@@ -12,6 +12,10 @@ typedef struct {
     size_t thread_num;
     shared_message_t* shared_message;
 
+    // se pide que cada hilo tenga 1 mutex, preguntar esta madre
+
+    pthread_mutex_t lock;
+
 } thread_data_t;
 
 
@@ -24,7 +28,7 @@ void* helloWorld(void* args) {
 
     // esto es espera activa, se queda en el while
     // consumiendo recursos hasta que le toque
-    
+
     //while (thread_num != shared_message->next_thread);
 
     if (thread_num == shared_message->chose_thread) {
@@ -84,7 +88,12 @@ int main(int argc, char* arg[]) {
     for (size_t i = 0; i < thread_count; ++i) {
         thread_data_list[i].thread_num = i;
         thread_data_list[i].shared_message = shared_message;
+        
+        if(i != 0){
+            pthread_mutex_lock(&thread_data_list[i].lock);
+        }
         pthread_create(&threads[i], NULL, helloWorld, (void*)&thread_data_list[i]);
+        
     }
 
     for (size_t i = 0; i < thread_count; ++i) {
