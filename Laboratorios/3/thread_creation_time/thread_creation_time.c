@@ -30,7 +30,7 @@ int main(int argc, char* arg[]){
     
     // malloc no inicializa las variables, calloc si
     // malloc tiene 1 argumento, calloc no
-
+    // malloc que veo, free que sapeo
     pthread_t* threads = malloc((size_t)(test_count * sizeof(pthread_t)));
     
 
