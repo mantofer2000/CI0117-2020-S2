@@ -4,8 +4,12 @@
 
 typedef struct {
     size_t message;
-    size_t chose_thread;
-    size_t next_thread;
+
+
+    size_t thread_amount;
+
+    //size_t chose_thread;
+    //size_t next_thread;
 } shared_message_t;
 
 typedef struct {
@@ -14,7 +18,9 @@ typedef struct {
 
     // se pide que cada hilo tenga 1 mutex, preguntar esta madre
 
+
     pthread_mutex_t lock;
+    pthread_mutex_t next_lock;
 
 } thread_data_t;
 
@@ -31,13 +37,13 @@ void* helloWorld(void* args) {
 
     //while (thread_num != shared_message->next_thread);
 
-    if (thread_num == shared_message->chose_thread) {
+    //if (thread_num == shared_message->chose_thread) {
         shared_message->message = 2021;
-    }
+   // }
 
     printf("Hello world from thread number # %zu. The message is: %zu\n", thread_num, shared_message->message);
     
-    ++shared_message->next_thread;
+    //++shared_message->next_thread;
     
     return NULL;
 }
@@ -69,8 +75,8 @@ int main(int argc, char* arg[]) {
     shared_message_t* shared_message = (shared_message_t*)calloc(1, sizeof(shared_message_t));
 
     shared_message->message = 2020;
-    shared_message->chose_thread = chosen_thread;
-    shared_message->next_thread = 0;
+    //shared_message->chose_thread = chosen_thread;
+    //shared_message->next_thread = 0;
 
     thread_data_t* thread_data_list = malloc((size_t)(thread_count * sizeof(thread_data_t)));
 
@@ -90,7 +96,9 @@ int main(int argc, char* arg[]) {
         thread_data_list[i].shared_message = shared_message;
         
         if(i != 0){
-            pthread_mutex_lock(&thread_data_list[i].lock);
+            pthread_mutex_init(&thread_data_list[i].lock, NULL);
+            // init y destroy
+            // lock y unlock
         }
         pthread_create(&threads[i], NULL, helloWorld, (void*)&thread_data_list[i]);
         
