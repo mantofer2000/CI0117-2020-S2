@@ -16,14 +16,14 @@ typedef struct {
 } private_data_t;
 
 
-void* hello_world(void* ptr){
+void* hello_world(void* ptr){  
     private_data_t* thread_data = (private_data_t*) ptr;
 
     size_t thread_num = thread_data->thread_num;
     shared_data_t* shared_data = thread_data->shared_data;
     
-
     pthread_mutex_lock(&shared_data->mutex_array[thread_num]);
+    
 
 
     //printf("Hello world from thread number # %zu. The message is: %zu\n", thread_num, shared_message->message);
@@ -32,7 +32,7 @@ void* hello_world(void* ptr){
 
 
     if(shared_data->next_thread < shared_data->thread_amount){
-        shared_data->next_thread++;
+        shared_data->next_thread = shared_data->next_thread + 1;
         pthread_mutex_unlock(&shared_data->mutex_array[shared_data->next_thread]);
     }
 

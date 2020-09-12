@@ -1,3 +1,3 @@
 
-run.out : hello_ordered_mutex2.c
-	gcc hello_ordered_mutex2.c -pthread -o run.out
+run.out : hello_ordered_mutex3.c
+	gcc hello_ordered_mutex3.c -pthread -o run.out
