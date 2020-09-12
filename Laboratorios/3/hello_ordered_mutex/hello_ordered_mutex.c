@@ -1,6 +1,7 @@
 #include <pthread.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 
 typedef struct {
     size_t message;
@@ -51,6 +52,17 @@ int main(int argc, char* arg[]) {
     // arg[0] = command
     // arg[1] = first param
 
+    struct timespec before, after;
+
+    time_t fastestS;
+    long fastestNs;
+    clock_gettime(CLOCK_MONOTONIC, &before);
+
+    
+    
+    
+    
+    
     size_t thread_count = 0;
     size_t chosen_thread = 0;
 
@@ -81,6 +93,7 @@ int main(int argc, char* arg[]) {
 
     thread_data_t* thread_data_list = malloc((size_t)(thread_count * sizeof(thread_data_t)));
 
+    clock_gettime(CLOCK_MONOTONIC, &before);
     for (size_t i = 0; i < thread_count; ++i){
         pthread_mutex_init(&shared_message->mutex_array[i], NULL);
         pthread_mutex_lock(&shared_message->mutex_array[i]);
@@ -101,11 +114,16 @@ int main(int argc, char* arg[]) {
     }
 
     printf("Hello world from main thread\n");
+    clock_gettime(CLOCK_MONOTONIC, &after);
 
     free(threads);
     free(shared_message->mutex_array);
     free(shared_message);
     free(thread_data_list);
+
+    fastestS = after.tv_sec - before.tv_sec;
+    fastestNs = after.tv_nsec - before.tv_nsec;
+    printf("Execution time was %ld.%lds among %zd threads\n", fastestS, fastestNs, thread_count);
 
     return 0;
 }
