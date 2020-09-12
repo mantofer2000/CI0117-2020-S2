@@ -30,6 +30,7 @@ void* helloWorld(void* args) {
     size_t thread_num = data->thread_num;
     shared_message_t* shared_message = data->shared_message;
 
+    sem_wait(&shared_message->sem_array[thread_num]);
 
     if(thread_num == shared_message->chose_thread)
         shared_message->message++;
@@ -94,8 +95,6 @@ int main(int argc, char* arg[]) {
 
     clock_gettime(CLOCK_MONOTONIC, &before);
     for (size_t i = 0; i < thread_count; ++i){
-        //pthread_mutex_init(&shared_message->mutex_array[i], NULL);
-        //pthread_mutex_lock(&shared_message->mutex_array[i]);
 
         sem_init(&shared_message->sem_array[i], 0, 0);
         thread_data_list[i].thread_num = i;
