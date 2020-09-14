@@ -65,6 +65,7 @@ int main(int argc, char* arg[]) {
     pthread_t* threads = malloc((size_t)(thread_count * sizeof(pthread_t)));
 
     shared_data_t* shared_data = (shared_data_t*)calloc(1, sizeof(shared_data_t));
+    shared_data->thread_count = thread_count;
 
     //shared_data->message = 2020;
     //shared_data->next_thread = 0;

@@ -44,12 +44,9 @@ int main(int argc, char* arg[]) {
     }
 
     pthread_t* threads = malloc((size_t)(thread_count * sizeof(pthread_t)));
-
     shared_data_t* shared_data = (shared_data_t*)calloc(1, sizeof(shared_data_t));
-
+    shared_data->thread_count = thread_count;
     pthread_mutex_init(&shared_data->mutex, NULL);
-
-
 
     thread_data_t* thread_data_list = malloc((size_t)(thread_count * sizeof(thread_data_t)));
 
