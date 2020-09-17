@@ -87,6 +87,8 @@ int main(int argc, char* arg[]) {
     pthread_mutex_destroy(&shared_data->mutex);
     pthread_barrier_destroy(&shared_data->barrier_start_race);
 
+    // Comment
+
     free(threads);
     free(shared_data);
     free(thread_data_list);
