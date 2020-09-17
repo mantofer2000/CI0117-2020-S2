@@ -90,6 +90,8 @@ int main(int argc, char* arg[]) {
 
     // comment otro sin merge
 
+    // Comment 
+    // Merge Comment
     free(threads);
     free(shared_data);
     free(thread_data_list);
