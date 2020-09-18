@@ -88,6 +88,8 @@ int main(int argc, char* arg[]) {
     pthread_barrier_destroy(&shared_data->barrier_start_race);
 
     // Comment
+    // COmentario
+
 
     free(threads);
     free(shared_data);
