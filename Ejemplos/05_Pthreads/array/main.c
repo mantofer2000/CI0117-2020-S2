@@ -4,8 +4,8 @@
 
 #include "array.h"
 
-#define MIN_CNT 10
-#define MAX_CNT 20
+#define MIN_CNT 1
+#define MAX_CNT 2
 
 void print_array(const char* name, array_t* array)
 {

@@ -9,6 +9,7 @@ typedef struct array
 	void** elements;
 	size_t capacity;
 	size_t count;
+    pthread_mutex_t mutex;
 } array_t;
 
 
@@ -22,7 +23,7 @@ array_t* array_create(size_t capacity)
 
 	array->capacity = capacity;
 	array->count = 0;
-
+    pthread_mutex_init( &array->mutex, NULL );
 	array->elements = (void**)malloc( capacity * sizeof(void*) );
 	if ( array->elements == NULL )
 		return free(array), NULL;
@@ -33,7 +34,7 @@ array_t* array_create(size_t capacity)
 void array_destroy(array_t* array)
 {
 	assert(array);
-
+    pthread_mutex_destroy(&array->mutex);
 	free(array->elements);
 	free(array);
 }

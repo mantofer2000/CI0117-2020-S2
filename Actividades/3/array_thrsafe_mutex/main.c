@@ -5,6 +5,7 @@
 
 #include "array.h"
 
+
 void print_array(const char* name, array_t* array);
 void test_arrays(array_t* array1, array_t* array2);
 void* test_array(void* data);
