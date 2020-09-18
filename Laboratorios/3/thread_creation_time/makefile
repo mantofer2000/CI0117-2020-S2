@@ -1,6 +1,16 @@
+APPNAME = thread_creation_time
 
-thread_creation_time.out : thread_creation_time.c
-	gcc thread_creation_time.c -pthread -o thread_creation_time.out
+$(APPNAME): $(APPNAME).c
+	cc -g -Wall -Wextra $(APPNAME).c -o $(APPNAME) -pthread -lm
 
+
+.PHONY: clean
 clean:
-	rm -rf *.out *.o *.exe
+	rm -f  $(APPNAME)
+
+
+#thread_creation_time.out : thread_creation_time.c
+#	gcc thread_creation_time.c -pthread -o thread_creation_time.out
+
+#clean:
+#	rm -rf *.out *.o *.exe
