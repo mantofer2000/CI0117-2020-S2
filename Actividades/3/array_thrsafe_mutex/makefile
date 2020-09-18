@@ -1,25 +1,14 @@
-CC=gcc
-CXX=g++
-FLAGS=-g -Wall -Wextra
-CFLAGS=$(FLAGS) -std=c11
-CXXFLAGS=$(FLAGS) -std=c++11
-LIBS= -pthread
+APPNAME = array_thrsafe_mutex
 
-HEADERS=$(wildcard *.h)
-SOURCES=$(wildcard *.c*)
-COBJECTS=$(SOURCES:.c=.o)
-OBJECTS=$(COBJECTS:.cpp=.o)
-EXECUTABLE=$(shell basename `pwd`)
+$(APPNAME): main.c array.c
+	cc -g -Wall -Wextra main.c array.c -o $(APPNAME) -pthread -lm
 
-$(EXECUTABLE): $(OBJECTS)
-	$(CXX) -o $@ $^ $(CFLAGS) $(LIBS)
 
-%.o: %.cpp $(HEADERS)
-	$(CXX) -c $< -o $@ $(CXXFLAGS)
+.PHONY: gitignore
+gitignore:
+	echo $(APPNAME) > .gitignore
 
-%.o: %.c $(HEADERS)
-	$(CC) -c -o $@ $< $(CFLAGS)
 
 .PHONY: clean
 clean:
-	rm -rf $(EXECUTABLE) *.o *.dSYM *~
+	rm -f  $(APPNAME)

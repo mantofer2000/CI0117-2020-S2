@@ -3,6 +3,12 @@ APPNAME = hello_ordered_semaphore
 $(APPNAME): $(APPNAME).c
 	cc -g -Wall -Wextra $(APPNAME).c -o $(APPNAME) -pthread -lm
 
+.PHONY: gitignore
+gitignore:
+	echo $(APPNAME) > .gitignore
+
+
+
 .PHONY: clean
 clean:
 	rm -f  $(APPNAME)
