@@ -6,8 +6,7 @@
 #include <semaphore.h>
 
 // Va a actuar de memoria compartida
-typedef struct{
-    
+typedef struct{    
     size_t num_customers;
     size_t num_waiting_room;
 
@@ -15,12 +14,12 @@ typedef struct{
     sem_t customer_semaphore;
     sem_t barber_semaphore;
 
-}barber_shop_t; 
+}barbershop_t; 
 
 typedef struct{
 
     size_t customer_id;
-    barber_shop_t* barber_shop;
+    barbershop_t* barber_shop;
 
 }customer_t;
 
@@ -54,6 +53,16 @@ int main(int argc, char* arg[]) {
         return 1;
     }
 
+    // +1 por el barbero
+    // Revisar porque hay que dar las validacion
+    // Por si no c pueden almacenar memoria
+    pthread_t* threads = malloc((size_t)((num_customers + 1) * sizeof(pthread_t)));
+    barbershop_t* shared_barbershop = (barbershop_t*)calloc(1, sizeof(barbershop_t));
+
+
+
+    free(threads);
+    free(shared_barbershop);
 
     return 0;
 }
