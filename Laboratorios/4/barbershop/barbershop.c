@@ -30,11 +30,13 @@ typedef struct{
 int customer_arrives(size_t id);
 int customer_leaves(size_t id);
 int customer_leaves_full(size_t id);
-int get_hair_cut();
+int get_haircut(size_t id);
 
 // Metodos propios para el barbero
 int cut_hair();
 int barber_leaves();
+int barber_wakes();
+int barber_sleeps();
 
 // otros metodos
 void random_sleep(useconds_t min_milliseconds, useconds_t max_milliseconds);
@@ -74,6 +76,35 @@ int customer_leaves(size_t id){
     return 1;
 }
 
+int get_haircut(size_t id){
+    printf("Customer %zd will get a haircut\n", id);
+    return 1;
+}
+
+// metodos barbero
+int cut_hair(){
+    printf("Barber will give a haircut\n");
+    random_sleep(1500, 3000);
+    printf("The barber has finished with the haircut\n");
+    return 1;
+}
+
+int barber_leaves(){
+    printf("The barber has finished for today\n");
+    return 1;    
+}
+
+int barber_sleeps(){
+    printf("There are no customers \n");
+    printf("The barber will go to sleep \n");
+    return 1;
+}
+
+
+int barber_wakes(){
+    printf("The barber is awake\n");
+    return 1;
+}
 
 void random_sleep(useconds_t min_milliseconds, useconds_t max_milliseconds){
 	useconds_t duration = min_milliseconds;
