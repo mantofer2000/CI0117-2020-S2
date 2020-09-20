@@ -49,13 +49,16 @@ void* barber_method(void * args){
     barbershop_t* shared_data = (barbershop_t*) args; 
     while(shared_data->num_customers){
         if(!shared_data->num_waiting_room){
+            printf("AQUI ESTOY \n");
             barber_sleeps();
             sem_wait(&shared_data->barber_semaphore);
         }else{
+            printf("AQUI ESTOY \n");
             sem_post(&shared_data->customer_semaphore);
             cut_hair();
             sem_post(&shared_data->barber_chair);
         }
+        
     }
     barber_leaves();
     return NULL;   
@@ -79,13 +82,15 @@ void* customer_method(void * args){
         full = 1;
     }
 
+    pthread_mutex_lock(&shared_data->mutex);
+        shared_data->num_customers--;
+    pthread_mutex_unlock(&shared_data->mutex);
+
     if(full){
         customer_leaves_full(private_data->customer_id);
     }else{
         customer_leaves(private_data->customer_id);
     }
-
-
 
     return NULL;
 }
@@ -126,10 +131,18 @@ int main(int argc, char* arg[]) {
     sem_init(&shared_barbershop->barber_semaphore, 0, 0);
     sem_init(&shared_barbershop->barber_chair, 0, 0);
 
+    for(size_t i = 0; i <= num_customers; i++){
+        if(i == 0){
+            pthread_create(&threads[i],  NULL, barber_method, NULL);
+        }else{
+            customer_data[i].barber_shop = shared_barbershop;
+            customer_data[i].customer_id = i;
+            pthread_create(&threads[i],  NULL, customer_method, (void*)&customer_data[i]);        
+        }
+    }    
     
-    
-    
-    
+    for(size_t j = 0; j <= num_customers; j++)
+        pthread_join(threads[j], NULL);
     
     pthread_mutex_destroy(&shared_barbershop->mutex);
     sem_destroy(&shared_barbershop->customer_semaphore);
