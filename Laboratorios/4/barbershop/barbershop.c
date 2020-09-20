@@ -20,10 +20,8 @@ typedef struct{
 }barbershop_t; 
 
 typedef struct{
-
     size_t customer_id;
     barbershop_t* barber_shop;
-
 }customer_t;
 
 
@@ -46,7 +44,11 @@ void random_sleep(useconds_t min_milliseconds, useconds_t max_milliseconds);
 
 
 void* barber_method(void * args){
+    
     barbershop_t* shared_data = (barbershop_t*) args; 
+    size_t num_customers = shared_data->num_customers;
+    printf("desde hilo %zd \n", num_customers);
+    /*
     while(shared_data->num_customers){
         if(!shared_data->num_waiting_room){
             printf("AQUI ESTOY \n");
@@ -60,14 +62,21 @@ void* barber_method(void * args){
         }
         
     }
+    
     barber_leaves();
+    */
     return NULL;   
 }
 
 void* customer_method(void * args){
+    /*
+    printf("AQUI ESTOY \n");
+    
+    
     customer_t* private_data = (customer_t*)args;
     barbershop_t* shared_data = (barbershop_t*)private_data->barber_shop;
-
+    printf("AQUI ESTOY \n");
+    
     customer_arrives(private_data->customer_id);
     sem_post(&shared_data->barber_semaphore);
     
@@ -91,7 +100,7 @@ void* customer_method(void * args){
     }else{
         customer_leaves(private_data->customer_id);
     }
-
+    */
     return NULL;
 }
 
@@ -113,15 +122,19 @@ int main(int argc, char* arg[]) {
     // +1 por el barbero
     // Revisar porque hay que dar las validacion
     // Por si no c pueden almacenar memoria
-    pthread_t* threads = malloc((size_t)((num_customers + 1) * sizeof(pthread_t)));
-    barbershop_t* shared_barbershop = (barbershop_t*)calloc(1, sizeof(barbershop_t));
+    pthread_t* threads = (pthread_t*)malloc((num_customers + 1) * sizeof(pthread_t));
+    barbershop_t* shared_barbershop = (barbershop_t*)malloc(sizeof(barbershop_t));
 
-    customer_t* customer_data = malloc((size_t)(num_customers * sizeof(customer_t)));
+    // hay un problema aca
+    customer_t* customer_data = (customer_t*)malloc((num_customers) * (sizeof(customer_t)));
 
+    printf("DESDE MAIN %zd \n", num_customers);
 
     shared_barbershop->num_customers = num_customers;
     shared_barbershop->num_waiting_room = num_waiting_room;
     shared_barbershop->customers_sitting = 0;
+
+    printf("DESDE MAIN %zd \n", shared_barbershop->num_customers);
 
     // Metodos de sincronizacion
     pthread_mutex_init(&shared_barbershop->mutex, NULL);
@@ -133,11 +146,11 @@ int main(int argc, char* arg[]) {
 
     for(size_t i = 0; i <= num_customers; i++){
         if(i == 0){
-            pthread_create(&threads[i],  NULL, barber_method, NULL);
+            pthread_create(&threads[i],  NULL, barber_method, (void*)&shared_barbershop);
         }else{
-            customer_data[i].barber_shop = shared_barbershop;
-            customer_data[i].customer_id = i;
-            pthread_create(&threads[i],  NULL, customer_method, (void*)&customer_data[i]);        
+            customer_data[i - 1].barber_shop = shared_barbershop;
+            customer_data[i - 1].customer_id = i;
+            pthread_create(&threads[i],  NULL, customer_method, (void*)&customer_data[i - 1]);        
         }
     }    
     
@@ -150,8 +163,9 @@ int main(int argc, char* arg[]) {
     sem_destroy(&shared_barbershop->barber_chair);
 
     free(threads);
-    free(shared_barbershop);
     free(customer_data);
+    free(shared_barbershop);
+    
 
     return 0;
 }
