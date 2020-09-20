@@ -15,6 +15,7 @@ typedef struct{
     pthread_mutex_t mutex;
     sem_t customer_semaphore;
     sem_t barber_semaphore;
+    sem_t barber_chair;
 
 }barbershop_t; 
 
@@ -29,6 +30,7 @@ typedef struct{
 
 // Metodos propios para el cliente
 int customer_arrives(size_t id);
+int customer_sits(size_t id);
 int customer_leaves(size_t id);
 int customer_leaves_full(size_t id);
 int get_haircut(size_t id);
@@ -52,6 +54,7 @@ void* barber_method(void * args){
         }else{
             sem_post(&shared_data->customer_semaphore);
             cut_hair();
+            sem_post(&shared_data->barber_chair);
         }
     }
     barber_leaves();
@@ -61,6 +64,28 @@ void* barber_method(void * args){
 void* customer_method(void * args){
     customer_t* private_data = (customer_t*)args;
     barbershop_t* shared_data = (barbershop_t*)private_data->barber_shop;
+
+    customer_arrives(private_data->customer_id);
+    sem_post(&shared_data->barber_semaphore);
+    
+    int full = 0;
+
+    if(shared_data->customers_sitting < shared_data->num_waiting_room){
+        customer_sits(private_data->customer_id);
+        sem_wait(&shared_data->customer_semaphore);
+        get_haircut(private_data->customer_id);
+        sem_wait(&shared_data->barber_chair);    
+    }else{
+        full = 1;
+    }
+
+    if(full){
+        customer_leaves_full(private_data->customer_id);
+    }else{
+        customer_leaves(private_data->customer_id);
+    }
+
+
 
     return NULL;
 }
@@ -99,7 +124,7 @@ int main(int argc, char* arg[]) {
     //se corta el pelo de una
     sem_init(&shared_barbershop->customer_semaphore, 0, 1);
     sem_init(&shared_barbershop->barber_semaphore, 0, 0);
-
+    sem_init(&shared_barbershop->barber_chair, 0, 0);
 
     
     
@@ -109,6 +134,7 @@ int main(int argc, char* arg[]) {
     pthread_mutex_destroy(&shared_barbershop->mutex);
     sem_destroy(&shared_barbershop->customer_semaphore);
     sem_destroy(&shared_barbershop->barber_semaphore);
+    sem_destroy(&shared_barbershop->barber_chair);
 
     free(threads);
     free(shared_barbershop);
@@ -118,13 +144,19 @@ int main(int argc, char* arg[]) {
 }
 
 int customer_arrives(size_t id){
+    random_sleep(1500,3000);
     printf("Customer number %zd has arrived\n", id);
     return 1;
 }
 
 
+int customer_sits(size_t id){
+    printf("Customer number %zd is waiting\n", id);
+    return 1;
+}
+
 int customer_leaves_full(size_t id){
-    printf("Barbershop is full\n");
+    printf("Waiting room is full\n");
     printf("Customer number %zd is leaving\n", id);
     return 1;
 }
