@@ -10,6 +10,8 @@ typedef struct{
     size_t num_customers;
     size_t num_waiting_room;
 
+    size_t customers_sitting;
+
     pthread_mutex_t mutex;
     sem_t customer_semaphore;
     sem_t barber_semaphore;
@@ -41,13 +43,38 @@ int barber_sleeps();
 void random_sleep(useconds_t min_milliseconds, useconds_t max_milliseconds);
 
 
+void* barber_method(void * args){
+    barbershop_t* shared_data = (barbershop_t*) args; 
+    while(shared_data->num_customers){
+        if(!shared_data->num_waiting_room){
+            barber_sleeps();
+            sem_wait(&shared_data->barber_semaphore);
+        }else{
+            sem_post(&shared_data->customer_semaphore);
+            cut_hair();
+        }
+    }
+    barber_leaves();
+    return NULL;   
+}
+
+void* customer_method(void * args){
+    customer_t* private_data = (customer_t*)args;
+    barbershop_t* shared_data = (barbershop_t*)private_data->barber_shop;
+
+    return NULL;
+}
+
+
 int main(int argc, char* arg[]) {
 
 	srand( time(NULL) );
     size_t num_customers = 0;
+    size_t num_waiting_room = 0;
 
-    if (argc >= 2) {
+    if (argc >= 3) {
         num_customers = (size_t)strtoul(arg[1], NULL, 10);
+        num_waiting_room = (size_t)strtoul(arg[2], NULL, 10);
     } else {
         fprintf(stderr, "Error, invalid number of parameters\n");
         return 1;
@@ -59,10 +86,33 @@ int main(int argc, char* arg[]) {
     pthread_t* threads = malloc((size_t)((num_customers + 1) * sizeof(pthread_t)));
     barbershop_t* shared_barbershop = (barbershop_t*)calloc(1, sizeof(barbershop_t));
 
+    customer_t* customer_data = malloc((size_t)(num_customers * sizeof(customer_t)));
 
+
+    shared_barbershop->num_customers = num_customers;
+    shared_barbershop->num_waiting_room = num_waiting_room;
+    shared_barbershop->customers_sitting = 0;
+
+    // Metodos de sincronizacion
+    pthread_mutex_init(&shared_barbershop->mutex, NULL);
+    //el de clientes empieza en 1 porque el primer cliente
+    //se corta el pelo de una
+    sem_init(&shared_barbershop->customer_semaphore, 0, 1);
+    sem_init(&shared_barbershop->barber_semaphore, 0, 0);
+
+
+    
+    
+    
+    
+    
+    pthread_mutex_destroy(&shared_barbershop->mutex);
+    sem_destroy(&shared_barbershop->customer_semaphore);
+    sem_destroy(&shared_barbershop->barber_semaphore);
 
     free(threads);
     free(shared_barbershop);
+    free(customer_data);
 
     return 0;
 }
