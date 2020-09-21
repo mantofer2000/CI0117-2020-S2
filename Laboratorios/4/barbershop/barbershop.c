@@ -1,3 +1,5 @@
+#define _XOPEN_SOURCE 600
+
 #include <pthread.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -13,7 +15,6 @@ typedef struct{
     size_t customers_sitting;
 
     pthread_mutex_t mutex;
-    //pthread_mutex_t barber_lock;
 
     sem_t barber_semaphore;
     sem_t customer_semaphore;
@@ -52,7 +53,6 @@ void* barber_method(void * args){
     
     customer_t* private_data = (customer_t*)args;
     barbershop_t* shared_data = (barbershop_t*)private_data->barber_shop;
-    //pthread_mutex_lock(&shared_data->barber_lock);
 
     printf("Barber has arrived \n");
 
@@ -63,7 +63,6 @@ void* barber_method(void * args){
 
     while(stop){
         // este sleep, se tiene que preguntar
-        // la vara es que esta despichando los impirmir
         random_sleep(1500, 3000);
 
         pthread_mutex_lock(&shared_data->mutex);
@@ -99,8 +98,6 @@ void* customer_method(void * args){
     barbershop_t* shared_data = (barbershop_t*)private_data->barber_shop;
         
     customer_arrives(private_data->customer_id);
-    
-    int full = 0;
 
     if(shared_data->customers_sitting < shared_data->num_waiting_room){
         sem_post(&shared_data->barber_semaphore);
@@ -156,7 +153,6 @@ int main(int argc, char* arg[]) {
     pthread_t* threads = (pthread_t*)malloc((num_customers + 1) * sizeof(pthread_t));
     barbershop_t* shared_barbershop = (barbershop_t*)calloc(1, sizeof(barbershop_t));
 
-    // hay un problema aca
     customer_t* customer_data = (customer_t*)malloc((num_customers + 1) * (sizeof(customer_t)));
 
     shared_barbershop->num_customers = num_customers;
@@ -165,10 +161,7 @@ int main(int argc, char* arg[]) {
 
     // Metodos de sincronizacion
     pthread_mutex_init(&shared_barbershop->mutex, NULL);
-    //pthread_mutex_init(&shared_barbershop->barber_lock, NULL);
 
-    //el de clientes empieza en 1 porque el primer cliente
-    //se corta el pelo de una
     sem_init(&shared_barbershop->customer_semaphore, 0, 0);
     sem_init(&shared_barbershop->barber_semaphore, 0, 0);
     sem_init(&shared_barbershop->barber_chair, 0, 0);
@@ -184,8 +177,6 @@ int main(int argc, char* arg[]) {
             pthread_create(&threads[i],  NULL, customer_method, (void*)&customer_data[i]);        
         }
     }    
-    
-    
 
     for(size_t j = 0; j <= num_customers; j++){
         pthread_join(threads[j], NULL);
@@ -193,7 +184,6 @@ int main(int argc, char* arg[]) {
     
     
     pthread_mutex_destroy(&shared_barbershop->mutex);
-    //pthread_mutex_destroy(&shared_barbershop->barber_lock);
 
     sem_destroy(&shared_barbershop->customer_semaphore);
     sem_destroy(&shared_barbershop->barber_semaphore);
@@ -250,7 +240,6 @@ int barber_leaves(){
 
 int barber_sleeps(){
     printf("There are no customers, the barber will go to sleep \n");
-    //printf("The barber will go to sleep \n");
     return 1;
 }
 
