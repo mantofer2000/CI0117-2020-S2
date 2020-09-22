@@ -33,8 +33,16 @@ Ademas, debido al uso de semaforos, se puede generar un deadlock debido a las de
 
         printf("Barber has arrived \n");
 
+        int stop = 1;
+        customers_remaining = shared_data->num_customers;
+        customers_sitting = 0;
+
         while (stop)
         {
+            pthread_mutex_lock(&mutex);
+                customers_remaining = shared_data->num_customers;
+                customers_sitting = shared_data->customers_sitting;
+            pthread_mutex_unlock(&mutex);
 
             if (customers_remaining == 0)
             {
@@ -44,11 +52,22 @@ Ademas, debido al uso de semaforos, se puede generar un deadlock debido a las de
 
             if (customers_sitting != 0)
             {
+<<<<<<< HEAD
                 cut_hair();
+=======
+                sem_post(&customer_semaphore);
+                cut_hair();
+                sem_post(&barber_chair);
+>>>>>>> master
             }
             else
             {
                 barber_sleeps();
+<<<<<<< HEAD
+=======
+                sem_wait(&barber_semaphore);
+                barber_wakes();
+>>>>>>> master
             }
 
         }
@@ -63,6 +82,7 @@ Ademas, debido al uso de semaforos, se puede generar un deadlock debido a las de
         customer_t* private_data = (customer_t*)args;
         barbershop_t* shared_data = (barbershop_t*)private_data->barber_shop;
 
+<<<<<<< HEAD
         customer_arrives(private_data->customer_id);
 
         if (customers sitting < limit waiting room)
@@ -76,6 +96,40 @@ Ademas, debido al uso de semaforos, se puede generar un deadlock debido a las de
         }
 
         num_customers--;
+=======
+        if (shared_data->customers_sitting < shared_data->num_waiting_room)
+        {
+            sem_post(&shared_data->barber_semaphore);
+
+            pthread_mutex_lock(&mutex);
+                shared_data->customers_sitting++;    
+                customer_sits(customer_id);
+            pthread_mutex_unlock(&mutex);
+
+            sem_wait(&shared_data->customer_semaphore);
+
+            pthread_mutex_lock(&mutex);
+                shared_data->customers_sitting--;   
+            pthread_mutex_unlock(&mutex);        
+
+            get_haircut(private_data->customer_id); 
+            sem_wait(&barber_chair);
+            customer_leaves(private_data->customer_id);
+        }
+        else
+        {
+            customer_leaves_full(customer_id);
+        }
+
+        pthread_mutex_lock(&mutex);
+            shared_data->num_customers--;
+        pthread_mutex_unlock(&mutex);
+
+        if (shared_data->num_customers == 0)
+        {
+          sem_post(&barber_semaphore);  
+        }
+>>>>>>> master
 
         return NULL;
     }
