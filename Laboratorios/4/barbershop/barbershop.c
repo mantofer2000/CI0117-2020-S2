@@ -144,6 +144,8 @@ int main(int argc, char* arg[]) {
         num_waiting_room = (size_t)strtoul(arg[2], NULL, 10);
     } else {
         fprintf(stderr, "Error, invalid number of parameters\n");
+        printf("1st parameter : Number of clients\n");
+        printf("2nd parameter : Waiting room size\n");
         return 1;
     }
 
