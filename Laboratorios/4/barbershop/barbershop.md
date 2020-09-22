@@ -20,6 +20,8 @@
 
 Si los hilos del barbero y los clientes no son coordinados correctamente puede haber un caso de *starvation*. Por ejemplo, si ya no queda ningún cliente pero no se le avisa al barbero, el barbero se va a quedar dormido indefinidamente. 
 
+Ademas, debido al uso de semaforos, se puede generar un deadlock debido a las dependencias entre los clientes y el barbero.
+
 ### Solución
 
 #### Función del barbero
