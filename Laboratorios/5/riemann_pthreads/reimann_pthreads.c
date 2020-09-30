@@ -53,6 +53,10 @@ int main(int argc, char* argv[])
         return (void) fprintf(stderr, "Usage: riemann_pthreads point_a point_b number_of_rectangles\n"), 1;
     }
 
+    num_threads = set_thread_amount(max_num_threads, number_of_rectangles);
+      
+    
+    
     walltime_t start;
     walltime_start(&start);
     area = calculate_area(point_a, point_b, number_of_rectangles);
@@ -69,7 +73,7 @@ double calculate_area(size_t point_a, size_t point_b, size_t number_of_rectangle
     double delta_x = ((double) point_b - (double) point_a) / number_of_rectangles;
     double result = 0.0;
 
-    // f(x) = x^2 + 1
+    //f(x) = x^2 + 1
     for(double i = point_a; i < point_b; i = i + delta_x){
         result += delta_x * ((i * i) + 1);
     }
