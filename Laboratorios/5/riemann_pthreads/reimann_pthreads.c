@@ -1,15 +1,29 @@
 #define _XOPEN_SOURCE 600
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <pthread.h>
+
+
+typedef struct{
+    
+}shared_data_t;
+
+typedef struct{
+    size_t thread_id;
+
+    size_t jump;
+
+    shared_data_t* shared_data;
+}private_data_t;
+
 
 typedef struct timespec walltime_t;
 
 void walltime_start(walltime_t* start);
 double walltime_elapsed(const walltime_t* start);
-
 double calculate_area(size_t point_a, size_t point_b, size_t number_of_rectangles);
+size_t set_thread_amount(size_t max_num_threads, size_t number_of_rectangles);
 
 int main(int argc, char* argv[])
 {
@@ -24,7 +38,7 @@ int main(int argc, char* argv[])
 
 
     // Ya esta en size_t, pero tambien revisar que no entren negativos
-    if ( argc >= 3 )
+    if ( argc >= 4 )
     {
         point_a = strtoul(argv[1], NULL, 10);
         point_b = strtoul(argv[2], NULL, 10);
@@ -33,10 +47,10 @@ int main(int argc, char* argv[])
             return (void) fprintf(stderr, "Error! point_b must be higher than point_a\n"), 2;
         }
         number_of_rectangles = strtoul(argv[3], NULL, 10);
+        max_num_threads = strtoul(argv[4], NULL, 10);
     }
-    else
-    {
-        return (void) fprintf(stderr, "Usage: riemann_serial point_a point_b number_of_rectangles\n"), 1;
+    else{
+        return (void) fprintf(stderr, "Usage: riemann_pthreads point_a point_b number_of_rectangles\n"), 1;
     }
 
     walltime_t start;
@@ -56,11 +70,9 @@ double calculate_area(size_t point_a, size_t point_b, size_t number_of_rectangle
     double result = 0.0;
 
     // f(x) = x^2 + 1
-
     for(double i = point_a; i < point_b; i = i + delta_x){
         result += delta_x * ((i * i) + 1);
     }
-
     return result;
 }
 
@@ -69,8 +81,7 @@ void walltime_start(walltime_t* start)
     clock_gettime(CLOCK_MONOTONIC, start);
 }
 
-double walltime_elapsed(const walltime_t* start)
-{
+double walltime_elapsed(const walltime_t* start){
     walltime_t finish;
     clock_gettime(CLOCK_MONOTONIC, &finish);
 
@@ -78,4 +89,16 @@ double walltime_elapsed(const walltime_t* start)
     elapsed += (finish.tv_nsec - start->tv_sec ) / 1000000000.0;
 
     return elapsed;
+}
+
+size_t set_thread_amount(size_t max_num_threads, size_t number_of_rectangles){
+    if(max_num_threads == number_of_rectangles){
+        return max_num_threads;
+    }
+    if(max_num_threads > number_of_rectangles){
+        return number_of_rectangles;
+    }
+    if(max_num_threads < number_of_rectangles){
+        return max_num_threads;
+    }
 }

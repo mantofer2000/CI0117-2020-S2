@@ -22,9 +22,6 @@ typedef struct{
 
 }barbershop_t; 
 
-
-
-
 typedef struct{
     size_t customer_id;
     barbershop_t* barber_shop;
