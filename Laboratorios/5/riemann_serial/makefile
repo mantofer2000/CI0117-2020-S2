@@ -1,4 +1,4 @@
-APPNAME = reimann_serial
+APPNAME = riemann_serial
 
 $(APPNAME): $(APPNAME).c
 	cc -g -Wall -Wextra $(APPNAME).c -o $(APPNAME) -pthread -lm -std=c99
