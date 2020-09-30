@@ -19,6 +19,8 @@ int main(int argc, char* argv[])
     double area;
     double elapsed;
 
+
+    // Ya esta en size_t, pero tambien revisar que no entren negativos
     if ( argc >= 3 )
     {
         point_a = strtoul(argv[1], NULL, 10);
@@ -49,6 +51,12 @@ double calculate_area(size_t point_a, size_t point_b, size_t number_of_rectangle
 {
     double delta_x = ((double) point_b - (double) point_a) / number_of_rectangles;
     double result = 0.0;
+
+    // f(x) = x^2 + 1
+
+    for(double i = point_a; i < point_b; i = i + delta_x){
+        result += delta_x * ((i * i) + 1);
+    }
 
     return result;
 }
