@@ -16,6 +16,9 @@ int main(int argc, char* argv[])
     size_t point_a;
     size_t point_b;
     size_t number_of_rectangles;
+    // Esta la ingresa el usuario, pero puede que se tenga que reducir
+    size_t max_num_threads;
+    size_t num_threads;
     double area;
     double elapsed;
 

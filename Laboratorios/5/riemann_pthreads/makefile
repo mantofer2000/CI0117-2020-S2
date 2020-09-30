@@ -8,7 +8,6 @@ gitignore:
 	echo $(APPNAME) > .gitignore
 
 
-
 .PHONY: clean
 clean:
 	rm -f  $(APPNAME)
