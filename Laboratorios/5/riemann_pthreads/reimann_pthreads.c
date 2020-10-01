@@ -12,6 +12,7 @@ typedef struct{
 
 typedef struct{
     size_t thread_id;
+    size_t num_threads;
 
     double begin;
     double end;
@@ -25,9 +26,29 @@ typedef struct timespec walltime_t;
 
 void walltime_start(walltime_t* start);
 double walltime_elapsed(const walltime_t* start);
-double calculate_area(size_t point_a, size_t point_b, size_t number_of_rectangles);
 size_t set_thread_amount(size_t max_num_threads, size_t number_of_rectangles);
 private_data_t * set_private_data(size_t num_threads, double delta_x, size_t point_a, size_t point_b);
+
+void* calculate_area(void* args){
+    private_data_t * private_data = (private_data_t*) args;
+    shared_data_t * shared_data = (shared_data_t*)private_data->shared_data;
+
+    double delta_x = private_data->delta_x;
+    double result = 0.0;
+    size_t jump = private_data->num_threads;
+    double begin = private_data->begin;
+    double end = private_data->end;
+
+    //f(x) = x^2 + 1
+    for(double i = begin; i < end; i = i + (delta_x * jump)){
+        result += delta_x * ((i * i) + 1);
+    }
+
+    pthread_mutex_lock(&shared_data->mutex);
+        shared_data->result += result;
+    pthread_mutex_unlock(&shared_data->mutex);
+    return NULL;
+}
 
 int main(int argc, char* argv[])
 {
@@ -59,16 +80,29 @@ int main(int argc, char* argv[])
 
     num_threads = set_thread_amount(max_num_threads, number_of_rectangles);
     double delta_x = ((double) point_b - (double) point_a) / number_of_rectangles;
+    
+    
     private_data_t * private_data = set_private_data(num_threads, delta_x, point_a, point_b);
     shared_data_t * shared_data = (shared_data_t *)calloc(1, sizeof(shared_data_t));
+    pthread_t* threads = (pthread_t*)malloc((num_threads) * sizeof(pthread_t));
+
+    pthread_mutex_init(&shared_data->mutex, NULL);
     
-    pthread_mutex_init(&shared_data->mutex);
-     
 
     
     walltime_t start;
     walltime_start(&start);
-    area = calculate_area(point_a, point_b, number_of_rectangles);
+
+    for(size_t i = 0; i < num_threads; i++){
+        private_data[i].shared_data = shared_data;
+        pthread_create(&threads[i],  NULL, calculate_area, (void*)&private_data[i]);
+
+    }
+    // area = calculate_area(point_a, point_b, number_of_rectangles);
+    for(size_t it = 0; it < num_threads; it++){pthread_join(threads[it], NULL);}
+    area = shared_data->result;
+    
+    
     elapsed = walltime_elapsed(&start);
 
     printf("The area is: %lf\n", area);
@@ -77,21 +111,8 @@ int main(int argc, char* argv[])
     pthread_mutex_destroy(&shared_data->mutex);
     free(private_data);
     free(shared_data);
-
-
+    free(threads);
     return 0;
-}
-
-double calculate_area(size_t point_a, size_t point_b, size_t number_of_rectangles)
-{
-    double delta_x = ((double) point_b - (double) point_a) / number_of_rectangles;
-    double result = 0.0;
-
-    //f(x) = x^2 + 1
-    for(double i = point_a; i < point_b; i = i + delta_x){
-        result += delta_x * ((i * i) + 1);
-    }
-    return result;
 }
 
 void walltime_start(walltime_t* start)
@@ -110,15 +131,19 @@ double walltime_elapsed(const walltime_t* start){
 }
 
 size_t set_thread_amount(size_t max_num_threads, size_t number_of_rectangles){
+    size_t return_value = 0;
+    
     if(max_num_threads == number_of_rectangles){
-        return max_num_threads;
+        return_value = max_num_threads;
     }
     if(max_num_threads > number_of_rectangles){
-        return number_of_rectangles;
+        return_value =  number_of_rectangles;
     }
     if(max_num_threads < number_of_rectangles){
-        return max_num_threads;
+        return_value =  max_num_threads;
     }
+    return return_value;
+
 }
 
 private_data_t * set_private_data(size_t num_threads, double delta_x, size_t point_a, size_t point_b){
@@ -128,6 +153,7 @@ private_data_t * set_private_data(size_t num_threads, double delta_x, size_t poi
         private_data[i].begin = ((double) point_a) + (i * delta_x);
         private_data[i].end = (double) point_b;
         private_data[i].delta_x = delta_x;
+        private_data[i].num_threads = num_threads;
     }
     return private_data;
 }
