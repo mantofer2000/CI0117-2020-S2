@@ -67,12 +67,10 @@ int main(int argc, char* argv[])
     {
         point_a = strtoul(argv[1], NULL, 10);
         point_b = strtoul(argv[2], NULL, 10);
-        if ( point_b < point_a )
-        {
-            return (void) fprintf(stderr, "Error! point_b must be higher than point_a\n"), 2;
-        }
+        if ( point_b < point_a ){return (void) fprintf(stderr, "Error! point_b must be higher than point_a\n"), 2;}
         number_of_rectangles = strtoul(argv[3], NULL, 10);
         max_num_threads = strtoul(argv[4], NULL, 10);
+        if(max_num_threads == 0){return (void) fprintf(stderr, "Error! Thread_num must not be 0\n"), 3;}
     }
     else{
         return (void) fprintf(stderr, "Usage: riemann_pthreads point_a point_b number_of_rectangles\n"), 1;
