@@ -49,12 +49,15 @@ int main(int argc, char* argv[])
 
 double calculate_area(size_t point_a, size_t point_b, size_t number_of_rectangles)
 {
-    double delta_x = ((double) point_b - (double) point_a) / (double)number_of_rectangles;
+    double a = (double) point_a;
+    double b = (double) point_b;
+    double dou_num_of_rectangles = number_of_rectangles; 
+    double delta_x = (b - a) / dou_num_of_rectangles;
     double result = 0.0;
 
     // f(x) = x^2 + 1
 
-    for(double i = point_a; i <= (point_b - delta_x); i += delta_x){
+    for(double i = a; i <= (b - delta_x); i += delta_x){
         result += delta_x * ((i * i) + 1);
     }
 

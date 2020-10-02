@@ -27,7 +27,7 @@ typedef struct timespec walltime_t;
 void walltime_start(walltime_t* start);
 double walltime_elapsed(const walltime_t* start);
 size_t set_thread_amount(size_t max_num_threads, size_t number_of_rectangles);
-private_data_t * set_private_data(size_t num_threads, double delta_x, size_t point_a, size_t point_b);
+private_data_t * set_private_data(size_t num_threads, double delta_x, double point_a, double point_b);
 
 void* calculate_area(void* args){
     private_data_t * private_data = (private_data_t*) args;
@@ -35,15 +35,13 @@ void* calculate_area(void* args){
 
     double delta_x = private_data->delta_x;
     double result = 0.0;
-    size_t jump = private_data->num_threads;
+    double jump = (double)private_data->num_threads;
     double begin = private_data->begin;
     double end = private_data->end;
 
     //f(x) = x^2 + 1
+
     for(double i = begin; i <= (end - delta_x); i += (delta_x * jump)){
-        //if(private_data->thread_id == 0){
-        //printf("The area  i THREAD: %lf\n", i);
-        //}
         result += delta_x * ((i * i) + 1);
     }
 
@@ -74,12 +72,16 @@ int main(int argc, char* argv[])
     else{
         return (void) fprintf(stderr, "Usage: riemann_pthreads point_a point_b number_of_rectangles\n"), 1;
     }
+    double a = (double) point_a;
+    double b = (double) point_b;
+    double dou_number_of_rectangles = (double) number_of_rectangles;
+
 
     num_threads = set_thread_amount(max_num_threads, number_of_rectangles);
-    double delta_x = ((double) point_b - (double) point_a) / (double)number_of_rectangles;
+    double delta_x = (b - a) / dou_number_of_rectangles;
     
     
-    private_data_t * private_data = set_private_data(num_threads, delta_x, point_a, point_b);
+    private_data_t * private_data = set_private_data(num_threads, delta_x, a, b);
     shared_data_t * shared_data = (shared_data_t *)calloc(1, sizeof(shared_data_t));
     pthread_t* threads = (pthread_t*)malloc((num_threads) * sizeof(pthread_t));
     shared_data->result = 0;
@@ -143,12 +145,12 @@ size_t set_thread_amount(size_t max_num_threads, size_t number_of_rectangles){
 
 }
 
-private_data_t * set_private_data(size_t num_threads, double delta_x, size_t point_a, size_t point_b){
+private_data_t * set_private_data(size_t num_threads, double delta_x, double point_a, double point_b){
     private_data_t * private_data = (private_data_t * )calloc(num_threads, sizeof(private_data_t));
     for(int  i = 0; i < (int)num_threads; i++){
         private_data[i].thread_id = i + 1;
-        private_data[i].begin = ((double) point_a) + (i * delta_x);
-        private_data[i].end = (double) point_b;
+        private_data[i].begin = ( point_a) + (i * delta_x);
+        private_data[i].end = point_b;
         private_data[i].delta_x = delta_x;
         private_data[i].num_threads = num_threads;
     }
