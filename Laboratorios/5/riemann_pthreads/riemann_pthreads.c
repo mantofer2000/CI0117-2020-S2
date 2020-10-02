@@ -40,7 +40,10 @@ void* calculate_area(void* args){
     double end = private_data->end;
 
     //f(x) = x^2 + 1
-    for(double i = begin; i < end; i = i + (delta_x * jump)){
+    for(double i = begin; i <= (end - delta_x); i += (delta_x * jump)){
+        //if(private_data->thread_id == 0){
+        //printf("The area  i THREAD: %lf\n", i);
+        //}
         result += delta_x * ((i * i) + 1);
     }
 
@@ -54,14 +57,8 @@ void* calculate_area(void* args){
 
 int main(int argc, char* argv[])
 {
-    size_t point_a;
-    size_t point_b;
-    size_t number_of_rectangles;
-    // Esta la ingresa el usuario, pero puede que se tenga que reducir
-    size_t max_num_threads;
-    size_t num_threads;
-    double area;
-    double elapsed;
+    size_t point_a, point_b, number_of_rectangles, max_num_threads, num_threads;
+    double area, elapsed;
 
 
     // Ya esta en size_t, pero tambien revisar que no entren negativos
@@ -79,12 +76,13 @@ int main(int argc, char* argv[])
     }
 
     num_threads = set_thread_amount(max_num_threads, number_of_rectangles);
-    double delta_x = ((double) point_b - (double) point_a) / number_of_rectangles;
+    double delta_x = ((double) point_b - (double) point_a) / (double)number_of_rectangles;
     
     
     private_data_t * private_data = set_private_data(num_threads, delta_x, point_a, point_b);
     shared_data_t * shared_data = (shared_data_t *)calloc(1, sizeof(shared_data_t));
     pthread_t* threads = (pthread_t*)malloc((num_threads) * sizeof(pthread_t));
+    shared_data->result = 0;
 
     pthread_mutex_init(&shared_data->mutex, NULL);
     
@@ -107,7 +105,6 @@ int main(int argc, char* argv[])
 
     printf("The area is: %lf\n", area);
     printf("Execution time: %lfs\n", elapsed);
-
     pthread_mutex_destroy(&shared_data->mutex);
     free(private_data);
     free(shared_data);
@@ -148,8 +145,8 @@ size_t set_thread_amount(size_t max_num_threads, size_t number_of_rectangles){
 
 private_data_t * set_private_data(size_t num_threads, double delta_x, size_t point_a, size_t point_b){
     private_data_t * private_data = (private_data_t * )calloc(num_threads, sizeof(private_data_t));
-    for(size_t i = 0; i < num_threads; i++){
-        private_data[i].thread_id = i;
+    for(int  i = 0; i < (int)num_threads; i++){
+        private_data[i].thread_id = i + 1;
         private_data[i].begin = ((double) point_a) + (i * delta_x);
         private_data[i].end = (double) point_b;
         private_data[i].delta_x = delta_x;
