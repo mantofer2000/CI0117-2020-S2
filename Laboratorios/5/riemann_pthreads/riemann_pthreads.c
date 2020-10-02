@@ -44,6 +44,8 @@ void* calculate_area(void* args){
         result += delta_x * ((i * i) + 1);
     }
 
+    //printf("The area THREAD: %ld\n", jump);
+
     pthread_mutex_lock(&shared_data->mutex);
         shared_data->result += result;
     pthread_mutex_unlock(&shared_data->mutex);
