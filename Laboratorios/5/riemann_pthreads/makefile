@@ -1,4 +1,4 @@
-APPNAME = reimann_pthreads
+APPNAME = riemann_pthreads
 
 $(APPNAME): $(APPNAME).c
 	cc -g -Wall -Wextra $(APPNAME).c -o $(APPNAME) -pthread -lm -std=c99
