@@ -25,7 +25,7 @@ int main(int argc, char* argv[])
     {
         point_a = strtoul(argv[1], NULL, 10);
         point_b = strtoul(argv[2], NULL, 10);
-        if ( point_b < point_a )
+        if ( point_b <= point_a )
         {
             return (void) fprintf(stderr, "Error! point_b must be higher than point_a\n"), 2;
         }
