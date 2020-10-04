@@ -44,28 +44,30 @@ void* run(void* args) {
     ++shared_data->num_ready;
     printf("Thread %zu/%zu: I am ready. But I need to wait!\n", thread_num, shared_data->total);
     
+
+    // ESte if va de primero ya que si va despues del broadcast, sale n veces
     if (shared_data->num_ready == shared_data->total) {
         printf("Thread %zu/%zu: We are all ready. Go!\n", thread_num, shared_data->total);
         pthread_cond_broadcast(&shared_data->cond_var_ready);
     }
+
+    while(shared_data->num_ready < shared_data->total) {
+        pthread_cond_wait(&shared_data->cond_var_ready, &shared_data->mutex_ready);
+    }
+
     
     /*
     if (shared_data->num_ready < shared_data->total) {
         pthread_cond_wait(&shared_data->cond_var_ready, &shared_data->mutex_ready);
     }*/
-
-    while(shared_data->num_ready < shared_data->total) {
-        pthread_cond_wait(&shared_data->cond_var_ready, &shared_data->mutex_ready);
-    }
     
     pthread_mutex_unlock(&shared_data->mutex_ready);
 
+   
+    // Mutex para la posicion
     pthread_mutex_lock(&shared_data->mutex_position);
-
-    printf("Thread %zu/%zu: I arrived at position %zu\n", thread_num, shared_data->total, shared_data->position);
-
-    ++shared_data->position;
-    
+        printf("Thread %zu/%zu: I arrived at position %zu\n", thread_num, shared_data->total, shared_data->position);
+        ++shared_data->position;
     pthread_mutex_unlock(&shared_data->mutex_position);
     
     return NULL;
@@ -117,4 +119,3 @@ int main(int argc, char* arg[]) {
 
     return 0;
 }
-
