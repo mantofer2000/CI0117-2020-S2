@@ -14,8 +14,7 @@ typedef struct dna_sequence
     int ocurrence_array_2 ['z' - 'a'];
     // Este tiene que venir definido desde el main,
     // es variable compartida
-    // desde el main se puede referenciar
-    
+    // desde el main se puede referenciar       
     int common_array['z' - 'a'];
 
     // numero de hilos en TOTAl
