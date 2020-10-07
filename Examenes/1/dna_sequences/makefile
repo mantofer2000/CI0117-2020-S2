@@ -1,0 +1,15 @@
+APPNAME = dna_sequences
+
+$(APPNAME):  main.c #$(APPNAME).c
+	cc -g -Wall -Wextra main.c -o $(APPNAME) -pthread -lm -std=c99
+	#cc -g -Wall -Wextra $(APPNAME).c -o $(APPNAME) -pthread -lm -std=c99
+
+.PHONY: gitignore
+gitignore:
+	echo $(APPNAME) > .gitignore
+
+
+.PHONY: clean
+clean:
+	rm -f  $(APPNAME)
+
