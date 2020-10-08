@@ -29,13 +29,40 @@ int main(int argc, char* argv[]){
         pthread_join(threads[i], NULL);
     }
 
+    char letter;
     
+    printf("Sequence 1: Ocurrences: ");
+    
+    for(size_t i = 0; i < ARRAY_SIZE; i++){
+        if(dna_sequence->ocurrence_array_1[i]!= 0){
+            letter = 'a' + i;
+            printf("%c = %d, ",  letter,  dna_sequence->ocurrence_array_1[i]);
+        }
+    }
+    printf("\n");
+
+    printf("Sequence 2: Ocurrences: ");
+    
+    for(size_t i = 0; i < ARRAY_SIZE; i++){
+        if(dna_sequence->ocurrence_array_2[i]!= 0){
+            letter = 'a' + i;
+            printf("%c = %d, ",  letter, dna_sequence->ocurrence_array_2[i] );
+        }
+    }
+    printf("\n");
+    printf("Common Letters: ");
+
+    for(size_t i = 0; i < ARRAY_SIZE; i++){
+        if(dna_sequence->common_array[i]!= 0){
+            letter = 'a' + i;
+            printf("%c, ", letter);
+        }
+    }
+    printf("\n");
     free(threads);
-    
     
     //destroy_acid_counter(acid_counter);
     //destroy_dna_sequence(dna_sequence);
-
     // me daba error si llamaba a los metodos
     for(size_t i = 0; i < thread_amount; i++){
         pthread_rwlock_destroy(&dna_sequence->rwlock_common[i]);
@@ -48,8 +75,6 @@ int main(int argc, char* argv[]){
     free(dna_sequence->rwlock_dna_2);   
     free(acid_counter);
     free(dna_sequence);
-
-
 
     return 0;
 }
