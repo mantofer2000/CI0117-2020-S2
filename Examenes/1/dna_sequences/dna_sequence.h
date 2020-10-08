@@ -27,7 +27,6 @@ typedef struct dna_sequence
     pthread_rwlock_t * rwlock_dna_1;
     pthread_rwlock_t * rwlock_dna_2;
 
-    
 }dna_sequence_t;
 
 dna_sequence_t * create_dna_sequence(size_t thread_amount);
