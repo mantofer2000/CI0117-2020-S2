@@ -17,6 +17,7 @@ dna_sequence_t * create_dna_sequence(size_t thread_amount){
     
     pthread_barrier_init(&shared_data->barrier, NULL, thread_amount);
 
+    shared_data->thread_amount = thread_amount;
     shared_data->rwlock_common = rwlock_common;
     shared_data->rwlock_dna_1 = rwlock_dna_1;
     shared_data->rwlock_dna_2 = rwlock_dna_2;
@@ -34,6 +35,9 @@ int destroy_dna_sequence(dna_sequence_t * shared_data){
         pthread_rwlock_destroy(&shared_data->rwlock_dna_2[i]);
     }
     pthread_barrier_destroy(&shared_data->barrier);
+    free(shared_data->rwlock_common);
+    free(shared_data->rwlock_dna_1);
+    free(shared_data->rwlock_dna_2);   
     free(shared_data);
     return 1;
 }

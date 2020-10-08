@@ -22,15 +22,34 @@ int main(int argc, char* argv[]){
 
 
     for(size_t i = 0; i < thread_amount; i++){
-        pthread_create(&threads[i], NULL, process_dna, NULL);
+        pthread_create(&threads[i], NULL, process_dna, &acid_counter[i]);
     }
 
     for(size_t i = 0; i < thread_amount; i++){
         pthread_join(threads[i], NULL);
     }
 
-    destroy_dna_sequence(dna_sequence);
-    destroy_acid_counter(acid_counter);
+    
+    free(threads);
+    
+    
+    //destroy_acid_counter(acid_counter);
+    //destroy_dna_sequence(dna_sequence);
+
+    // me daba error si llamaba a los metodos
+    for(size_t i = 0; i < thread_amount; i++){
+        pthread_rwlock_destroy(&dna_sequence->rwlock_common[i]);
+        pthread_rwlock_destroy(&dna_sequence->rwlock_dna_1[i]);
+        pthread_rwlock_destroy(&dna_sequence->rwlock_dna_2[i]);
+    }
+    pthread_barrier_destroy(&dna_sequence->barrier);
+    free(dna_sequence->rwlock_common);
+    free(dna_sequence->rwlock_dna_1);
+    free(dna_sequence->rwlock_dna_2);   
+    free(acid_counter);
+    free(dna_sequence);
+
+
 
     return 0;
 }
