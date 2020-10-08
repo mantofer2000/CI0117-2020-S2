@@ -32,7 +32,6 @@ int main(int argc, char* argv[]){
     char letter;
     
     printf("Sequence 1: Ocurrences: ");
-    
     for(size_t i = 0; i < ARRAY_SIZE; i++){
         if(dna_sequence->ocurrence_array_1[i]!= 0){
             letter = 'a' + i;
@@ -40,9 +39,7 @@ int main(int argc, char* argv[]){
         }
     }
     printf("\n");
-
     printf("Sequence 2: Ocurrences: ");
-    
     for(size_t i = 0; i < ARRAY_SIZE; i++){
         if(dna_sequence->ocurrence_array_2[i]!= 0){
             letter = 'a' + i;

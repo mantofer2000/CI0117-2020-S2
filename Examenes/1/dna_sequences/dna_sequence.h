@@ -1,8 +1,8 @@
 #ifndef DNA_SEQUENCE_H
 #define DNA_SEQUENCE_H
 
-#define DNA_SEQUENCE_1 "abckh"
-#define DNA_SEQUENCE_2 "llpqrsh"
+#define DNA_SEQUENCE_1 "llllllla"
+#define DNA_SEQUENCE_2 "abczertyuioplla"
 #define ARRAY_SIZE 26
 
 #include <stdio.h>
