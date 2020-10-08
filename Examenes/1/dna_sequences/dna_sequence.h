@@ -5,6 +5,8 @@
 #define DNA_SEQUENCE_2 "zxdeffrsafdsagfsgsrtg"
 #define ARRAY_SIZE 'z' - 'a'
 
+#include <stdio.h>
+#include <stdlib.h>
 #include <pthread.h>
 
 // van a haber 2 dna_sequence, uno por cada hilo de adn

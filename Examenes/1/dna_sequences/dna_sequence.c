@@ -1,4 +1,4 @@
-#include <dna_sequence.h>
+#include "dna_sequence.h"
 
 // primer parametro *2 es thread amount
 dna_sequence_t * create_dna_sequence(size_t thread_amount){
