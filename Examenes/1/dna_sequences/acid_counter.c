@@ -3,9 +3,7 @@
 // falta validacion
 // asuntos de memoria
 acid_counter_t * create_acid_counter(size_t thread_amount, dna_sequence_t* shared_data){
-    printf("LLEGO\n");
     acid_counter_t * ptr = calloc(thread_amount, sizeof(acid_counter_t));
-    printf("LLEGO\n");
     if ( ptr == NULL ){
         fprintf(stderr, "Error allocating memory\n");
 		return -1;
