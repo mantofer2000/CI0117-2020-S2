@@ -15,29 +15,42 @@ sem_t agente;
 /*
 Variables modificadas y creadas por marco para el examen
 */
-
 pthread_t mutex;
-pthread_cond_t cond_var[3];
+pthread_cond_t cond_var;
+pthread_cond_t start;
+
+size_t fumador;
+
 
 size_t materiales[3];
+size_t llegue;
 #define PAPEL 0
 #define TABACO 1
 #define CERILLO 2
 
 typedef void *(*smokers_t)(void *);
 
+// metodo para la variable de condicion, es solo un return
+void set_fumador(int fumador_local){
+	fumador = fumador_local;
+}
+
+size_t return_fumador(){
+	return fumador;
+}
 
  // El fumador cero tiene papel infinito.
 void* fumador_0(void* arg)
 {
+
 	while (true)
 	{
 		nanosleep((struct timespec[]){{0, rand() % 3000000000}}, NULL); // Sleep para visualizar de mejor manera los threads
 		printf("El fumador cero tiene papel y esta esperando para fumar.\n");
 
 		pthread_mutex_lock(&mutex);
-		if(!(materiales[TABACO] != 0 && materiales[CERILLO] != 0)){
-			pthread_cond_wait(&cond_var[PAPEL], &mutex);
+		if(!(return_fumador() == 0)){
+			pthread_cond_wait(&cond_var, &mutex);
 		}
 		pthread_mutex_unlock(&mutex);
 		
@@ -54,15 +67,15 @@ void* fumador_0(void* arg)
 //El fumador uno tiene cerillos infinitos.
 void* fumador_1(void* arg)
 {
-	while (true)
 	{
+	while (true)
 		nanosleep((struct timespec[]){{0, rand() % 30000000000}}, NULL);
 		printf("El fumador uno tiene cerillos y esta esperando para fumar.\n");
 
 		
 		pthread_mutex_lock(&mutex);
-		if(!(materiales[PAPEL] != 0 && materiales[TABACO] != 0)){
-			pthread_cond_wait(&cond_var[CERILLO], &mutex);
+		if(!(return_fumador() == 1)){
+			pthread_cond_wait(&cond_var, &mutex);
 		}
 		pthread_mutex_unlock(&mutex);
 
@@ -83,8 +96,8 @@ void* fumador_2(void* arg)
 		printf("El fumador dos tiene tabaco y esta esperando para fumar.\n");
 
 		pthread_mutex_lock(&mutex);
-		if(!(materiales[PAPEL] != 0 && materiales[CERILLO] != 0)){
-			pthread_cond_wait(&cond_var[TABACO], &mutex);
+		if(!(return_fumador() == 2)){
+			pthread_cond_wait(&cond_var, &mutex);
 		}
 		pthread_mutex_unlock(&mutex);
 
@@ -104,12 +117,15 @@ int main(int argc, char* arvg[])
 	sem_init(&agente, 0, 1); // semaforo del agente.
 	pthread_t fumadores[3];// vector de threads
 	smokers_t metodos_fumadores[3] = { fumador_0, fumador_1, fumador_2 };// Metodos para los threads.
+	llegue = 0;
 
+
+	set_fumador(3);
 	pthread_mutex_init(&mutex, NULL);
-	pthread_cond_init(&cond_var[0], NULL);
-	pthread_cond_init(&cond_var[1], NULL);
-	pthread_cond_init(&cond_var[2], NULL);
-
+	pthread_cond_init(&cond_var, NULL);
+	//pthread_cond_init(&cond_var[1], NULL);
+	//pthread_cond_init(&cond_var[2], NULL);
+	pthread_cond_init(&start, NULL);
 
 	for (int i = 0; i < 3; ++i) // Aqui se inicializa el semaforo de cada fumador *thread* y se crea cada thread con su respectiva funcion.
 	{
@@ -122,7 +138,7 @@ int main(int argc, char* arvg[])
 	}
 
 
-	sleep(3);
+	 // solo para ordenar los imprimir
 	while (true) // aca el agente va a empeza a distribuir 2 ingredientes en cada iteracion, solo un thread podra tomarlos para evitar deadlocks.
 	{
 	
@@ -132,28 +148,11 @@ int main(int argc, char* arvg[])
 			materiales[i] = 0;
 		}
 
-		int ready = 0;
-		while(ready < 2){
-			int random = rand() % 3;
-			if(materiales[random] == 0){
-				materiales[random] = 1;
-				ready++;
-			}
-		}
-		if(materiales[PAPEL] == 0){
-			pthread_cond_signal(&cond_var[PAPEL]);
-		}else
-		{
-			if(materiales[CERILLO] == 0){
-				pthread_cond_signal(&cond_var[CERILLO]);
-			}else
-			{
-				pthread_cond_signal(&cond_var[TABACO]);
-			}
-			
-		}
+		set_fumador(rand() % 3);
+
+		pthread_cond_signal(&cond_var);
 		
-		
+
 		//sem_post(&semaforos[rand() % 3]); // distribuye dos materiales para un solo fumador.
 	}
 
@@ -164,8 +163,6 @@ int main(int argc, char* arvg[])
 
 	pthread_mutex_destroy(&mutex);
 	sem_destroy(&agente);
-	pthread_cond_destroy(&cond_var[0]);
-	pthread_cond_destroy(&cond_var[1]);
-	pthread_cond_destroy(&cond_var[2]);
-
+	pthread_cond_destroy(&cond_var);
+	pthread_cond_destroy(&start);
 }

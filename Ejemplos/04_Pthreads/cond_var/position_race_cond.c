@@ -46,6 +46,7 @@ void* run(void* args) {
     
 
     // ESte if va de primero ya que si va despues del broadcast, sale n veces
+    
     if (shared_data->num_ready == shared_data->total) {
         printf("Thread %zu/%zu: We are all ready. Go!\n", thread_num, shared_data->total);
         pthread_cond_broadcast(&shared_data->cond_var_ready);
@@ -54,6 +55,7 @@ void* run(void* args) {
     while(shared_data->num_ready < shared_data->total) {
         pthread_cond_wait(&shared_data->cond_var_ready, &shared_data->mutex_ready);
     }
+
 
     
     /*
