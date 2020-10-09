@@ -1,4 +1,4 @@
-APPNAME = cigarette_smoker
+APPNAME = sushiBarProblem
 
 $(APPNAME): $(APPNAME).c
 	cc -g -Wall -Wextra $(APPNAME).c -o $(APPNAME) -pthread -lm -std=c99
@@ -6,7 +6,6 @@ $(APPNAME): $(APPNAME).c
 .PHONY: gitignore
 gitignore:
 	echo $(APPNAME) > .gitignore
-
 
 
 .PHONY: clean
