@@ -14,7 +14,10 @@ dna_sequence_t * create_dna_sequence(size_t thread_amount){
     }
     
     dna_sequence_t * shared_data = calloc(1, sizeof(dna_sequence_t));
-    
+    if ( shared_data == NULL ){
+        fprintf(stderr, "Error allocating memory\n");
+		return -1;
+    }
     pthread_barrier_init(&shared_data->barrier, NULL, thread_amount);
 
     shared_data->thread_amount = thread_amount;

@@ -4,9 +4,8 @@
 
 int main(int argc, char* argv[]){
     // Numero de hilos
-    size_t thread_amount;
-    
-    if (argc >= 1) {
+    size_t thread_amount = 1;    
+    if (argc >= 2 ) {
         thread_amount = (size_t)strtoul(argv[1], NULL, 10);
     }else{
         fprintf(stderr, "Error, invalid number of parameters\n");
@@ -17,7 +16,6 @@ int main(int argc, char* argv[]){
 
     dna_sequence_t * dna_sequence = create_dna_sequence(thread_amount);
     acid_counter_t * acid_counter = create_acid_counter(thread_amount, dna_sequence);
-
     pthread_t * threads = calloc(thread_amount, sizeof(pthread_t));
 
 

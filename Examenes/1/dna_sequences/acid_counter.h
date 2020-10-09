@@ -7,7 +7,7 @@ typedef struct acid_counter{
     // sale mas barato tener 2 arreglos que 3 estructuras
     size_t dna_id; // 1 o 2
     size_t thread_id;
-    size_t array_id;
+    size_t array_id; // id dentro de su array
     dna_sequence_t * shared_data;
 }acid_counter_t;
 
