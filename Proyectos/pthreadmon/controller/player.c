@@ -16,7 +16,7 @@ void player_destroy(player_t* player)
     free(player);
 }
 
-pokemon_t* choose_team()
+pokemon_t** choose_team()
 {
     pokemon_t** pokemon_team = malloc( 3 * sizeof(pokemon_t*) );
 
