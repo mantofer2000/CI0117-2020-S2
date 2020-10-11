@@ -14,7 +14,7 @@ int main(int argc, char* arg[]) {
     run_data_t* run_data_list = malloc(NUM_LANES * sizeof(run_data_t));
     pthread_t* runner_threads = malloc(NUM_LANES * sizeof(pthread_t));
 
-    for (int i = 0 ; i < NUM_LANES; ++i) {
+    for (int i = 0 ; i < NUM_LANES; ++i){
         run_data_list[i].runner = runner_create(i, 1000 + (rand() % 4000), 5000 + (rand() % 11000));
         run_data_list[i].position = &running_track->position;
         run_data_list[i].lane_start = &running_track->lanes_start_line[i];
