@@ -8,9 +8,13 @@
 typedef struct player
 {
     char* player_name;
-    // pokemon[3] pokemon_team;
+    pokemon_t** pokemon_team; // Es un puntero a punteros porque cada pokemon es un puntero
 
 } player_t;
 
+player_t* player_create(char* player_name);
+void player_destroy(player_t* player);
+
+pokemon_t* choose_team();
 
 #endif PLAYER_H
