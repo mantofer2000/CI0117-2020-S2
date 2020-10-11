@@ -1044,6 +1044,7 @@ void initialize_type_info_list()
     }
 }
 
+// Llamar de primero
 void initialize_data() {
     initialize_pokemon_info_list();
     initialize_move_info_list();
