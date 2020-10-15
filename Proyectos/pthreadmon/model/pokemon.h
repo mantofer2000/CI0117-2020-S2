@@ -5,6 +5,8 @@
 #include "stdio.h"
 #include "stdlib.h"
 
+#define POKEMON_HP 1500
+
 
 typedef struct
 {
@@ -18,5 +20,6 @@ typedef struct
 }pokemon_t;
 
 pokemon_t * create_pokemon(int id);
+void destroy_pokemon(pokemon_t * pokemon);
 
 #endif

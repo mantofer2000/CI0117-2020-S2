@@ -17,4 +17,4 @@ void player_destroy(player_t* player);
 
 pokemon_t** choose_team();
 
-#endif PLAYER_H
+#endif 
