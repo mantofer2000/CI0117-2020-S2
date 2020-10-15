@@ -9,7 +9,7 @@
 typedef struct
 {
     //int id; // va aqui porque el usuario lo define
-    int hp; // va aqui porque es dinamica
+    int hp; // es 1500
     pokemon_info_t * pokemon_info;
     move_info_t * fast_move_info;
     move_info_t * charged_move_info;
