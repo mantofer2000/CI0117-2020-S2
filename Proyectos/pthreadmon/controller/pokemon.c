@@ -1,7 +1,7 @@
 #include "../model/pokemon.h"
 
 // aqui ya viene en supuesto que el id esta correcto
-pokemon_t * create_pokemon(int id){
+pokemon_t * pokemon_create(int id){
     pokemon_t * new_pokemon = (pokemon_t *) malloc(sizeof(pokemon_t));
     new_pokemon->pokemon_info =  (pokemon_info_t *) malloc(sizeof(pokemon_info_t));
     new_pokemon->fast_move_info = (move_info_t *) malloc(sizeof(move_info_t));
@@ -45,7 +45,7 @@ pokemon_t * create_pokemon(int id){
 
 
 
-void destroy_pokemon(pokemon_t * pokemon){
+void pokemon_destroy(pokemon_t * pokemon){
     
     free(pokemon->pokemon_info);
     free(pokemon->fast_move_info);

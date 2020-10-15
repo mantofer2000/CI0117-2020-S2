@@ -19,8 +19,8 @@ typedef struct
 
 }pokemon_t;
 
-pokemon_t * create_pokemon(int id);
-void destroy_pokemon(pokemon_t * pokemon);
+pokemon_t * pokemon_create(int id);
+void pokemon_destroy(pokemon_t * pokemon);
 void print(pokemon_t * );
 
 #endif
