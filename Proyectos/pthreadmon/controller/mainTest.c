@@ -21,7 +21,7 @@ int main(){
 
 
     
-    destroy_pokemon(my_pokemon);
+    //destroy_pokemon(my_pokemon);
     
 
     return 0;
