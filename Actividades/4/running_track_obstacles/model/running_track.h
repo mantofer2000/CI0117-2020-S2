@@ -1,3 +1,5 @@
+#define _XOPEN_SOURCE 600
+
 #ifndef RUNNING_TRACK_H
 #define RUNNING_TRACK_H
 

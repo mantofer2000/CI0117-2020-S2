@@ -1,3 +1,5 @@
+#define _XOPEN_SOURCE 600
+
 #include <stdlib.h>
 #include "../model/running_track.h"
 
