@@ -21,5 +21,6 @@ typedef struct
 
 pokemon_t * create_pokemon(int id);
 void destroy_pokemon(pokemon_t * pokemon);
+void print(pokemon_t * );
 
 #endif
