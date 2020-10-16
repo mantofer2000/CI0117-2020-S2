@@ -56,11 +56,11 @@ void* run(void* args) {
 
         pthread_mutex_lock(data->mutex_position);
 
-        data->obstacle_matrix[data->runner->id][obstacle] = 1;
+        data->obstacles_matrix[data->runner->id][obstacle] = 1;
         
         // Ya paso por el obstaculo anterior, volver a estaclecerlo en 0.
         if ( obstacle > 0 )
-            data->obstacle_matrix[data->runner->id][obstacle - 1] = 0;
+            data->obstacles_matrix[data->runner->id][obstacle - 1] = 0;
 
         pthread_mutex_unlock(data->mutex_position);
     }
