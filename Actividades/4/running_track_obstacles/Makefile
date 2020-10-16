@@ -1,2 +1,2 @@
 compile: controller/running_track.c controller/runner.c controller/main.c view/running_track_ui.c
-	gcc `pkg-config --cflags gtk+-3.0` controller/running_track.c controller/runner.c controller/main.c view/running_track_ui.c -lm -pthread -std=gnu99 -o running_track `pkg-config --libs gtk+-3.0`
+	gcc `pkg-config --cflags gtk+-3.0` controller/running_track.c controller/runner.c controller/main.c view/running_track_ui.c -lm -pthread -std=gnu99 -o running_track_obstacles `pkg-config --libs gtk+-3.0`

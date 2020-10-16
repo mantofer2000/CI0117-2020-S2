@@ -37,15 +37,17 @@ int start_race() {
         printf("lane %d: %d\n", i, running_track->lanes_finish_line[i]); 
     }
 
+    pthread_mutex_lock(&mutex_running_track);
     running_track_destroy(running_track);
+    running_track = NULL; // Asi la UI ya no la sigue dibujando.
+    pthread_mutex_unlock(&mutex_running_track);
+
     for (int i = 0 ; i < NUM_LANES; ++i) {
         runner_destroy(run_data_list[i].runner);
     }
 
     free(run_data_list);
     free(runner_threads);
-
-    running_track = 0;
 
     return 0;
 }
