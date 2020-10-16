@@ -12,11 +12,8 @@ typedef struct running_track
 {
     int* lanes_start_line;
     int* lanes_finish_line;
-
+    int** obstacles;
     int position;
-
-    int** obstacles_matrix;
-
     pthread_mutex_t mutex_position;
     pthread_barrier_t barrier_start_line;
 

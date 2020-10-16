@@ -53,6 +53,8 @@ static gboolean draw_running_track(GtkWidget *widget,
                 gtk_label_set_text(GTK_LABEL(labels_finish_line[i]), "-");
             }
 
+            
+
         }
     }
 

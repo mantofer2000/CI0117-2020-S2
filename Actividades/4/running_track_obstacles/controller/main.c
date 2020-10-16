@@ -1,11 +1,11 @@
-#define _XOPEN_SOURCE 600
-
 #include <stdlib.h>
 #include <stdio.h>
 #include <time.h>
 #include <unistd.h>
 #include "../model/main.h"
 #include "../model/runner.h"
+
+running_track_t* running_track;
 
 int start_race() {
 
@@ -23,12 +23,8 @@ int start_race() {
         run_data_list[i].runner = runner_create(i, 1000 + (rand() % 4000), 5000 + (rand() % 11000));
         run_data_list[i].lane_start = &running_track->lanes_start_line[i];
         run_data_list[i].lane_finish = &running_track->lanes_finish_line[i];
+        run_data_list[i].lane_obstacles = running_track->obstacles[i];
         run_data_list[i].position = &running_track->position;
-        run_data_list[i].obstacles_matrix = &running_track->obstacles_matrix[i];
-        
-        // Asi?
-        for ( int row = 0; row < NUM_OBSTACLES; ++row )
-            run_data_list[i].obstacles_matrix[row] = &running_track->obstacles_matrix[i][row];
 
         pthread_create(&runner_threads[i], NULL, run, (void*)&run_data_list[i]);
     }
@@ -53,3 +49,4 @@ int start_race() {
 
     return 0;
 }
+

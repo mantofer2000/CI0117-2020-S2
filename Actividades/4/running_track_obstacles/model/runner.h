@@ -10,7 +10,6 @@ typedef struct runner
     int id;
     int preparation_time;
     int running_time;
-    int time_per_obstacle;
 } runner_t;
 
 
@@ -19,8 +18,8 @@ typedef struct run_data
     runner_t* runner;
     int * lane_start;
     int * lane_finish;
+    int * lane_obstacles;
     int * position;
-    int** obstacles_matrix;
     pthread_mutex_t * mutex_position;
     pthread_barrier_t * barrier_start_line;
 } run_data_t;
