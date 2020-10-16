@@ -64,6 +64,7 @@ int main(int argc, char* argv[]){
         pthread_rwlock_destroy(&dna_sequence->rwlock_dna_1[i]);
         pthread_rwlock_destroy(&dna_sequence->rwlock_dna_2[i]);
     }
+    
     pthread_barrier_destroy(&dna_sequence->barrier);
     free(dna_sequence->rwlock_common);
     free(dna_sequence->rwlock_dna_1);

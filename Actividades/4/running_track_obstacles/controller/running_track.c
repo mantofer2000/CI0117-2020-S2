@@ -11,7 +11,7 @@ running_track_t* running_track_create() {
 
     running_track->position = 1;
 
-    running_track->obstacles_matrix = calloc(NUM_LANES, sizeof(int*));
+    running_track->obstacles_matrix = (int **)calloc(NUM_LANES, sizeof(int*));
     for ( int row = 0; row < NUM_OBSTACLES; ++row )
         running_track->obstacles_matrix[row] = calloc(NUM_OBSTACLES, sizeof(int));
 
