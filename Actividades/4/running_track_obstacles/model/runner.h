@@ -10,6 +10,7 @@ typedef struct runner
     int id;
     int preparation_time;
     int running_time;
+    int time_per_obstacle;
 } runner_t;
 
 

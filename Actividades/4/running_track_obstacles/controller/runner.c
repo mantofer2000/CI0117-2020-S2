@@ -26,6 +26,7 @@ runner_t* runner_create(int id, int preparation_time, int running_time) {
     runner->id = id;
     runner->preparation_time = preparation_time;
     runner->running_time = running_time;
+    runner->time_per_obstacle = (running_time / 5);
 
     return runner;
 }
@@ -46,7 +47,23 @@ void* run(void* args) {
 
     printf("Tread %d: Go!!!\n", data->runner->id);
     // Running!! 
-    fixed_sleep((useconds_t)data->runner->running_time);
+    //fixed_sleep((useconds_t)data->runner->running_time);
+
+    for ( int obstacle = 0; obstacle < NUM_OBSTACLES; ++obstacle )
+    {
+        // El tiempo que duren en cada obstaculo.
+        fixed_sleep((useconds_t)data->runner->time_per_obstacle);
+
+        pthread_mutex_lock(data->mutex_position);
+
+        data->obstacle_matrix[data->runner->id][obstacle] = 1;
+        
+        // Ya paso por el obstaculo anterior, volver a estaclecerlo en 0.
+        if ( obstacle > 0 )
+            data->obstacle_matrix[data->runner->id][obstacle - 1] = 0;
+
+        pthread_mutex_unlock(data->mutex_position);
+    }
 
     // Finish Line!
     pthread_mutex_lock(data->mutex_position);
