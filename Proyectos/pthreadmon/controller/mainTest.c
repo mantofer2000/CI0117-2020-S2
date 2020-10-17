@@ -1,12 +1,12 @@
 
 // main tonto por ahora
-#include "../model/pokemon.h"
 #include "../model/player.h"
 
 
 int main(){
     // poner el initialize de mapper.c
     initialize_data();
+    
     // hay que corregir donde va esta vara
     // recordar hacer el main lo menos cargado posible
 
