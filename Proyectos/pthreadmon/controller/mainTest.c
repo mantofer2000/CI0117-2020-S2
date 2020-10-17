@@ -2,8 +2,8 @@
 // main tonto por ahora
 #include "../model/player.h"
 
-
-int main(){
+// El main esta en pthreadmon_ui.c para ir probando la interfaz
+/*int main(){
     // poner el initialize de mapper.c
     initialize_data();
     
@@ -25,4 +25,4 @@ int main(){
     
 
     return 0;
-}
+}*/
