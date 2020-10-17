@@ -61,10 +61,7 @@ static gboolean draw_running_track(GtkWidget *widget,
     return TRUE;
 }
 
-static void
-activate(GtkApplication *app,
-         gpointer user_data)
-{
+static void activate(GtkApplication *app, gpointer user_data){
 
     /* create a new window, and set its title */
     window = gtk_application_window_new(app);
