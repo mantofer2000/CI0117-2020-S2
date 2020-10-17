@@ -12,6 +12,7 @@ typedef struct
 {
     //int id; // va aqui porque el usuario lo define
     int hp; // es 1500
+    int efectivity; // por default es 1, pero depende del ambiente que puede cambiar
     pokemon_info_t * pokemon_info;
     move_info_t * fast_move_info;
     move_info_t * charged_move_info;

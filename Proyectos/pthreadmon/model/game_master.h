@@ -18,11 +18,24 @@ typedef struct{
     shared_data_t * shared_data;
 }private_data_t;
 
-
-
 // el metodo parello
 // ver opcion de nombres
 void* fight_simulation(void * ptr);
+// cuando se muere un pokemon, un pront por ahora
+void faint_pokemon(pokemon_t * pokemon);
+
+// cuando un entrenador intercambia pokemon
+// un print por ahora
+void switch_pokemon(player_t * player);
+
+
+
+// son solo prints que indiquen quien gano o perdio
+void victory(player_t * player);
+
+void defeat(player_t * player);
+
+int set_efectivity();
 
 
 // los nombres de jugadores van a venir de parametros
