@@ -6,7 +6,8 @@
 #include "stdlib.h"
 
 #define POKEMON_HP 1500
-
+#define TRUE 1
+#define FALSE 0
 
 typedef struct
 {
@@ -26,8 +27,7 @@ pokemon_t * pokemon_create(int id);
 
 int pokemon_fast_attack(pokemon_t * pokemon);
 int pokemon_charged_attack(pokemon_t * pokemon);
-
-
+int pokemon_charged_attack_availible(pokemon_t * pokemon);
 
 void pokemon_destroy(pokemon_t * pokemon);
 void print(pokemon_t * );
