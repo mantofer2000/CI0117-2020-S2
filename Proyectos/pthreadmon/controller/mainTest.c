@@ -3,8 +3,8 @@
 #include "../model/pokemon.h"
 #include "../model/player.h"
 
-
-int main(){
+// El main esta en pthreadmon_ui.c para ir probando la interfaz
+/*int main(){
     // poner el initialize de mapper.c
     initialize_data();
     // hay que corregir donde va esta vara
@@ -25,4 +25,4 @@ int main(){
     
 
     return 0;
-}
+}*/
