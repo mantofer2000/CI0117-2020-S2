@@ -15,6 +15,7 @@ pokemon_t * pokemon_create(int id){
     // hay que cambiarlo
     new_pokemon->hp = POKEMON_HP;
     new_pokemon->efectivity = 1;
+    new_pokemon->energy = 0;
     
     new_pokemon->pokemon_info->id = id;
     new_pokemon->pokemon_info->speciesName = get_pokemon_species_name(id);
