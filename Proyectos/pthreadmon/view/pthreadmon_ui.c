@@ -42,8 +42,9 @@ static void activate(GtkApplication* app, gpointer user_data)
 
     window = gtk_application_window_new(app);
     gtk_window_set_title(GTK_WINDOW(window), "Pthreadmon");
-    gtk_window_set_default_size(GTK_WINDOW(window), 500, 700);
-    gtk_container_set_border_width(GTK_CONTAINER(window), 10);
+    gtk_window_set_default_size(GTK_WINDOW(window), 500, 600);
+    //gtk_window_set_resizable(GTK_WINDOW(window), FALSE);
+    gtk_container_set_border_width(GTK_CONTAINER(window), 5);
 
     grid = gtk_grid_new();
     gtk_grid_set_row_homogeneous(GTK_GRID(grid), TRUE);
@@ -109,6 +110,10 @@ static void activate(GtkApplication* app, gpointer user_data)
     g_signal_connect(button_start, "clicked", G_CALLBACK(start_clicked), NULL);
 
     gtk_grid_attach(GTK_GRID(grid), button_start, 2, 8, 1, 1);
+
+    attacks_info_label = gtk_label_new("-");
+    gtk_widget_set_name(attacks_info_label, "attacks_info");
+    gtk_grid_attach(GTK_GRID(grid), attacks_info_label, 0, 8, 3, 2);
 
     gtk_widget_show_all(window);
 }
