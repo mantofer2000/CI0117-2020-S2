@@ -81,3 +81,7 @@ int pokemon_charged_attack_availible(pokemon_t * pokemon){
     }
     return can_attack;
 }
+
+int pokemon_availible(pokemon_t * pokemon){
+    int availible = (pokemon->hp) ? TRUE : FALSE; 
+}

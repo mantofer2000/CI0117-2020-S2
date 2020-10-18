@@ -29,6 +29,8 @@ int pokemon_fast_attack(pokemon_t * pokemon);
 int pokemon_charged_attack(pokemon_t * pokemon);
 int pokemon_charged_attack_availible(pokemon_t * pokemon);
 
+int pokemon_availible(pokemon_t * pokemon);
+
 void pokemon_destroy(pokemon_t * pokemon);
 void print(pokemon_t * );
 

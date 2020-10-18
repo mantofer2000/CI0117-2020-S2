@@ -10,12 +10,22 @@
 
 typedef struct{
     pthread_barrier_t barrier;
-}shared_data_t;
+    
+    player_t * player_one;
+    player_t * player_two;
 
 
+
+
+}battle_arena_t;
+
+
+// 1 hilo por pokemon
 typedef struct{
-    player_t * player;
-    shared_data_t * shared_data;
+    int thread_id;
+    int team_id; // id dentro del equipo
+    pokemon_t * pokemon;
+    battle_arena_t * shared_data;
 }private_data_t;
 
 // el metodo parello
@@ -42,6 +52,6 @@ int set_efectivity();
 // ya que hay que considerar que viene desde el GUI
 private_data_t * private_data_create();
 
-shared_data_t * shared_data_create();
+battle_arena_t * battle_arena_create();
 
 #endif
