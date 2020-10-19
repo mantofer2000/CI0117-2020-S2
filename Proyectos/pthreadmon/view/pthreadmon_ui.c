@@ -74,6 +74,7 @@ static void activate(GtkApplication* app, gpointer user_data)
         gdk_pixbuf_scale_simple(gtk_image_get_pixbuf(GTK_IMAGE(pokemon_labels[1])),
         75, 75, GDK_INTERP_NEAREST));
     pokemon_labels[2] = gtk_label_new("Energy: ");
+    gtk_widget_set_name(pokemon_labels[2], "energy_label");
 
     for ( int label = 0; label < 3; ++label )
         gtk_grid_attach(GTK_GRID(grid), pokemon_labels[label], 2, label + 1, 1, 1);
@@ -86,6 +87,7 @@ static void activate(GtkApplication* app, gpointer user_data)
         gdk_pixbuf_scale_simple(gtk_image_get_pixbuf(GTK_IMAGE(pokemon_labels[1])),
         75, 75, GDK_INTERP_NEAREST));
     pokemon_labels[2] = gtk_label_new("Energy: ");
+    gtk_widget_set_name(pokemon_labels[2], "energy_label");
 
     for ( int label = 0; label < 3; ++label )
         gtk_grid_attach(GTK_GRID(grid), pokemon_labels[label], 0, label + 4, 1, 1);

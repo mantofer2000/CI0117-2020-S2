@@ -5,6 +5,11 @@
 
 #hp_label
 {
+    background-color: cyan;
+}
+
+#energy_label
+{
     background-color: skyblue;
 }
 
