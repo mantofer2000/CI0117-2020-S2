@@ -42,4 +42,5 @@ battle_arena_t * battle_arena_create(){
     // la barrera
     pthread_barrier_init(&battle_arena->barrier, NULL ,TOTAL_POKEMON * 2);
 
+    return battle_arena;
 }
