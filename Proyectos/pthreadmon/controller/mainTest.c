@@ -16,10 +16,6 @@ int main(){
     player_t * player_two = player_create("Gabriel");
     player_two->pokemon_team = choose_team();
 
-
-    printf("Funciono jodeeeeer\n");
-
-
     
     //destroy_pokemon(my_pokemon);
     

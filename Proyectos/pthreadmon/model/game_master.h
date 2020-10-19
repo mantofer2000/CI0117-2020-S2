@@ -11,6 +11,8 @@
 typedef struct{
     pthread_barrier_t barrier;
     
+    sem_t * pokemon_semaphore_array;
+
     player_t * player_one;
     player_t * player_two;
 
@@ -47,7 +49,8 @@ int set_efectivity();
 
 // los nombres de jugadores van a venir de parametros
 // ya que hay que considerar que viene desde el GUI
-private_data_t * private_data_create();
+// 
+private_data_t * private_data_create(player_t * player);
 
 battle_arena_t * battle_arena_create();
 
