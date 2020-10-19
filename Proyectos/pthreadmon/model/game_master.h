@@ -14,16 +14,13 @@ typedef struct{
     player_t * player_one;
     player_t * player_two;
 
-
-
-
 }battle_arena_t;
 
 
 // 1 hilo por pokemon
 typedef struct{
     int thread_id;
-    int team_id; // id dentro del equipo
+    int trainer_id; // id dentro del equipo
     pokemon_t * pokemon;
     battle_arena_t * shared_data;
 }private_data_t;
