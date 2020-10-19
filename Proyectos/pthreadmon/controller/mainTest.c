@@ -17,7 +17,7 @@ int main(){
     player_two->pokemon_team = choose_team();
 
 
-    
+    printf("Funciono jodeeeeer\n");
 
 
     
