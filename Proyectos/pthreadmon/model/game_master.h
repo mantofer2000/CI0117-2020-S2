@@ -4,6 +4,7 @@
 #include "../model/player.h"
 #include "pthread.h"
 #include "semaphore.h"
+#include <stdio.h>
 
 // este numero puede cambiar, recordadr interfaz
 #define THREAD_NUM 6
@@ -18,16 +19,26 @@ typedef struct{
 
     sem_t * pokemon_semaphore_array;
 
+    pthread_mutex_t mutex;
+
     player_t * player_one;
     player_t * player_two;
+
+    // estos pokemon son los que estan
+    // peleando actualmente
+    // estan aca ya que se puedan quitar la vida
+    // entre si
+    pokemon_t * poke_p_one;
+    pokemon_t * poke_p_two;
 
 }battle_arena_t;
 
 
 // 1 hilo por pokemon
 typedef struct{
-    int thread_id;
-    int trainer_id; // id dentro del equipo
+    size_t thread_id;
+    size_t trainer_id;
+    size_t team_id; // id dentro del equipo
     pokemon_t * pokemon;
     battle_arena_t * shared_data;
 }private_data_t;

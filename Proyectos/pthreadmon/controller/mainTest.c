@@ -1,6 +1,6 @@
 
 // main tonto por ahora
-#include "../model/player.h"
+#include "../model/game_master.h"
 
 // El main esta en pthreadmon_ui.c para ir probando la interfaz
 int main(){
@@ -16,7 +16,10 @@ int main(){
     player_t * player_two = player_create("Gabriel");
     player_two->pokemon_team = choose_team();
 
-    
+    initialize_fight(player_one, player_two);
+
+
+
     //destroy_pokemon(my_pokemon);
     
 
