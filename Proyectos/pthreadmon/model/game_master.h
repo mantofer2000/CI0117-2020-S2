@@ -2,9 +2,7 @@
 #define MAPPER_H
 
 #include "../model/player.h"
-#include "pthread.h"
-#include "semaphore.h"
-#include <stdio.h>
+
 
 // este numero puede cambiar, recordadr interfaz
 #define THREAD_NUM 6
@@ -13,11 +11,12 @@
 // para las estructuras
 
 typedef struct{
-    //pthread_barrier_t barrier;    
+    pthread_barrier_t barrier;    
     int battle_over;
-    //sem_t * pokemon_semaphore_array;
+    sem_t * pokemon_semaphore_array;
 
     pthread_mutex_t mutex;
+    pthread_cond_t cond_var;
 
     player_t * player_one;
     player_t * player_two;
@@ -51,7 +50,7 @@ void* fight_simulation(void * ptr);
 //void faint_pokemon(pokemon_t * pokemon);
 
 
-//void switch_pokemon(player_t * player);
+void switch_pokemon(battle_arena_t * battle_arena, int team_id);
 
 int is_battle_over(player_t * p_one, player_t * p_two);
 

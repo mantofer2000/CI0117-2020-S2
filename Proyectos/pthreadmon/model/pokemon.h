@@ -2,8 +2,11 @@
 #define POKEMON_H
 
 #include "../model/mapper.h"
-#include "stdio.h"
-#include "stdlib.h"
+
+#include <pthread.h>
+#include <stdlib.h>
+#include <semaphore.h>
+#include <stdio.h>
 
 #define POKEMON_HP 1500
 #define TRUE 1
