@@ -13,11 +13,9 @@
 // para las estructuras
 
 typedef struct{
-    pthread_barrier_t barrier;
-    
+    //pthread_barrier_t barrier;    
     int battle_over;
-
-    sem_t * pokemon_semaphore_array;
+    //sem_t * pokemon_semaphore_array;
 
     pthread_mutex_t mutex;
 
@@ -36,7 +34,7 @@ typedef struct{
 
 // 1 hilo por pokemon
 typedef struct{
-    size_t thread_id;
+    int thread_id;
     size_t trainer_id;
     size_t team_id; // id dentro del equipo
     pokemon_t * pokemon;
@@ -50,26 +48,24 @@ void initialize_fight(player_t * p_one, player_t * p_two);
 // ver opcion de nombres
 void* fight_simulation(void * ptr);
 // cuando se muere un pokemon, un pront por ahora
-void faint_pokemon(pokemon_t * pokemon);
+//void faint_pokemon(pokemon_t * pokemon);
 
-// cuando un entrenador intercambia pokemon
-// un print por ahora
-void switch_pokemon(player_t * player);
+
+//void switch_pokemon(player_t * player);
 
 int is_battle_over(player_t * p_one, player_t * p_two);
 
 // son solo prints que indiquen quien gano o perdio
-void victory(player_t * player);
+//void victory(player_t * player);
 
-void defeat(player_t * player);
+//void defeat(player_t * player);
 
-int set_efectivity();
-
+//int set_efectivity();
 
 // los nombres de jugadores van a venir de parametros
 // ya que hay que considerar que viene desde el GUI
 // NO LOS INICILIZA, SOLO CREA, FALTA DESTROYS
-private_data_t * private_data_create(player_t *, player_t * );
-battle_arena_t * battle_arena_create();
+//private_data_t * private_data_create(player_t *, player_t * );
+//battle_arena_t * battle_arena_create();
 
 #endif
