@@ -1,11 +1,10 @@
 #include "../model/player.h"
 
-player_t* player_create(char* name, int id1, int id2, int id3)
+player_t* player_create(char* name)
 {
     player_t* player = calloc(1, sizeof(player_t));
     player->pokemon_availible = TOTAL_POKEMON;
     player->player_name = name;
-    player->pokemon_team = choose_team(id1, id2, id3);
 
     return player;
 }
