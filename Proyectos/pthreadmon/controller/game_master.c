@@ -13,10 +13,10 @@ void* fight_simulation(void * ptr){
     if(!is_battle_over(shared_data->player_one, shared_data->player_two)){
         if(private_data->trainer_id == 1){
             shared_data->poke_p_one = private_data->pokemon;
-            shared_data->poke_p_one_id = private_data->thread_id;
+            
         }else{
             shared_data->poke_p_two = private_data->pokemon;
-            shared_data->poke_p_two_id = private_data->thread_id;
+            
         }
         pthread_mutex_lock(&shared_data->mutex);
             pthread_cond_signal(&shared_data->cond_var);
@@ -31,12 +31,21 @@ void* fight_simulation(void * ptr){
     //pthread_mutex_lock(&pokemon->shared_data->mutex);
     
     while(private_data->pokemon->hp > 0 && !(is_battle_over(shared_data->player_one, shared_data->player_two))){
+        if(shared_data->gotta_wait == TRUE){
+            pthread_mutex_lock(&shared_data->mutex);
+                pthread_cond_wait(&shared_data->cond_var, &shared_data->mutex);
+            pthread_mutex_unlock(&shared_data->mutex);
+        }
+        
         if(private_data->trainer_id == 1){
             if(pokemon_charged_attack_availible(private_data->pokemon) == TRUE){
                 pthread_mutex_lock(&shared_data->mutex);
-                    sem_wait(&shared_data->pokemon_semaphore_array[shared_data->poke_p_two_id]);
-                        shared_data->poke_p_two->hp -= pokemon_charged_attack(private_data->pokemon);
-                    sem_post(&shared_data->pokemon_semaphore_array[shared_data->poke_p_two_id]);        
+                    shared_data->gotta_wait = TRUE;
+                pthread_mutex_unlock(&shared_data->mutex);
+                shared_data->poke_p_two->hp -= pokemon_charged_attack(private_data->pokemon);
+                pthread_mutex_lock(&shared_data->mutex);
+                    shared_data->gotta_wait = FALSE;
+                    pthread_cond_broadcast(&shared_data->sleep_cond_var);
                 pthread_mutex_unlock(&shared_data->mutex);    
             }else{
                 shared_data->poke_p_two->hp -= pokemon_fast_attack(private_data->pokemon);
@@ -52,9 +61,15 @@ void* fight_simulation(void * ptr){
         }else{
             if(pokemon_charged_attack_availible(private_data->pokemon) == TRUE){
                 pthread_mutex_lock(&shared_data->mutex);
-                    sem_wait(&shared_data->pokemon_semaphore_array[shared_data->poke_p_one_id]);
-                        shared_data->poke_p_two->hp -= pokemon_charged_attack(private_data->pokemon);
-                    sem_post(&shared_data->pokemon_semaphore_array[shared_data->poke_p_one_id]);        
+                    shared_data->gotta_wait = TRUE;
+                pthread_mutex_unlock(&shared_data->mutex);
+
+
+                shared_data->poke_p_one->hp -= pokemon_charged_attack(private_data->pokemon);
+                
+                pthread_mutex_lock(&shared_data->mutex);
+                    shared_data->gotta_wait = FALSE;
+                    pthread_cond_broadcast(&shared_data->sleep_cond_var);
                 pthread_mutex_unlock(&shared_data->mutex);
             }else{
                 shared_data->poke_p_one->hp -= pokemon_fast_attack(private_data->pokemon);
@@ -144,10 +159,12 @@ int switch_pokemon(battle_arena_t * battle_arena, int team_id, int thread_id){
 
 void initialize_fight(player_t * p_one, player_t * p_two){
     battle_arena_t * battle_arena = (battle_arena_t *) malloc(sizeof(battle_arena_t));
-    
+    battle_arena->gotta_wait = FALSE;
+
     pthread_mutex_init(&battle_arena->mutex, NULL);
     pthread_barrier_init(&battle_arena->barrier, NULL, TOTAL_POKEMON * 2);
     pthread_cond_init(&battle_arena->cond_var, NULL);
+    pthread_cond_init(&battle_arena->sleep_cond_var, NULL);
 
     sem_t * sem_array = (sem_t * ) malloc(sizeof(sem_t) * (TOTAL_POKEMON * 2));
 

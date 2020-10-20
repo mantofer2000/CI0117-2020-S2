@@ -17,6 +17,7 @@ typedef struct{
 
     pthread_mutex_t mutex;
     pthread_cond_t cond_var;
+    pthread_cond_t sleep_cond_var;
 
     player_t * player_one;
     player_t * player_two;
@@ -26,8 +27,7 @@ typedef struct{
     // estan aca ya que se puedan quitar la vida
     // entre si
     
-    int poke_p_one_id;
-    int poke_p_two_id;
+    int gotta_wait;
     
     pokemon_t * poke_p_one;
     pokemon_t * poke_p_two;
