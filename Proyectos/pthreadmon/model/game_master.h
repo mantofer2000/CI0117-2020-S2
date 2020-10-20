@@ -25,6 +25,10 @@ typedef struct{
     // peleando actualmente
     // estan aca ya que se puedan quitar la vida
     // entre si
+    
+    int poke_p_one_id;
+    int poke_p_two_id;
+    
     pokemon_t * poke_p_one;
     pokemon_t * poke_p_two;
 

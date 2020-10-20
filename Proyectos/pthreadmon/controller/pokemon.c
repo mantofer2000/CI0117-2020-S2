@@ -67,8 +67,9 @@ int pokemon_fast_attack(pokemon_t * pokemon){
 }
 
 int pokemon_charged_attack(pokemon_t * pokemon){
-    // solo lo pongo para volver a verificar
-    int damage = (TRUE == pokemon_charged_attack_availible(pokemon)) ? pokemon->charged_move_info->power : 0;
+    int damage = (pokemon->charged_move_info->power) * pokemon->efectivity;
+    // REVISAR
+    pokemon->energy = 0;
     return damage;
     
 }
@@ -76,7 +77,6 @@ int pokemon_charged_attack(pokemon_t * pokemon){
 int pokemon_charged_attack_availible(pokemon_t * pokemon){
     int can_attack = FALSE;
     if(pokemon->energy >= pokemon->charged_move_info->energy){
-        pokemon->energy -= pokemon->charged_move_info->energy;
         can_attack = TRUE;
     }
     return can_attack;
