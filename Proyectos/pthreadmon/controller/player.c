@@ -22,7 +22,7 @@ pokemon_t** choose_team()
 
     // Estupidez por ahora para crear al equipo de pokemon
     for ( int id = 0; id < 3; ++id ){
-        pokemon_team[id] = pokemon_create(id);
+        pokemon_team[id] = pokemon_create(id + 5);
     }
     return pokemon_team;
 }

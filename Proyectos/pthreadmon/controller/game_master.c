@@ -9,43 +9,76 @@ void* fight_simulation(void * ptr){
     if(private_data->team_id != 0){
         sem_wait(&shared_data->pokemon_semaphore_array[private_data->thread_id]);
     }
-    
-    
+
+    if(private_data->trainer_id == 1){
+        shared_data->poke_p_one = private_data->pokemon;
+    }else{
+        shared_data->poke_p_two = private_data->pokemon;
+    }
+
+    pthread_mutex_lock(&shared_data->mutex);
+        pthread_cond_signal(&shared_data->cond_var);
+    pthread_mutex_unlock(&shared_data->mutex);
+
+    // toda esta mierda se puede mejorar si se implemetnara un array de jugadores
+    // en vez de dos punteros
+    // si queda tiempo cambiar    
     //pthread_mutex_lock(&pokemon->shared_data->mutex);
-    printf(" READY TO FIGHT %d \n", private_data->thread_id);
-    while(private_data->pokemon->hp > 0 && !(is_battle_over(shared_data->poke_p_one, shared_data->poke_p_two))){
+
+    if(!is_battle_over(shared_data->player_one, shared_data->player_two))
+        printf(" READY TO FIGHT %d \n", private_data->thread_id);
+    
+    
+    while(private_data->pokemon->hp > 0 && !(is_battle_over(shared_data->player_one, shared_data->player_two))){
         if(private_data->trainer_id == 1){
             shared_data->poke_p_two->hp -= pokemon_fast_attack(private_data->pokemon);
-            pthread_mutex_lock(&shared_data->mutex);
+            
                 if(!shared_data->poke_p_two->hp){
-                    if(!is_battle_over(shared_data->poke_p_one, shared_data->poke_p_two)){
-                        pthread_cond_wait(&shared_data->cond_var, &shared_data->mutex);
-                    }
+                    
+                    pthread_mutex_lock(&shared_data->mutex);
+                        if(!is_battle_over(shared_data->player_one, shared_data->player_two)){
+                            pthread_cond_wait(&shared_data->cond_var, &shared_data->mutex);
+                        }
+                    pthread_mutex_unlock(&shared_data->mutex);
+                    
                 }
-            pthread_mutex_unlock(&shared_data->mutex);
-
+            
         }else{
             shared_data->poke_p_one->hp -= pokemon_fast_attack(private_data->pokemon);
-            pthread_mutex_lock(&shared_data->mutex);
                 if(!shared_data->poke_p_one->hp){
-                    if(!is_battle_over(shared_data->poke_p_one, shared_data->poke_p_two)){
-                        pthread_cond_wait(&shared_data->cond_var, &shared_data->mutex);
-                    }
+                    
+                    pthread_mutex_lock(&shared_data->mutex);
+                        if(!is_battle_over(shared_data->player_one, shared_data->player_two)){
+                            pthread_cond_wait(&shared_data->cond_var, &shared_data->mutex);
+                        }
+                    pthread_mutex_unlock(&shared_data->mutex);
+                    
                 }
-            pthread_mutex_unlock(&shared_data->mutex);
         }
     }
 
     if(private_data->pokemon->hp <= 0){
-        if(private_data->team_id == 1){
+        if(private_data->trainer_id == 1){
             shared_data->player_one->pokemon_availible -= 1;
+            //int to_wake = (switch_pokemon(shared_data, private_data->team_id, private_data->thread_id) *  2) + 1;
+            printf("I LOST, %d\n", private_data->thread_id);
         }else{
             shared_data->player_two->pokemon_availible -= 1;
+            //int to_wake = (switch_pokemon(shared_data, private_data->team_id, private_data->thread_id) *  2);
+            printf("I LOST, %d, \n", private_data->thread_id);
         }
-        printf("I LOST, %d \n", private_data->thread_id);
+        
+        if(!is_battle_over(shared_data->player_one, shared_data->player_two)){sem_post(&shared_data->pokemon_semaphore_array[private_data->thread_id + 2]);}
+        
+        
+        if(is_battle_over(shared_data->player_one, shared_data->player_two)){
+            for(size_t i = 0; i < TOTAL_POKEMON * 2; i++){
+                sem_post(&shared_data->pokemon_semaphore_array[i]);
+            }
+            pthread_cond_broadcast(&shared_data->cond_var);
+        }
+    
     }
-
-
    return NULL;
 
 }
@@ -55,20 +88,23 @@ void* fight_simulation(void * ptr){
 // cuando un entrenador intercambia pokemon
 // un print por ahora
 
-void switch_pokemon(battle_arena_t * battle_arena, int team_id){
+/*
+int switch_pokemon(battle_arena_t * battle_arena, int team_id, int thread_id){
 
-    
+    int pokemon_to_wait = 0;
     if(team_id == 1){
         for(size_t i = 0; i < TOTAL_POKEMON; i++){
-            if(battle_arena->player_one->pokemon_team[i]->hp){
+            if(battle_arena->player_one->pokemon_team[i]->hp > 0){
                 battle_arena->poke_p_one = battle_arena->player_one->pokemon_team[i];
+                pokemon_to_wait = i;
                 i = TOTAL_POKEMON + 1;
             }
         }
     }else{
         for(size_t i = 0; i < TOTAL_POKEMON; i++){
-            if(battle_arena->player_two->pokemon_team[i]->hp){
+            if(battle_arena->player_two->pokemon_team[i]->hp > 0){
                 battle_arena->poke_p_two = battle_arena->player_two->pokemon_team[i];
+                pokemon_to_wait = i;
                 i = TOTAL_POKEMON + 1;
             }
         }
@@ -77,8 +113,8 @@ void switch_pokemon(battle_arena_t * battle_arena, int team_id){
     pthread_mutex_lock(&battle_arena->mutex);
         pthread_cond_signal(&battle_arena->cond_var);
     pthread_mutex_unlock(&battle_arena->mutex);
-        
-}
+
+ } */
 
 
 

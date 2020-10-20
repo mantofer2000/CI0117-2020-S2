@@ -50,7 +50,7 @@ void* fight_simulation(void * ptr);
 //void faint_pokemon(pokemon_t * pokemon);
 
 
-void switch_pokemon(battle_arena_t * battle_arena, int team_id);
+int switch_pokemon(battle_arena_t * battle_arena, int team_id, int thread_id);
 
 int is_battle_over(player_t * p_one, player_t * p_two);
 
