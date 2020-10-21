@@ -1,8 +1,18 @@
+#include "../model/game_master.h"
+#include "../model/mapper.h"
+#include "../model/player.h"
+#include "../model/pokemon.h"
+
 #include <gtk/gtk.h>
 #include <stdlib.h>
 
 GtkWidget *window; // Ventana.
 GtkWidget *grid;
+
+GtkWidget *dialog;
+GtkWidget *label;
+GtkWidget *box;
+GtkWidget *content_area;
 
 GtkWidget *button_start;
 
@@ -36,6 +46,30 @@ static void start_clicked()
     g_print("Start button pressed\n");
 }
 
+void show_message(GtkWindow* parent, gchar* message)
+{
+    GtkDialogFlags flags;
+    flags = GTK_DIALOG_DESTROY_WITH_PARENT;
+    dialog = gtk_dialog_new_with_buttons("Message", parent, flags,
+        ("_OK"), GTK_RESPONSE_NONE, NULL);
+
+    content_area = gtk_dialog_get_content_area(GTK_DIALOG(dialog));
+    //label = gtk_label_new(message);
+    
+    //box = gtk_box_new(TRUE, 2);
+    //gtk_container_add(GTK_CONTAINER(dialog), box);
+
+    label = gtk_entry_new();
+    gtk_entry_set_text(GTK_ENTRY(label), "label");
+
+    gtk_container_add(GTK_CONTAINER(content_area), label);
+
+    g_signal_connect_swapped(dialog, "response", G_CALLBACK(gtk_widget_destroy), dialog);
+
+    //gtk_container_add(GTK_CONTAINER(content_area), label);
+    gtk_widget_show_all(dialog);
+}
+
 static void activate(GtkApplication* app, gpointer user_data)
 {
     myCSS();
@@ -52,7 +86,9 @@ static void activate(GtkApplication* app, gpointer user_data)
 
     gtk_container_add(GTK_CONTAINER(window), grid);
 
-    for ( int index = 0; index < 3; ++index )
+    show_message(GTK_WINDOW(window), "Bruh");
+
+    /*for ( int index = 0; index < 3; ++index )
     {
         input_labels[index] = gtk_entry_new();
 
@@ -62,7 +98,7 @@ static void activate(GtkApplication* app, gpointer user_data)
         gtk_entry_set_text(GTK_ENTRY(input_labels[index]), num);
 
         gtk_grid_attach(GTK_GRID(grid), input_labels[index], index, 0, 1, 1);
-    }
+    }*/
 
     // A esto hay que hacerle un draw y eso pero por ahora los hago aqui para probar
 
@@ -96,7 +132,7 @@ static void activate(GtkApplication* app, gpointer user_data)
     gtk_widget_set_name(attacks_info_label, "attacks_info");
     gtk_grid_attach(GTK_GRID(grid), attacks_info_label, 1, 2, 1, 4);
 
-    for ( int index = 0; index < 3; ++index )
+    /*for ( int index = 0; index < 3; ++index )
     {
         input_labels[index] = gtk_entry_new();
 
@@ -106,7 +142,7 @@ static void activate(GtkApplication* app, gpointer user_data)
         gtk_entry_set_text(GTK_ENTRY(input_labels[index]), num);
 
         gtk_grid_attach(GTK_GRID(grid), input_labels[index], index, 7, 1, 1);
-    }
+    }*/
 
     button_start = gtk_button_new_with_label("Start");
     g_signal_connect(button_start, "clicked", G_CALLBACK(start_clicked), NULL);
