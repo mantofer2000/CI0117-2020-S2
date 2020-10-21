@@ -168,6 +168,8 @@ static void activate(GtkApplication* app, gpointer user_data)
 
 int main(int argc, char* argv[])
 {
+    pthread_mutex_init(&battle_arena_mutex, NULL);
+
     GtkApplication *app;
     int status;
 
@@ -175,6 +177,8 @@ int main(int argc, char* argv[])
     g_signal_connect(app, "activate", G_CALLBACK(activate), NULL);
     status = g_application_run(G_APPLICATION(app), argc, argv);
     g_object_unref(app);
+
+    pthread_mutex_destroy(&battle_arena_mutex);
 
     return status;
 }

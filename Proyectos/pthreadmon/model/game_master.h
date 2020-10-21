@@ -7,6 +7,9 @@
 // este numero puede cambiar, recordadr interfaz
 #define THREAD_NUM 6
 
+// mutex para la ui
+pthread_mutex_t battle_arena_mutex;
+
 // por orden y la vara se va a usar shared_data y private_data
 // para las estructuras
 
@@ -14,9 +17,6 @@ typedef struct{
     pthread_barrier_t barrier;    
     int battle_over;
     sem_t * pokemon_semaphore_array;
-
-    // mutex para la ui
-    pthread_mutex_t battle_arena_mutex;
 
     pthread_mutex_t mutex;
     pthread_cond_t cond_var;
