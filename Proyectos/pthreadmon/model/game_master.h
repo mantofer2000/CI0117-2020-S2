@@ -15,6 +15,9 @@ typedef struct{
     int battle_over;
     sem_t * pokemon_semaphore_array;
 
+    // mutex para la ui
+    pthread_mutex_t battle_arena_mutex;
+
     pthread_mutex_t mutex;
     pthread_cond_t cond_var;
     pthread_cond_t sleep_cond_var;

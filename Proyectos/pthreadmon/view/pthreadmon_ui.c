@@ -46,7 +46,7 @@ static void start_clicked()
     g_print("Start button pressed\n");
 }
 
-void show_message(GtkWindow* parent, gchar* message)
+void get_player_inputs(GtkWindow* parent, gchar* message)
 {
     GtkDialogFlags flags;
     flags = GTK_DIALOG_DESTROY_WITH_PARENT;
@@ -96,7 +96,7 @@ static void activate(GtkApplication* app, gpointer user_data)
 
     gtk_container_add(GTK_CONTAINER(window), grid);
 
-    show_message(GTK_WINDOW(window), "Bruh");
+    get_player_inputs(GTK_WINDOW(window), "Bruh");
 
     /*for ( int index = 0; index < 3; ++index )
     {
