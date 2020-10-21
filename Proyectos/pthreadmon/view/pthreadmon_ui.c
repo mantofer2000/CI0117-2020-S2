@@ -50,7 +50,7 @@ void show_message(GtkWindow* parent, gchar* message)
 {
     GtkDialogFlags flags;
     flags = GTK_DIALOG_DESTROY_WITH_PARENT;
-    dialog = gtk_dialog_new_with_buttons("Message", parent, flags,
+    dialog = gtk_dialog_new_with_buttons("Choose", parent, flags,
         ("_OK"), GTK_RESPONSE_NONE, NULL);
 
     content_area = gtk_dialog_get_content_area(GTK_DIALOG(dialog));
@@ -59,15 +59,25 @@ void show_message(GtkWindow* parent, gchar* message)
     //box = gtk_box_new(TRUE, 2);
     //gtk_container_add(GTK_CONTAINER(dialog), box);
 
-    label = gtk_entry_new();
-    gtk_entry_set_text(GTK_ENTRY(label), "label");
+    for ( int index = 0; index < 3; ++index )
+    {
+        input_labels[index] = gtk_entry_new();
+        gtk_entry_set_text(GTK_ENTRY(input_labels[index]), "label");
 
-    gtk_container_add(GTK_CONTAINER(content_area), label);
+        gtk_container_add(GTK_CONTAINER(content_area), input_labels[index]);
+    }
+
+    
 
     g_signal_connect_swapped(dialog, "response", G_CALLBACK(gtk_widget_destroy), dialog);
 
     //gtk_container_add(GTK_CONTAINER(content_area), label);
     gtk_widget_show_all(dialog);
+}
+
+static gboolean draw_battle_arena(GtkWidget *widget, GdkEventExpose *event, gpointer data)
+{
+
 }
 
 static void activate(GtkApplication* app, gpointer user_data)
