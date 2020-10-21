@@ -1,4 +1,5 @@
 #include "../model/game_master.h"
+ #include <time.h>
 
 void* fight_simulation(void * ptr){
     private_data_t * private_data = (private_data_t *) ptr;
@@ -13,7 +14,6 @@ void* fight_simulation(void * ptr){
     if(!is_battle_over(shared_data->player_one, shared_data->player_two)){
         if(private_data->trainer_id == 1){
             shared_data->poke_p_one = private_data->pokemon;
-            
         }else{
             shared_data->poke_p_two = private_data->pokemon;
             
@@ -37,8 +37,9 @@ void* fight_simulation(void * ptr){
             pthread_mutex_unlock(&shared_data->mutex);
         }
         
-        if(private_data->trainer_id == 1){
+        if(private_data->trainer_id == 1){            
             if(pokemon_charged_attack_availible(private_data->pokemon) == TRUE){
+                private_data->pokemon->efectivity = get_efectivity(shared_data->poke_p_two->type_info->id, private_data->pokemon->charged_move_info->typeId);
                 pthread_mutex_lock(&shared_data->mutex);
                     shared_data->gotta_wait = TRUE;
                 pthread_mutex_unlock(&shared_data->mutex);
@@ -46,9 +47,12 @@ void* fight_simulation(void * ptr){
                 pthread_mutex_lock(&shared_data->mutex);
                     shared_data->gotta_wait = FALSE;
                     pthread_cond_broadcast(&shared_data->sleep_cond_var);
-                pthread_mutex_unlock(&shared_data->mutex);    
+                pthread_mutex_unlock(&shared_data->mutex);
+                usleep(private_data->pokemon->charged_move_info->cooldown);    
             }else{
+                private_data->pokemon->efectivity = get_efectivity(shared_data->poke_p_two->type_info->id, private_data->pokemon->fast_move_info->typeId);
                 shared_data->poke_p_two->hp -= pokemon_fast_attack(private_data->pokemon);
+                usleep(private_data->pokemon->fast_move_info->cooldown);
             }
             if(!shared_data->poke_p_two->hp){
                 pthread_mutex_lock(&shared_data->mutex);
@@ -60,6 +64,7 @@ void* fight_simulation(void * ptr){
             }
         }else{
             if(pokemon_charged_attack_availible(private_data->pokemon) == TRUE){
+                private_data->pokemon->efectivity = get_efectivity(shared_data->poke_p_one->type_info->id, private_data->pokemon->charged_move_info->typeId);
                 pthread_mutex_lock(&shared_data->mutex);
                     shared_data->gotta_wait = TRUE;
                 pthread_mutex_unlock(&shared_data->mutex);
@@ -71,8 +76,13 @@ void* fight_simulation(void * ptr){
                     shared_data->gotta_wait = FALSE;
                     pthread_cond_broadcast(&shared_data->sleep_cond_var);
                 pthread_mutex_unlock(&shared_data->mutex);
+
+                usleep(private_data->pokemon->charged_move_info->cooldown);
+
             }else{
+                private_data->pokemon->efectivity = get_efectivity(shared_data->poke_p_one->type_info->id, private_data->pokemon->fast_move_info->typeId);
                 shared_data->poke_p_one->hp -= pokemon_fast_attack(private_data->pokemon);
+                usleep(private_data->pokemon->fast_move_info->cooldown);
             }
                 if(!shared_data->poke_p_one->hp){   
                     pthread_mutex_lock(&shared_data->mutex);
@@ -153,7 +163,17 @@ int switch_pokemon(battle_arena_t * battle_arena, int team_id, int thread_id){
 
 //void defeat(player_t * player){}
 
-//int set_efectivity(){}
+int get_efectivity(int target_pokemon_type, int attacking_move_type){
+    if (weaknesses_matrix[target_pokemon_type][attacking_move_type]) {
+    return 1.6;
+    } else if (resistances_matrix[target_pokemon_type][attacking_move_type]) {
+        return 0.625;
+    } else if (immunities_matrix[target_pokemon_type][attacking_move_type]) {
+        return 0.390625;
+    } else {// ninguno de los anteriores
+    return 1;
+}
+}
 
 
 

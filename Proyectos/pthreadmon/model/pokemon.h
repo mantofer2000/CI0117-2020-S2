@@ -7,8 +7,10 @@
 #include <stdlib.h>
 #include <semaphore.h>
 #include <stdio.h>
+#include <math.h>
 
 #define POKEMON_HP 1500
+#define BONUS 2.3
 #define TRUE 1
 #define FALSE 0
 

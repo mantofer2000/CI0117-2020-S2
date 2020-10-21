@@ -61,13 +61,13 @@ void pokemon_destroy(pokemon_t * pokemon){
 
 
 int pokemon_fast_attack(pokemon_t * pokemon){
-    int damage = (pokemon->fast_move_info->power) * pokemon->efectivity;
+    int damage = floor((pokemon->fast_move_info->power) * pokemon->efectivity * BONUS) + 1;
     pokemon->energy += pokemon->fast_move_info->energyGain;
     return damage;
 }
 
 int pokemon_charged_attack(pokemon_t * pokemon){
-    int damage = (pokemon->charged_move_info->power) * pokemon->efectivity;
+    int damage = floor((pokemon->charged_move_info->power) * pokemon->efectivity * BONUS) + 1;
     // REVISAR
     pokemon->energy = 0;
     return damage;
