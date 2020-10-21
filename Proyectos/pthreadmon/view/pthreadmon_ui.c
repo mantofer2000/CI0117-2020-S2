@@ -22,6 +22,11 @@ GtkWidget *pokemon_labels[3];
 
 GtkWidget *attacks_info_label;
 
+player_t* player1;
+player_t* player2;
+
+
+
 void myCSS(void)
 {
     GtkCssProvider* provider;
@@ -41,9 +46,11 @@ void myCSS(void)
     g_object_unref(provider);
 }
 
-static void start_clicked()
+// Para que es esta vara si no hace nada? xd (revisar)
+static void my_callback(GObject *source_object, GAsyncResult *res,
+                        gpointer user_data)
 {
-    g_print("Start button pressed\n");
+   /* Do nothing */
 }
 
 void get_player_inputs(GtkWindow* parent, gchar* message)
@@ -54,10 +61,12 @@ void get_player_inputs(GtkWindow* parent, gchar* message)
         ("_OK"), GTK_RESPONSE_NONE, NULL);
 
     content_area = gtk_dialog_get_content_area(GTK_DIALOG(dialog));
-    //label = gtk_label_new(message);
+    label = gtk_label_new(message);
     
     //box = gtk_box_new(TRUE, 2);
     //gtk_container_add(GTK_CONTAINER(dialog), box);
+
+    gtk_container_add(GTK_CONTAINER(content_area), label);
 
     for ( int index = 0; index < 3; ++index )
     {
@@ -71,13 +80,43 @@ void get_player_inputs(GtkWindow* parent, gchar* message)
 
     g_signal_connect_swapped(dialog, "response", G_CALLBACK(gtk_widget_destroy), dialog);
 
-    //gtk_container_add(GTK_CONTAINER(content_area), label);
     gtk_widget_show_all(dialog);
 }
 
+// Llama al metodo de main.c para iniciar la carrera.
+static void start_async(GTask *task, gpointer source_object,
+                        gpointer task_data, GCancellable *cancellable)
+{
+    // OJO
+    // Crear jugadores aqui
+    // Hacer la vara de los pokemon random
+    // Pedir nombre y los pokemon que va a usar
+    // Si la entrada esta mal volver a llamar esa ventana hasta que
+    // los ponga bien
+    // Una vez creados, INICIAR BATALLA
+}
+
+// Este metodo es llamado cuando se hace click en el boton START.
+static void start_clicked()
+{
+    g_print("Start button pressed\n");
+    GCancellable *cancellable = g_cancellable_new();
+    GTask *task = g_task_new(g_object_new(G_TYPE_OBJECT, NULL), cancellable, my_callback, NULL);
+    g_task_run_in_thread(task, start_async);
+    g_object_unref(task);
+}
+
+
 static gboolean draw_battle_arena(GtkWidget *widget, GdkEventExpose *event, gpointer data)
 {
+    pthread_mutex_lock(&battle_arena_mutex);
 
+    if ( !(is_battle_over(player1, player2)) )
+    {
+
+    }
+
+    pthread_mutex_unlock(&battle_arena_mutex);
 }
 
 static void activate(GtkApplication* app, gpointer user_data)
@@ -96,7 +135,7 @@ static void activate(GtkApplication* app, gpointer user_data)
 
     gtk_container_add(GTK_CONTAINER(window), grid);
 
-    get_player_inputs(GTK_WINDOW(window), "Bruh");
+    get_player_inputs(GTK_WINDOW(window), "Choose three");
 
     /*for ( int index = 0; index < 3; ++index )
     {
@@ -159,9 +198,9 @@ static void activate(GtkApplication* app, gpointer user_data)
 
     gtk_grid_attach(GTK_GRID(grid), button_start, 2, 8, 1, 1);
 
-    attacks_info_label = gtk_label_new("-");
+    /*attacks_info_label = gtk_label_new("-");
     gtk_widget_set_name(attacks_info_label, "attacks_info");
-    gtk_grid_attach(GTK_GRID(grid), attacks_info_label, 0, 8, 3, 2);
+    gtk_grid_attach(GTK_GRID(grid), attacks_info_label, 0, 8, 3, 2);*/
 
     gtk_widget_show_all(window);
 }
