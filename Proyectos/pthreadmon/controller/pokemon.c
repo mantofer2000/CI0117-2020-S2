@@ -18,6 +18,8 @@ pokemon_t * pokemon_create(int id){
     new_pokemon->energy = 0;
 
     new_pokemon->is_attacking = 0; // GABRIEL UI
+    new_pokemon->attacking_fast = 0;
+    new_pokemon->attacking_charged = 0;
     
     new_pokemon->pokemon_info->id = id;
     new_pokemon->pokemon_info->speciesName = get_pokemon_species_name(id);

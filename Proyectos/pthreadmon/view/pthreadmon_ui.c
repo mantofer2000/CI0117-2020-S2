@@ -383,9 +383,27 @@ static gboolean draw_battle_arena(GtkWidget *widget, GdkEventExpose *event, gpoi
             gtk_label_set_text(GTK_LABEL(pokemon_labels1[0]), hp_1);
             gtk_label_set_text(GTK_LABEL(pokemon_labels1[1]), poke_one->pokemon_info->speciesName);
 
-            char move_info[50];
-            sprintf(move_info, "Info:\nEnergy: %d\n", poke_one->energy);
-            gtk_label_set_text(GTK_LABEL(pokemon_labels1[2]), move_info);
+            char move_info_1[50];
+            sprintf(move_info_1, "Energy: %d\n", poke_one->energy);
+            gtk_label_set_text(GTK_LABEL(pokemon_labels1[2]), move_info_1);
+
+            if ( poke_one->is_attacking )
+            {
+                if ( poke_one->attacking_charged )
+                {
+                    char charged[50];
+                    sprintf(charged, "%s is using a CHARGED %s!!",
+                        poke_one->pokemon_info->speciesName, poke_one->charged_move_info->moveName);
+                    gtk_label_set_text(GTK_LABEL(attacks_info_label), charged);
+                }
+                else if ( poke_one->attacking_fast )
+                {
+                    char fast[50];
+                    sprintf(fast, "%s is using %s!",
+                        poke_one->pokemon_info->speciesName, poke_one->fast_move_info->moveName);
+                    gtk_label_set_text(GTK_LABEL(attacks_info_label), fast);
+                }
+            }
 
             pokemon_t* poke_two = active_poke_two;
 
@@ -393,6 +411,29 @@ static gboolean draw_battle_arena(GtkWidget *widget, GdkEventExpose *event, gpoi
             sprintf(hp_2, "HP: %d", poke_two->hp);
             gtk_label_set_text(GTK_LABEL(pokemon_labels2[0]), hp_2);
             gtk_label_set_text(GTK_LABEL(pokemon_labels2[1]), poke_two->pokemon_info->speciesName);
+
+            char move_info_2[50];
+            sprintf(move_info_2, "Energy: %d\n", poke_two->energy);
+            gtk_label_set_text(GTK_LABEL(pokemon_labels2[2]), move_info_2);
+
+            if ( poke_two->is_attacking )
+            {
+                if ( poke_two->attacking_charged )
+                {
+                    char charged[50];
+                    sprintf(charged, "%s is using a CHARGED %s!!",
+                        poke_two->pokemon_info->speciesName, poke_two->charged_move_info->moveName);
+                    gtk_label_set_text(GTK_LABEL(attacks_info_label), charged);
+                }
+                else if ( poke_two->attacking_fast )
+                {
+                    char fast[50];
+                    sprintf(fast, "%s is using %s!",
+                        poke_two->pokemon_info->speciesName, poke_two->fast_move_info->moveName);
+                    gtk_label_set_text(GTK_LABEL(attacks_info_label), fast);
+                }
+            }
+
             //char poke_two_image[50];
             //sprintf(poke_two_image, "/sprites/%s.png", poke_two->pokemon_info->speciesName);
         }
@@ -404,11 +445,15 @@ static gboolean draw_battle_arena(GtkWidget *widget, GdkEventExpose *event, gpoi
             gdk_pixbuf_scale_simple(gtk_image_get_pixbuf(GTK_IMAGE(pokemon_labels2[1])),
             75, 75, GDK_INTERP_NEAREST));*/
     }
-    /*else
+    else
     {
-        gtk_image_clear(GTK_IMAGE(pokemon_labels1[1]));
-	    gtk_image_clear(GTK_IMAGE(pokemon_labels2[1]));
-    }*/
+        // Podria mostrar en las mismas labels el HP con que quedaron los pokes
+        // O tambien mostrar un dialog con los resultados de todo
+        if ( battle_arena )
+        {
+             
+        }
+    }
 
     pthread_mutex_unlock(&battle_arena_mutex);
 
@@ -441,7 +486,7 @@ static void activate(GtkApplication* app, gpointer user_data)
     gtk_widget_set_name(pokemon_labels1[2], "energy_label");
 
     for ( int label = 0; label < 3; ++label )
-        gtk_grid_attach(GTK_GRID(grid), pokemon_labels1[label], 2, label + 1, 1, 1);
+        gtk_grid_attach(GTK_GRID(grid), pokemon_labels1[label], 3, label + 1, 1, 1);
 
     pokemon_labels2[0] = gtk_label_new("HP: ");
     gtk_widget_set_name(pokemon_labels2[0], "hp_label");
@@ -455,7 +500,7 @@ static void activate(GtkApplication* app, gpointer user_data)
 
     attacks_info_label = gtk_label_new("-");
     gtk_widget_set_name(attacks_info_label, "attacks_info");
-    gtk_grid_attach(GTK_GRID(grid), attacks_info_label, 1, 2, 1, 4);
+    gtk_grid_attach(GTK_GRID(grid), attacks_info_label, 1, 2, 2, 4);
 
     button_start = gtk_button_new_with_label("Start");
     g_signal_connect(button_start, "clicked", G_CALLBACK(start_clicked), NULL);
