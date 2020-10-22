@@ -65,6 +65,7 @@ int switch_pokemon(battle_arena_t * battle_arena, int team_id, int thread_id);
 
 int is_battle_over(player_t ** players_array);
 
+
 // son solo prints que indiquen quien gano o perdio
 //void victory(player_t * player);
 
