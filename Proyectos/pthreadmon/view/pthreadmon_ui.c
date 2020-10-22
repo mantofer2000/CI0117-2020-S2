@@ -443,6 +443,8 @@ static void activate(GtkApplication* app, gpointer user_data)
     gtk_widget_set_name(attacks_info_label, "attacks_info");
     gtk_grid_attach(GTK_GRID(grid), attacks_info_label, 0, 8, 3, 2);*/
 
+    g_timeout_add(33, (GSourceFunc)draw_battle_arena, (gpointer)window);
+
     gtk_widget_show_all(window);
 }
 
