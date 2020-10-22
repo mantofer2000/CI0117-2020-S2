@@ -451,7 +451,45 @@ static gboolean draw_battle_arena(GtkWidget *widget, GdkEventExpose *event, gpoi
         // O tambien mostrar un dialog con los resultados de todo
         if ( battle_arena )
         {
-             
+            pokemon_t* poke_one = active_poke_one;
+
+            char hp_1[10];
+
+            if (poke_one->hp <= 0)
+            {
+                gtk_label_set_text(GTK_LABEL(pokemon_labels1[0]), "Lost");
+            }
+            else
+            {
+                sprintf(hp_1, "HP: %d", poke_one->hp);
+                gtk_label_set_text(GTK_LABEL(pokemon_labels1[0]), hp_1);
+            }
+            
+            gtk_label_set_text(GTK_LABEL(pokemon_labels1[1]), poke_one->pokemon_info->speciesName);
+
+            char move_info_1[50];
+            sprintf(move_info_1, "Energy: %d\n", poke_one->energy);
+            gtk_label_set_text(GTK_LABEL(pokemon_labels1[2]), move_info_1);
+
+            pokemon_t* poke_two = active_poke_two;
+
+            char hp_2[10];
+
+            if (poke_two->hp <= 0)
+            {
+                gtk_label_set_text(GTK_LABEL(pokemon_labels2[0]), "Lost");
+            }
+            else
+            {
+                sprintf(hp_2, "HP: %d", poke_two->hp);
+                gtk_label_set_text(GTK_LABEL(pokemon_labels2[0]), hp_2);
+            }
+
+            gtk_label_set_text(GTK_LABEL(pokemon_labels2[1]), poke_two->pokemon_info->speciesName);
+
+            char move_info_2[50];
+            sprintf(move_info_2, "Energy: %d\n", poke_two->energy);
+            gtk_label_set_text(GTK_LABEL(pokemon_labels2[2]), move_info_2);
         }
     }
 
