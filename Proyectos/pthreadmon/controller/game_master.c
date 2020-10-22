@@ -128,35 +128,6 @@ void* fight_simulation(void * ptr){
 // cuando un entrenador intercambia pokemon
 // un print por ahora
 
-/*
-int switch_pokemon(battle_arena_t * battle_arena, int team_id, int thread_id){
-
-    int pokemon_to_wait = 0;
-    if(team_id == 1){
-        for(size_t i = 0; i < TOTAL_POKEMON; i++){
-            if(battle_arena->player_one->pokemon_team[i]->hp > 0){
-                battle_arena->poke_p_one = battle_arena->player_one->pokemon_team[i];
-                pokemon_to_wait = i;
-                i = TOTAL_POKEMON + 1;
-            }
-        }
-    }else{
-        for(size_t i = 0; i < TOTAL_POKEMON; i++){
-            if(battle_arena->player_two->pokemon_team[i]->hp > 0){
-                battle_arena->poke_p_two = battle_arena->player_two->pokemon_team[i];
-                pokemon_to_wait = i;
-                i = TOTAL_POKEMON + 1;
-            }
-        }
-    }   
-    
-    pthread_mutex_lock(&battle_arena->mutex);
-        pthread_cond_signal(&battle_arena->cond_var);
-    pthread_mutex_unlock(&battle_arena->mutex);
-
- } */
-
-
 
 // son solo prints que indiquen quien gano o perdio
 //void victory(player_t * player){}
@@ -244,6 +215,12 @@ void initialize_fight(player_t * p_one, player_t * p_two){
     size_t k = 0;
     for(; k < THREAD_NUM; k++){
         pthread_join(threads[k], NULL);
+    }
+
+    if(battle_arena->player_one->pokemon_availible == FALSE){
+        battle_arena->winner = battle_arena->poke_p_two;
+    }else{
+        battle_arena->winner = battle_arena->poke_p_one;
     }
 
     size_t l = 0;

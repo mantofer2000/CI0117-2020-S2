@@ -31,6 +31,8 @@ typedef struct{
     // entre si
     
     int gotta_wait;
+
+    player_t * winner;
     
     pokemon_t * poke_p_one;
     pokemon_t * poke_p_two;
