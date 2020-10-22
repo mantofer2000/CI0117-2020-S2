@@ -373,20 +373,28 @@ static gboolean draw_battle_arena(GtkWidget *widget, GdkEventExpose *event, gpoi
 
     if ( !(is_battle_over(player1, player2)) )
     {
+        
         if ( battle_arena )
         {
             pokemon_t* poke_one = active_poke_one;
 
             char hp_1[10];
-            sprintf(hp_1, "HP: %d", poke_one->pokemon_info->id);
+            sprintf(hp_1, "HP: %d", poke_one->hp);
             gtk_label_set_text(GTK_LABEL(pokemon_labels1[0]), hp_1);
             gtk_label_set_text(GTK_LABEL(pokemon_labels1[1]), poke_one->pokemon_info->speciesName);
 
+            char move_info[50];
+            sprintf(move_info, "Info:\nEnergy: %d\n", poke_one->energy);
+            gtk_label_set_text(GTK_LABEL(pokemon_labels1[2]), move_info);
+
             pokemon_t* poke_two = active_poke_two;
 
-            char poke_two_image[50];
-            sprintf(poke_two_image, "/sprites/%s.png", poke_two->pokemon_info->speciesName);
-            //printf("%s\n", poke_one->pokemon_info->speciesName);
+            char hp_2[10];
+            sprintf(hp_2, "HP: %d", poke_two->hp);
+            gtk_label_set_text(GTK_LABEL(pokemon_labels2[0]), hp_2);
+            gtk_label_set_text(GTK_LABEL(pokemon_labels2[1]), poke_two->pokemon_info->speciesName);
+            //char poke_two_image[50];
+            //sprintf(poke_two_image, "/sprites/%s.png", poke_two->pokemon_info->speciesName);
         }
         
         
@@ -429,7 +437,7 @@ static void activate(GtkApplication* app, gpointer user_data)
     gtk_widget_set_name(pokemon_labels1[0], "hp_label");
     pokemon_labels1[1] = gtk_label_new("-");
     
-    pokemon_labels1[2] = gtk_label_new("Energy: ");
+    pokemon_labels1[2] = gtk_label_new("Info: ");
     gtk_widget_set_name(pokemon_labels1[2], "energy_label");
 
     for ( int label = 0; label < 3; ++label )
@@ -439,7 +447,7 @@ static void activate(GtkApplication* app, gpointer user_data)
     gtk_widget_set_name(pokemon_labels2[0], "hp_label");
     pokemon_labels2[1] = gtk_label_new("-");
     
-    pokemon_labels2[2] = gtk_label_new("Energy: ");
+    pokemon_labels2[2] = gtk_label_new("Info: ");
     gtk_widget_set_name(pokemon_labels2[2], "energy_label");
 
     for ( int label = 0; label < 3; ++label )
