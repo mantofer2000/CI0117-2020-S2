@@ -30,11 +30,16 @@ GtkWidget *poke_list_labels[5];
 char* player1_name;
 char* player2_name;
 
+int id1, id2, id3;
+
 player_t* player1;
 player_t* player2;
 
 pokemon_t** random_pokemon_list;
 
+
+static void show_poke_list(GtkWindow* parent);
+static void poke_list(GtkWidget* widget, gpointer data);
 
 void myCSS(void)
 {
@@ -129,7 +134,52 @@ void get_player_inputs(GtkWindow* parent, gchar* message /*, player_t* player*/)
     gtk_widget_show_all(dialog);
 }
 
-static void show_poke_list(GtkWindow* parent, gpointer data)
+int is_an_option(int id)
+{
+    for ( int index = 0; index < 5; ++index )
+        if ( random_pokemon_list[index]->pokemon_info->id == id )
+            return 1;
+
+    return 0;
+}
+
+static void options_dialog(GtkWindow* parent)
+{
+    GtkDialogFlags flags;
+    flags = GTK_DIALOG_DESTROY_WITH_PARENT;
+
+    dialog = gtk_dialog_new();
+    gtk_window_set_title(GTK_WINDOW(dialog), "X");
+
+    content_area = gtk_dialog_get_content_area(GTK_DIALOG(dialog));
+    label = gtk_label_new("Wrong choice. Try again");
+
+    gtk_container_add(GTK_CONTAINER(content_area), label);
+
+    test_button = gtk_button_new_with_mnemonic("_OK");
+    gtk_container_add(GTK_CONTAINER(content_area), test_button);
+
+    g_signal_connect(test_button, "clicked", G_CALLBACK(poke_list), NULL);
+    g_signal_connect_swapped(test_button, "clicked", G_CALLBACK(gtk_widget_destroy), dialog);
+
+    g_signal_connect_swapped(dialog, "response", G_CALLBACK(gtk_widget_destroy), dialog);
+
+    gtk_widget_show_all(dialog);
+}
+
+
+
+static void assign_id1(GtkWidget* widget, gpointer data)
+{
+    char* temp = (char*) gtk_entry_get_text(GTK_ENTRY(data));
+    id1 = strtoul(temp, NULL, 10);
+    if ( !(is_an_option(id1)) )
+        //show_poke_list(GTK_WINDOW(window), "Options for you");
+        options_dialog(GTK_WINDOW(window));
+    printf("%d\n", id1);
+}
+
+static void show_poke_list(GtkWindow* parent)
 {
     GtkDialogFlags flags;
     flags = GTK_DIALOG_DESTROY_WITH_PARENT;
@@ -164,6 +214,9 @@ static void show_poke_list(GtkWindow* parent, gpointer data)
     test_button = gtk_button_new_with_mnemonic("_Go!");
     gtk_container_add(GTK_CONTAINER(content_area), test_button);
 
+    g_signal_connect(test_button, "clicked", G_CALLBACK(assign_id1), input_labels[0]);
+    g_signal_connect_swapped(test_button, "clicked", G_CALLBACK(gtk_widget_destroy), dialog);
+
     g_signal_connect_swapped(dialog, "response", G_CALLBACK(gtk_widget_destroy), dialog);
 
     gtk_widget_show_all(dialog);
@@ -172,7 +225,7 @@ static void show_poke_list(GtkWindow* parent, gpointer data)
 static void poke_list(GtkWidget* widget, gpointer data)
 {
     printf("The poke list is here\n");
-    show_poke_list(GTK_WINDOW(window), "Options for you");
+    show_poke_list(GTK_WINDOW(window));
 }
 
 static void name_1(GtkWidget* widget, gpointer data)
