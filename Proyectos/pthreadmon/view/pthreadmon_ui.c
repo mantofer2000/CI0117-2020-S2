@@ -20,7 +20,8 @@ GtkWidget *test_button;
 GtkWidget *input_name_label;
 GtkWidget *input_labels[3];
 
-GtkWidget *pokemon_labels[3];
+GtkWidget *pokemon_labels1[3];
+GtkWidget *pokemon_labels2[3];
 
 GtkWidget *attacks_info_label;
 
@@ -30,6 +31,7 @@ GtkWidget *poke_list_labels[5];
 char* player1_name;
 char* player2_name;
 
+int player_id;
 int id1, id2, id3;
 
 player_t* player1;
@@ -38,8 +40,13 @@ player_t* player2;
 pokemon_t** random_pokemon_list;
 
 
+static void start_async(GTask *task, gpointer source_object,
+                        gpointer task_data, GCancellable *cancellable);
+
 static void show_poke_list(GtkWindow* parent);
 static void poke_list(GtkWidget* widget, gpointer data);
+
+void player_get_name(GtkWindow* parent, int id);
 
 void myCSS(void)
 {
@@ -104,7 +111,7 @@ static void my_callback(GObject *source_object, GAsyncResult *res,
    /* Do nothing */
 }
 
-void get_player_inputs(GtkWindow* parent, gchar* message /*, player_t* player*/)
+/*void get_player_inputs(GtkWindow* parent, gchar* message)
 {
     GtkDialogFlags flags;
     flags = GTK_DIALOG_DESTROY_WITH_PARENT;
@@ -132,6 +139,25 @@ void get_player_inputs(GtkWindow* parent, gchar* message /*, player_t* player*/)
     g_signal_connect_swapped(dialog, "response", G_CALLBACK(gtk_widget_destroy), dialog);
 
     gtk_widget_show_all(dialog);
+}*/
+
+static void player_team()
+{
+    if ( player_id == 1 )
+    {
+        player1->pokemon_team = choose_team(id1, id2, id3);
+        player_id = 2;
+
+        player_get_name(GTK_WINDOW(window), player_id);
+    }
+    else
+    {
+        player2->pokemon_team = choose_team(id1, id2, id3);
+        GCancellable *cancellable = g_cancellable_new();
+        GTask *task = g_task_new(g_object_new(G_TYPE_OBJECT, NULL), cancellable, my_callback, NULL);
+        g_task_run_in_thread(task, start_async);
+        g_object_unref(task);
+    }    
 }
 
 int is_an_option(int id)
@@ -167,16 +193,34 @@ static void options_dialog(GtkWindow* parent)
     gtk_widget_show_all(dialog);
 }
 
-
+static void verify()
+{
+    if ( !(is_an_option(id1)) || !(is_an_option(id2)) || !(is_an_option(id3)) )
+        options_dialog(GTK_WINDOW(window));
+    else
+        player_team();
+}
 
 static void assign_id1(GtkWidget* widget, gpointer data)
 {
     char* temp = (char*) gtk_entry_get_text(GTK_ENTRY(data));
     id1 = strtoul(temp, NULL, 10);
-    if ( !(is_an_option(id1)) )
-        //show_poke_list(GTK_WINDOW(window), "Options for you");
-        options_dialog(GTK_WINDOW(window));
     printf("%d\n", id1);
+}
+
+static void assign_id2(GtkWidget* widget, gpointer data)
+{
+    char* temp = (char*) gtk_entry_get_text(GTK_ENTRY(data));
+    id2 = strtoul(temp, NULL, 10);
+    printf("%d\n", id2);
+}
+
+static void assign_id3(GtkWidget* widget, gpointer data)
+{
+    char* temp = (char*) gtk_entry_get_text(GTK_ENTRY(data));
+    id3 = strtoul(temp, NULL, 10);
+    printf("%d\n", id3);
+    verify();
 }
 
 static void show_poke_list(GtkWindow* parent)
@@ -215,6 +259,8 @@ static void show_poke_list(GtkWindow* parent)
     gtk_container_add(GTK_CONTAINER(content_area), test_button);
 
     g_signal_connect(test_button, "clicked", G_CALLBACK(assign_id1), input_labels[0]);
+    g_signal_connect(test_button, "clicked", G_CALLBACK(assign_id2), input_labels[1]);
+    g_signal_connect(test_button, "clicked", G_CALLBACK(assign_id3), input_labels[2]);
     g_signal_connect_swapped(test_button, "clicked", G_CALLBACK(gtk_widget_destroy), dialog);
 
     g_signal_connect_swapped(dialog, "response", G_CALLBACK(gtk_widget_destroy), dialog);
@@ -232,12 +278,14 @@ static void name_1(GtkWidget* widget, gpointer data)
 {
     player1_name = (char*) gtk_entry_get_text(GTK_ENTRY(data));
     printf("The name is %s\n", player1_name);
+    player1 = player_create(player1_name);
 }
 
 static void name_2(GtkWidget* widget, gpointer data)
 {
     player2_name = (char*) gtk_entry_get_text(GTK_ENTRY(data));
     printf("The name is %s\n", player2_name);
+    player2 = player_create(player2_name);
 }
 
 void player_get_name(GtkWindow* parent, int id)
@@ -246,9 +294,16 @@ void player_get_name(GtkWindow* parent, int id)
     flags = GTK_DIALOG_DESTROY_WITH_PARENT;
     dialog = gtk_dialog_new();
     // Recordar hacer un sprintf para  especificar el id del jugador
-    gtk_window_set_title(GTK_WINDOW(dialog), "Name?");
+    gtk_window_set_title(GTK_WINDOW(dialog), "Name");
+
+    random_pokemon_list = generate_random_pokes();
 
     content_area = gtk_dialog_get_content_area(GTK_DIALOG(dialog));
+
+    char label_text[30];
+    sprintf(label_text, "Player #%d. Type your name", id);
+    label = gtk_label_new(label_text);
+    gtk_container_add(GTK_CONTAINER(content_area), label);
 
     input_name_label = gtk_entry_new();
     gtk_container_add(GTK_CONTAINER(content_area), input_name_label);
@@ -266,6 +321,8 @@ void player_get_name(GtkWindow* parent, int id)
     {
         g_signal_connect(test_button, "clicked", G_CALLBACK(name_2), input_name_label);
         g_signal_connect(input_name_label, "activate", G_CALLBACK(name_2), input_name_label);
+        g_signal_connect(test_button, "clicked", G_CALLBACK(poke_list), NULL);
+        g_signal_connect_swapped(test_button, "clicked", G_CALLBACK(gtk_widget_destroy), dialog);
     }
 
     gtk_container_add(GTK_CONTAINER(content_area), test_button);
@@ -282,37 +339,36 @@ static void start_async(GTask *task, gpointer source_object,
                         gpointer task_data, GCancellable *cancellable)
 {  
     // Una vez creados los jugadores, INICIAR BATALLA
+    printf("Ya me llamaron\n");
+    initialize_fight(player1, player2);
 }
 
-static void create_player1()
+static void create_players()
 {
     // OJO
     // Crear jugadores aqui
     // Hacer la vara de los pokemon random
-    random_pokemon_list = generate_random_pokes();
+    
     // Pedir nombre y los pokemon que va a usar
-    player_get_name(GTK_WINDOW(window), 1);
-    //gtk_entry_get_text(GTK_ENTRY(input_name_label));
-    get_player_inputs(GTK_WINDOW(window), "Choose three");
+    player_id = 1;
+    player_get_name(GTK_WINDOW(window), player_id);
+    
+    //get_player_inputs(GTK_WINDOW(window), "Choose three");
     // Si la entrada esta mal volver a llamar esa ventana hasta que
     // los ponga bien
-}
-
-static void create_player2()
-{
-    player_get_name(GTK_WINDOW(window), 2);
 }
 
 // Este metodo es llamado cuando se hace click en el boton START.
 static void start_clicked()
 {
     g_print("Start button pressed\n");
-    create_player1();
-    //create_player2();
-    GCancellable *cancellable = g_cancellable_new();
+    create_players();
+
+    // Pasar esto a player_team
+    /*GCancellable *cancellable = g_cancellable_new();
     GTask *task = g_task_new(g_object_new(G_TYPE_OBJECT, NULL), cancellable, my_callback, NULL);
     g_task_run_in_thread(task, start_async);
-    g_object_unref(task);
+    g_object_unref(task);*/
 }
 
 
@@ -322,7 +378,15 @@ static gboolean draw_battle_arena(GtkWidget *widget, GdkEventExpose *event, gpoi
 
     if ( !(is_battle_over(player1, player2)) )
     {
-
+        gtk_image_set_from_file(GTK_IMAGE(pokemon_labels1[1]), "sprites/mew.png");
+        gtk_image_set_from_pixbuf(GTK_IMAGE(pokemon_labels1[1]),
+            gdk_pixbuf_scale_simple(gtk_image_get_pixbuf(GTK_IMAGE(pokemon_labels1[1])),
+            75, 75, GDK_INTERP_NEAREST));
+            
+        gtk_image_set_from_file(GTK_IMAGE(pokemon_labels2[1]), "sprites/magnezone.png");
+        gtk_image_set_from_pixbuf(GTK_IMAGE(pokemon_labels2[1]),
+            gdk_pixbuf_scale_simple(gtk_image_get_pixbuf(GTK_IMAGE(pokemon_labels2[1])),
+            75, 75, GDK_INTERP_NEAREST));
     }
 
     pthread_mutex_unlock(&battle_arena_mutex);
@@ -344,63 +408,31 @@ static void activate(GtkApplication* app, gpointer user_data)
 
     gtk_container_add(GTK_CONTAINER(window), grid);
 
-    //get_player_inputs(GTK_WINDOW(window), "Choose three");
-
-    /*for ( int index = 0; index < 3; ++index )
-    {
-        input_labels[index] = gtk_entry_new();
-
-        char num[7] = "Input ";
-        num[6] = index + '1';
-
-        gtk_entry_set_text(GTK_ENTRY(input_labels[index]), num);
-
-        gtk_grid_attach(GTK_GRID(grid), input_labels[index], index, 0, 1, 1);
-    }*/
-
     // A esto hay que hacerle un draw y eso pero por ahora los hago aqui para probar
 
-    pokemon_labels[0] = gtk_label_new("HP: ");
-    gtk_widget_set_name(pokemon_labels[0], "hp_label");
-    pokemon_labels[1] = gtk_image_new();
-    gtk_image_set_from_file(GTK_IMAGE(pokemon_labels[1]), "sprites/mew.png");
-    gtk_image_set_from_pixbuf(GTK_IMAGE(pokemon_labels[1]),
-        gdk_pixbuf_scale_simple(gtk_image_get_pixbuf(GTK_IMAGE(pokemon_labels[1])),
-        75, 75, GDK_INTERP_NEAREST));
-    pokemon_labels[2] = gtk_label_new("Energy: ");
-    gtk_widget_set_name(pokemon_labels[2], "energy_label");
+    pokemon_labels1[0] = gtk_label_new("HP: ");
+    gtk_widget_set_name(pokemon_labels1[0], "hp_label");
+    pokemon_labels1[1] = gtk_image_new();
+    
+    pokemon_labels1[2] = gtk_label_new("Energy: ");
+    gtk_widget_set_name(pokemon_labels1[2], "energy_label");
 
     for ( int label = 0; label < 3; ++label )
-        gtk_grid_attach(GTK_GRID(grid), pokemon_labels[label], 2, label + 1, 1, 1);
+        gtk_grid_attach(GTK_GRID(grid), pokemon_labels1[label], 2, label + 1, 1, 1);
 
-    pokemon_labels[0] = gtk_label_new("HP: ");
-    gtk_widget_set_name(pokemon_labels[0], "hp_label");
-    pokemon_labels[1] = gtk_image_new();
-    gtk_image_set_from_file(GTK_IMAGE(pokemon_labels[1]), "sprites/magnezone.png");
-    gtk_image_set_from_pixbuf(GTK_IMAGE(pokemon_labels[1]),
-        gdk_pixbuf_scale_simple(gtk_image_get_pixbuf(GTK_IMAGE(pokemon_labels[1])),
-        75, 75, GDK_INTERP_NEAREST));
-    pokemon_labels[2] = gtk_label_new("Energy: ");
-    gtk_widget_set_name(pokemon_labels[2], "energy_label");
+    pokemon_labels2[0] = gtk_label_new("HP: ");
+    gtk_widget_set_name(pokemon_labels2[0], "hp_label");
+    pokemon_labels2[1] = gtk_image_new();
+    
+    pokemon_labels2[2] = gtk_label_new("Energy: ");
+    gtk_widget_set_name(pokemon_labels2[2], "energy_label");
 
     for ( int label = 0; label < 3; ++label )
-        gtk_grid_attach(GTK_GRID(grid), pokemon_labels[label], 0, label + 4, 1, 1);
+        gtk_grid_attach(GTK_GRID(grid), pokemon_labels2[label], 0, label + 4, 1, 1);
 
     attacks_info_label = gtk_label_new("-");
     gtk_widget_set_name(attacks_info_label, "attacks_info");
     gtk_grid_attach(GTK_GRID(grid), attacks_info_label, 1, 2, 1, 4);
-
-    /*for ( int index = 0; index < 3; ++index )
-    {
-        input_labels[index] = gtk_entry_new();
-
-        char num[7] = "Input ";
-        num[6] = index + '1';
-
-        gtk_entry_set_text(GTK_ENTRY(input_labels[index]), num);
-
-        gtk_grid_attach(GTK_GRID(grid), input_labels[index], index, 7, 1, 1);
-    }*/
 
     button_start = gtk_button_new_with_label("Start");
     g_signal_connect(button_start, "clicked", G_CALLBACK(start_clicked), NULL);
