@@ -1,4 +1,4 @@
-all: prueba_consola#refactor prueba_consola #prueba_gui #refactor
+all: prueba_gui refactor
 
 prueba_consola: controller/game_master.c controller/mapper.c controller/player.c controller/pokemon.c controller/mainTest.c
 	gcc controller/game_master.c controller/mapper.c controller/player.c controller/pokemon.c controller/mainTest.c -pthread -std=gnu99 -lm -o prueba_consola

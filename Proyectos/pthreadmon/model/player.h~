@@ -17,7 +17,6 @@ typedef struct player
 player_t* player_create(char* player_name);
 void player_destroy(player_t* player);
 
-void set_name(player_t* player, char* name);
 pokemon_t** choose_team(int id1, int id2, int id3);
 
 #endif 

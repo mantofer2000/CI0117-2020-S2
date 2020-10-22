@@ -278,14 +278,14 @@ static void name_1(GtkWidget* widget, gpointer data)
 {
     player1_name = (char*) gtk_entry_get_text(GTK_ENTRY(data));
     printf("The name is %s\n", player1_name);
-    set_name(player1, player1_name);
+    player1 = player_create(player1_name);
 }
 
 static void name_2(GtkWidget* widget, gpointer data)
 {
     player2_name = (char*) gtk_entry_get_text(GTK_ENTRY(data));
     printf("The name is %s\n", player2_name);
-    set_name(player2, player2_name);
+    player2 = player_create(player2_name);
 }
 
 void player_get_name(GtkWindow* parent, int id)
@@ -345,6 +345,11 @@ static void start_async(GTask *task, gpointer source_object,
 
 static void create_players()
 {
+    // OJO
+    // Crear jugadores aqui
+    // Hacer la vara de los pokemon random
+    
+    // Pedir nombre y los pokemon que va a usar
     player_id = 1;
     player_get_name(GTK_WINDOW(window), player_id);
     
@@ -373,7 +378,6 @@ static gboolean draw_battle_arena(GtkWidget *widget, GdkEventExpose *event, gpoi
 
     if ( !(is_battle_over(player1, player2)) )
     {
-	//char* pokemon_one 
         gtk_image_set_from_file(GTK_IMAGE(pokemon_labels1[1]), "sprites/mew.png");
         gtk_image_set_from_pixbuf(GTK_IMAGE(pokemon_labels1[1]),
             gdk_pixbuf_scale_simple(gtk_image_get_pixbuf(GTK_IMAGE(pokemon_labels1[1])),
@@ -384,15 +388,8 @@ static gboolean draw_battle_arena(GtkWidget *widget, GdkEventExpose *event, gpoi
             gdk_pixbuf_scale_simple(gtk_image_get_pixbuf(GTK_IMAGE(pokemon_labels2[1])),
             75, 75, GDK_INTERP_NEAREST));
     }
-    else
-    {
-        gtk_image_clear(GTK_IMAGE(pokemon_labels1[1]));
-	gtk_image_clear(GTK_IMAGE(pokemon_labels2[1]));
-    }
 
     pthread_mutex_unlock(&battle_arena_mutex);
-
-    return TRUE;
 }
 
 static void activate(GtkApplication* app, gpointer user_data)
@@ -455,13 +452,6 @@ int main(int argc, char* argv[])
 {
     srand( time(NULL) );
     initialize_data();
-
-    // Evitar seg fault
-    player1 = player_create("Trainer1");
-    player1->pokemon_team = choose_team(0, 0, 0);
-
-    player2 = player_create("Trainer2");
-    player2->pokemon_team = choose_team(0, 0, 0);
 
     pthread_mutex_init(&battle_arena_mutex, NULL);
 
