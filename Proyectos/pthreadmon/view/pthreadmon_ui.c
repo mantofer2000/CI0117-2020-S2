@@ -373,22 +373,34 @@ static gboolean draw_battle_arena(GtkWidget *widget, GdkEventExpose *event, gpoi
 
     if ( !(is_battle_over(player1, player2)) )
     {
-	//char* pokemon_one 
-        gtk_image_set_from_file(GTK_IMAGE(pokemon_labels1[1]), "sprites/mew.png");
-        gtk_image_set_from_pixbuf(GTK_IMAGE(pokemon_labels1[1]),
-            gdk_pixbuf_scale_simple(gtk_image_get_pixbuf(GTK_IMAGE(pokemon_labels1[1])),
-            75, 75, GDK_INTERP_NEAREST));
+        if ( battle_arena )
+        {
+            pokemon_t* poke_one = active_poke_one;
+
+            char hp_1[10];
+            sprintf(hp_1, "HP: %d", poke_one->pokemon_info->id);
+            gtk_label_set_text(GTK_LABEL(pokemon_labels1[0]), hp_1);
+            gtk_label_set_text(GTK_LABEL(pokemon_labels1[1]), poke_one->pokemon_info->speciesName);
+
+            pokemon_t* poke_two = active_poke_two;
+
+            char poke_two_image[50];
+            sprintf(poke_two_image, "/sprites/%s.png", poke_two->pokemon_info->speciesName);
+            //printf("%s\n", poke_one->pokemon_info->speciesName);
+        }
+        
+        
             
-        gtk_image_set_from_file(GTK_IMAGE(pokemon_labels2[1]), "sprites/magnezone.png");
+        /*gtk_image_set_from_file(GTK_IMAGE(pokemon_labels2[1]), "sprites/magnezone.png");
         gtk_image_set_from_pixbuf(GTK_IMAGE(pokemon_labels2[1]),
             gdk_pixbuf_scale_simple(gtk_image_get_pixbuf(GTK_IMAGE(pokemon_labels2[1])),
-            75, 75, GDK_INTERP_NEAREST));
+            75, 75, GDK_INTERP_NEAREST));*/
     }
-    else
+    /*else
     {
         gtk_image_clear(GTK_IMAGE(pokemon_labels1[1]));
-	gtk_image_clear(GTK_IMAGE(pokemon_labels2[1]));
-    }
+	    gtk_image_clear(GTK_IMAGE(pokemon_labels2[1]));
+    }*/
 
     pthread_mutex_unlock(&battle_arena_mutex);
 
@@ -415,7 +427,7 @@ static void activate(GtkApplication* app, gpointer user_data)
 
     pokemon_labels1[0] = gtk_label_new("HP: ");
     gtk_widget_set_name(pokemon_labels1[0], "hp_label");
-    pokemon_labels1[1] = gtk_image_new();
+    pokemon_labels1[1] = gtk_label_new("-");
     
     pokemon_labels1[2] = gtk_label_new("Energy: ");
     gtk_widget_set_name(pokemon_labels1[2], "energy_label");
@@ -425,7 +437,7 @@ static void activate(GtkApplication* app, gpointer user_data)
 
     pokemon_labels2[0] = gtk_label_new("HP: ");
     gtk_widget_set_name(pokemon_labels2[0], "hp_label");
-    pokemon_labels2[1] = gtk_image_new();
+    pokemon_labels2[1] = gtk_label_new("-");
     
     pokemon_labels2[2] = gtk_label_new("Energy: ");
     gtk_widget_set_name(pokemon_labels2[2], "energy_label");

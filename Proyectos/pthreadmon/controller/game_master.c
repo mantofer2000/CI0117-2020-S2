@@ -32,6 +32,11 @@ void* fight_simulation(void * ptr){
                 pthread_cond_wait(&shared_data->cond_var, &shared_data->mutex);
             pthread_mutex_unlock(&shared_data->mutex);
         }
+            // GABRIEL
+            if ( private_data->team_number == TEAM_1 )
+                active_poke_one = private_data->pokemon;
+            else
+                active_poke_two = private_data->pokemon;
                 
             if(pokemon_charged_attack_availible(private_data->pokemon) == TRUE){
                 //private_data->pokemon->efectivity = get_efectivity(shared_data->poke_p_two->type_info->id, private_data->pokemon->charged_move_info->typeId);
@@ -103,7 +108,7 @@ void initialize_fight(player_t * p_one, player_t * p_two){
     player_t ** players_array = malloc(PLAYER_AMOUNT * sizeof(player_t*));
     pokemon_t ** poke_p_array = malloc(PLAYER_AMOUNT * sizeof(pokemon_t*));
     
-    battle_arena_t * battle_arena = (battle_arena_t *) malloc(sizeof(battle_arena_t));
+    battle_arena = (battle_arena_t *) malloc(sizeof(battle_arena_t));
     battle_arena->gotta_wait = FALSE;
 
     pthread_mutex_init(&battle_arena->mutex, NULL);
