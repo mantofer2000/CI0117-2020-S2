@@ -27,7 +27,6 @@ GtkWidget *attacks_info_label;
 
 GtkWidget *poke_list_labels[5];
 
-//GtkEntryBuffer *player1_name;
 char* player1_name;
 char* player2_name;
 
@@ -96,15 +95,13 @@ pokemon_t** generate_random_pokes()
         }
         if ( !(is_repeated) )
         {
-            random_pokemon_list[poke] = pokemon_create(rand_id);
-            //printf("%d: %s\n", random_pokemon_list[poke]->pokemon_info->id, random_pokemon_list[poke]->pokemon_info->speciesName); 
+            random_pokemon_list[poke] = pokemon_create(rand_id); 
             ++poke;
         }
     }
     return random_pokemon_list;
 }
 
-// Para que es esta vara si no hace nada? xd (revisar)
 static void my_callback(GObject *source_object, GAsyncResult *res,
                         gpointer user_data)
 {
@@ -358,12 +355,6 @@ static void start_clicked()
 {
     g_print("Start button pressed\n");
     create_players();
-
-    // Pasar esto a player_team
-    /*GCancellable *cancellable = g_cancellable_new();
-    GTask *task = g_task_new(g_object_new(G_TYPE_OBJECT, NULL), cancellable, my_callback, NULL);
-    g_task_run_in_thread(task, start_async);
-    g_object_unref(task);*/
 }
 
 
@@ -378,14 +369,20 @@ static gboolean draw_battle_arena(GtkWidget *widget, GdkEventExpose *event, gpoi
         {
             pokemon_t* poke_one = active_poke_one;
 
-            char hp_1[10];
-            sprintf(hp_1, "HP: %d", poke_one->hp);
+            char hp_1[50];
+            sprintf(hp_1, "Name: %s\nHP: %d", poke_one->pokemon_info->speciesName, poke_one->hp);
             gtk_label_set_text(GTK_LABEL(pokemon_labels1[0]), hp_1);
-            gtk_label_set_text(GTK_LABEL(pokemon_labels1[1]), poke_one->pokemon_info->speciesName);
 
-            char move_info_1[50];
-            sprintf(move_info_1, "Energy: %d\n", poke_one->energy);
-            gtk_label_set_text(GTK_LABEL(pokemon_labels1[2]), move_info_1);
+            gchar image_1[50];
+            sprintf(image_1, "sprites/%s.png", poke_one->pokemon_info->speciesName);
+            gtk_image_set_from_file(GTK_IMAGE(pokemon_labels1[1]), image_1);
+            gtk_image_set_from_pixbuf(GTK_IMAGE(pokemon_labels1[1]),
+                gdk_pixbuf_scale_simple(gtk_image_get_pixbuf(GTK_IMAGE(pokemon_labels1[1])),
+                75, 75, GDK_INTERP_NEAREST));
+
+            char energy_1[50];
+            sprintf(energy_1, "Energy: %d\n", poke_one->energy);
+            gtk_label_set_text(GTK_LABEL(pokemon_labels1[2]), energy_1);
 
             if ( poke_one->is_attacking )
             {
@@ -407,14 +404,20 @@ static gboolean draw_battle_arena(GtkWidget *widget, GdkEventExpose *event, gpoi
 
             pokemon_t* poke_two = active_poke_two;
 
-            char hp_2[10];
-            sprintf(hp_2, "HP: %d", poke_two->hp);
+            char hp_2[50];
+            sprintf(hp_2, "Name: %s\nHP: %d", poke_two->pokemon_info->speciesName, poke_two->hp);
             gtk_label_set_text(GTK_LABEL(pokemon_labels2[0]), hp_2);
-            gtk_label_set_text(GTK_LABEL(pokemon_labels2[1]), poke_two->pokemon_info->speciesName);
+            
+            gchar image_2[50];
+            sprintf(image_2, "sprites/%s.png", poke_two->pokemon_info->speciesName);
+            gtk_image_set_from_file(GTK_IMAGE(pokemon_labels2[1]), image_2);
+            gtk_image_set_from_pixbuf(GTK_IMAGE(pokemon_labels2[1]),
+                gdk_pixbuf_scale_simple(gtk_image_get_pixbuf(GTK_IMAGE(pokemon_labels2[1])),
+                75, 75, GDK_INTERP_NEAREST));
 
-            char move_info_2[50];
-            sprintf(move_info_2, "Energy: %d\n", poke_two->energy);
-            gtk_label_set_text(GTK_LABEL(pokemon_labels2[2]), move_info_2);
+            char energy_2[50];
+            sprintf(energy_2, "Energy: %d\n", poke_two->energy);
+            gtk_label_set_text(GTK_LABEL(pokemon_labels2[2]), energy_2);
 
             if ( poke_two->is_attacking )
             {
@@ -433,22 +436,10 @@ static gboolean draw_battle_arena(GtkWidget *widget, GdkEventExpose *event, gpoi
                     gtk_label_set_text(GTK_LABEL(attacks_info_label), fast);
                 }
             }
-
-            //char poke_two_image[50];
-            //sprintf(poke_two_image, "/sprites/%s.png", poke_two->pokemon_info->speciesName);
         }
-        
-        
-            
-        /*gtk_image_set_from_file(GTK_IMAGE(pokemon_labels2[1]), "sprites/magnezone.png");
-        gtk_image_set_from_pixbuf(GTK_IMAGE(pokemon_labels2[1]),
-            gdk_pixbuf_scale_simple(gtk_image_get_pixbuf(GTK_IMAGE(pokemon_labels2[1])),
-            75, 75, GDK_INTERP_NEAREST));*/
     }
     else
     {
-        // Podria mostrar en las mismas labels el HP con que quedaron los pokes
-        // O tambien mostrar un dialog con los resultados de todo
         if ( battle_arena )
         {
             pokemon_t* poke_one = active_poke_one;
@@ -457,15 +448,21 @@ static gboolean draw_battle_arena(GtkWidget *widget, GdkEventExpose *event, gpoi
 
             if (poke_one->hp <= 0)
             {
-                gtk_label_set_text(GTK_LABEL(pokemon_labels1[0]), "Lost");
+                sprintf(hp_1, "Name: %s\nLost", poke_one->pokemon_info->speciesName);
+                gtk_label_set_text(GTK_LABEL(pokemon_labels1[0]), hp_1);
             }
             else
             {
-                sprintf(hp_1, "HP: %d", poke_one->hp);
+                sprintf(hp_1, "Name: %s\nHP: %d", poke_one->pokemon_info->speciesName, poke_one->hp);
                 gtk_label_set_text(GTK_LABEL(pokemon_labels1[0]), hp_1);
             }
             
-            gtk_label_set_text(GTK_LABEL(pokemon_labels1[1]), poke_one->pokemon_info->speciesName);
+            gchar image_1[50];
+            sprintf(image_1, "sprites/%s.png", poke_one->pokemon_info->speciesName);
+            gtk_image_set_from_file(GTK_IMAGE(pokemon_labels1[1]), image_1);
+            gtk_image_set_from_pixbuf(GTK_IMAGE(pokemon_labels1[1]),
+                gdk_pixbuf_scale_simple(gtk_image_get_pixbuf(GTK_IMAGE(pokemon_labels1[1])),
+                75, 75, GDK_INTERP_NEAREST));
 
             char move_info_1[50];
             sprintf(move_info_1, "Energy: %d\n", poke_one->energy);
@@ -477,20 +474,36 @@ static gboolean draw_battle_arena(GtkWidget *widget, GdkEventExpose *event, gpoi
 
             if (poke_two->hp <= 0)
             {
-                gtk_label_set_text(GTK_LABEL(pokemon_labels2[0]), "Lost");
+                sprintf(hp_2, "Name: %s\nLost", poke_two->pokemon_info->speciesName);
+                gtk_label_set_text(GTK_LABEL(pokemon_labels1[0]), hp_2);
             }
             else
             {
-                sprintf(hp_2, "HP: %d", poke_two->hp);
+                sprintf(hp_2, "Name: %s\nHP: %d", poke_two->pokemon_info->speciesName, poke_two->hp);
                 gtk_label_set_text(GTK_LABEL(pokemon_labels2[0]), hp_2);
             }
 
-            gtk_label_set_text(GTK_LABEL(pokemon_labels2[1]), poke_two->pokemon_info->speciesName);
+            gchar image_2[50];
+            sprintf(image_2, "sprites/%s.png", poke_two->pokemon_info->speciesName);
+            gtk_image_set_from_file(GTK_IMAGE(pokemon_labels2[1]), image_2);
+            gtk_image_set_from_pixbuf(GTK_IMAGE(pokemon_labels2[1]),
+                gdk_pixbuf_scale_simple(gtk_image_get_pixbuf(GTK_IMAGE(pokemon_labels2[1])),
+                75, 75, GDK_INTERP_NEAREST));
 
             char move_info_2[50];
             sprintf(move_info_2, "Energy: %d\n", poke_two->energy);
             gtk_label_set_text(GTK_LABEL(pokemon_labels2[2]), move_info_2);
+
+            char announce[20];
+
+            if ( poke_one->hp <= 0 )
+                sprintf(announce, "The winner is %s!!", poke_two->pokemon_info->speciesName);
+            else
+                sprintf(announce, "The winner is %s!!", poke_one->pokemon_info->speciesName);
+
+            gtk_label_set_text(GTK_LABEL(attacks_info_label), announce);
         }
+        
     }
 
     pthread_mutex_unlock(&battle_arena_mutex);
@@ -518,7 +531,7 @@ static void activate(GtkApplication* app, gpointer user_data)
 
     pokemon_labels1[0] = gtk_label_new("HP: ");
     gtk_widget_set_name(pokemon_labels1[0], "hp_label");
-    pokemon_labels1[1] = gtk_label_new("-");
+    pokemon_labels1[1] = gtk_image_new();
     
     pokemon_labels1[2] = gtk_label_new("Info: ");
     gtk_widget_set_name(pokemon_labels1[2], "energy_label");
@@ -528,7 +541,7 @@ static void activate(GtkApplication* app, gpointer user_data)
 
     pokemon_labels2[0] = gtk_label_new("HP: ");
     gtk_widget_set_name(pokemon_labels2[0], "hp_label");
-    pokemon_labels2[1] = gtk_label_new("-");
+    pokemon_labels2[1] = gtk_image_new();
     
     pokemon_labels2[2] = gtk_label_new("Info: ");
     gtk_widget_set_name(pokemon_labels2[2], "energy_label");
