@@ -162,7 +162,8 @@ static void options_dialog(GtkWindow* parent)
 
 static void verify()
 {
-    if ( !(is_an_option(id1)) || !(is_an_option(id2)) || !(is_an_option(id3)) )
+    if ( !(is_an_option(id1)) || !(is_an_option(id2)) || !(is_an_option(id3))
+        || (id1 == id2) || (id1 == id3) || (id2 == id3) )
         options_dialog(GTK_WINDOW(window));
     else
         player_team();
@@ -326,8 +327,16 @@ static gboolean draw_battle_arena(GtkWidget *widget, GdkEventExpose *event, gpoi
             pokemon_t* poke_one = active_poke_one;
 
             char hp_1[50];
-            sprintf(hp_1, "Name: %s\nHP: %d", poke_one->pokemon_info->speciesName, poke_one->hp);
-            gtk_label_set_text(GTK_LABEL(pokemon_labels1[0]), hp_1);
+            if (poke_one->hp <= 0)
+            {
+                sprintf(hp_1, "Name: %s\nLost", poke_one->pokemon_info->speciesName);
+                gtk_label_set_text(GTK_LABEL(pokemon_labels1[0]), hp_1);
+            }
+            else
+            {
+                sprintf(hp_1, "Name: %s\nHP: %d", poke_one->pokemon_info->speciesName, poke_one->hp);
+                gtk_label_set_text(GTK_LABEL(pokemon_labels1[0]), hp_1);
+            }
 
             gchar image_1[50];
             sprintf(image_1, "sprites/%s.png", poke_one->pokemon_info->speciesName);
@@ -361,8 +370,16 @@ static gboolean draw_battle_arena(GtkWidget *widget, GdkEventExpose *event, gpoi
             pokemon_t* poke_two = active_poke_two;
 
             char hp_2[50];
-            sprintf(hp_2, "Name: %s\nHP: %d", poke_two->pokemon_info->speciesName, poke_two->hp);
-            gtk_label_set_text(GTK_LABEL(pokemon_labels2[0]), hp_2);
+            if (poke_two->hp <= 0)
+            {
+                sprintf(hp_2, "Name: %s\nLost", poke_two->pokemon_info->speciesName);
+                gtk_label_set_text(GTK_LABEL(pokemon_labels2[0]), hp_2);
+            }
+            else
+            {
+                sprintf(hp_2, "Name: %s\nHP: %d", poke_two->pokemon_info->speciesName, poke_two->hp);
+                gtk_label_set_text(GTK_LABEL(pokemon_labels2[0]), hp_2);
+            }
             
             gchar image_2[50];
             sprintf(image_2, "sprites/%s.png", poke_two->pokemon_info->speciesName);
@@ -431,7 +448,7 @@ static gboolean draw_battle_arena(GtkWidget *widget, GdkEventExpose *event, gpoi
             if (poke_two->hp <= 0)
             {
                 sprintf(hp_2, "Name: %s\nLost", poke_two->pokemon_info->speciesName);
-                gtk_label_set_text(GTK_LABEL(pokemon_labels1[0]), hp_2);
+                gtk_label_set_text(GTK_LABEL(pokemon_labels2[0]), hp_2);
             }
             else
             {
