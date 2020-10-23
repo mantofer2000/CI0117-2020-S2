@@ -2,7 +2,7 @@ pthreadmon
 
 *
 !*.c
-!Makefile
+!makefile
 !.gitignore
 !*.md
 !*.h
