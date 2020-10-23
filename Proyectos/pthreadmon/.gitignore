@@ -1,1 +1,13 @@
 pthreadmon
+
+*
+!*.c
+!Makefile
+!.gitignore
+!*.md
+!*.h
+!.css
+!*.png
+!*.pdf
+!*.pptx
+!*/
