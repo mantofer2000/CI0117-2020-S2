@@ -108,36 +108,6 @@ static void my_callback(GObject *source_object, GAsyncResult *res,
    /* Do nothing */
 }
 
-/*void get_player_inputs(GtkWindow* parent, gchar* message)
-{
-    GtkDialogFlags flags;
-    flags = GTK_DIALOG_DESTROY_WITH_PARENT;
-    dialog = gtk_dialog_new_with_buttons("Choose", parent, flags,
-        ("_OK"), GTK_RESPONSE_NONE, NULL);
-
-    content_area = gtk_dialog_get_content_area(GTK_DIALOG(dialog));
-    label = gtk_label_new(message);
-    
-    //box = gtk_box_new(TRUE, 2);
-    //gtk_container_add(GTK_CONTAINER(dialog), box);
-
-    gtk_container_add(GTK_CONTAINER(content_area), label);
-
-    for ( int index = 0; index < 3; ++index )
-    {
-        input_labels[index] = gtk_entry_new();
-        gtk_entry_set_text(GTK_ENTRY(input_labels[index]), "label");
-
-        gtk_container_add(GTK_CONTAINER(content_area), input_labels[index]);
-    }
-
-    
-
-    g_signal_connect_swapped(dialog, "response", G_CALLBACK(gtk_widget_destroy), dialog);
-
-    gtk_widget_show_all(dialog);
-}*/
-
 static void player_team()
 {
     if ( player_id == 1 )
@@ -202,21 +172,18 @@ static void assign_id1(GtkWidget* widget, gpointer data)
 {
     char* temp = (char*) gtk_entry_get_text(GTK_ENTRY(data));
     id1 = strtoul(temp, NULL, 10);
-    printf("%d\n", id1);
 }
 
 static void assign_id2(GtkWidget* widget, gpointer data)
 {
     char* temp = (char*) gtk_entry_get_text(GTK_ENTRY(data));
     id2 = strtoul(temp, NULL, 10);
-    printf("%d\n", id2);
 }
 
 static void assign_id3(GtkWidget* widget, gpointer data)
 {
     char* temp = (char*) gtk_entry_get_text(GTK_ENTRY(data));
     id3 = strtoul(temp, NULL, 10);
-    printf("%d\n", id3);
     verify();
 }
 
@@ -235,7 +202,6 @@ static void show_poke_list(GtkWindow* parent)
 
     for ( int index = 0; index < 5; ++index )
     {
-        printf("%d: %s\n", random_pokemon_list[index]->pokemon_info->id, random_pokemon_list[index]->pokemon_info->speciesName); 
         char temp[50];
         sprintf(temp, "%d: %s", random_pokemon_list[index]->pokemon_info->id,
                 random_pokemon_list[index]->pokemon_info->speciesName);
@@ -267,21 +233,18 @@ static void show_poke_list(GtkWindow* parent)
 
 static void poke_list(GtkWidget* widget, gpointer data)
 {
-    printf("The poke list is here\n");
     show_poke_list(GTK_WINDOW(window));
 }
 
 static void name_1(GtkWidget* widget, gpointer data)
 {
     player1_name = (char*) gtk_entry_get_text(GTK_ENTRY(data));
-    printf("The name is %s\n", player1_name);
     set_name(player1, player1_name);
 }
 
 static void name_2(GtkWidget* widget, gpointer data)
 {
     player2_name = (char*) gtk_entry_get_text(GTK_ENTRY(data));
-    printf("The name is %s\n", player2_name);
     set_name(player2, player2_name);
 }
 
@@ -290,7 +253,7 @@ void player_get_name(GtkWindow* parent, int id)
     GtkDialogFlags flags;
     flags = GTK_DIALOG_DESTROY_WITH_PARENT;
     dialog = gtk_dialog_new();
-    // Recordar hacer un sprintf para  especificar el id del jugador
+    
     gtk_window_set_title(GTK_WINDOW(dialog), "Name");
 
     random_pokemon_list = generate_random_pokes();
@@ -336,7 +299,6 @@ static void start_async(GTask *task, gpointer source_object,
                         gpointer task_data, GCancellable *cancellable)
 {  
     // Una vez creados los jugadores, INICIAR BATALLA
-    printf("Ya me llamaron\n");
     initialize_fight(player1, player2);
 }
 
@@ -344,19 +306,13 @@ static void create_players()
 {
     player_id = 1;
     player_get_name(GTK_WINDOW(window), player_id);
-    
-    //get_player_inputs(GTK_WINDOW(window), "Choose three");
-    // Si la entrada esta mal volver a llamar esa ventana hasta que
-    // los ponga bien
 }
 
 // Este metodo es llamado cuando se hace click en el boton START.
 static void start_clicked()
 {
-    g_print("Start button pressed\n");
     create_players();
 }
-
 
 static gboolean draw_battle_arena(GtkWidget *widget, GdkEventExpose *event, gpointer data)
 {
