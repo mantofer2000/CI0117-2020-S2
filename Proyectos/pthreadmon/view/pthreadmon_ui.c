@@ -311,7 +311,6 @@ static void create_players()
 // Este metodo es llamado cuando se hace click en el boton START.
 static void start_clicked()
 {
-    g_print("Start button pressed\n");
     create_players();
 }
 
