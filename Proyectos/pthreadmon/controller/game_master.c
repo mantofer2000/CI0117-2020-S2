@@ -22,7 +22,7 @@ void* fight_simulation(void * ptr){
             pthread_cond_signal(&shared_data->cond_var);
         pthread_mutex_unlock(&shared_data->mutex);
 
-        printf(" READY TO FIGHT %d \n", private_data->thread_id);
+        //printf(" READY TO FIGHT %d \n", private_data->thread_id);
     }
 
     
@@ -82,7 +82,7 @@ void* fight_simulation(void * ptr){
                 
             shared_data->players_array[private_data->team_number]->pokemon_availible -= 1;
             //int to_wake = (switch_pokemon(shared_data, private_data->team_id, private_data->thread_id) *  2) + 1;
-            printf("I LOST, %d , ENEMY HP : %d \n", private_data->thread_id, shared_data->poke_p_array[enemy_team_number]->hp);
+            //printf("I LOST, %d , ENEMY HP : %d \n", private_data->thread_id, shared_data->poke_p_array[enemy_team_number]->hp);
         
         
         if(!is_battle_over(shared_data->players_array[TEAM_1], shared_data->players_array[TEAM_2])){sem_post(&shared_data->pokemon_semaphore_array[private_data->thread_id + 2]);}
@@ -201,7 +201,26 @@ void initialize_fight(player_t * p_one, player_t * p_two){
 
     free(threads);
     free(private_data_array);
+    free(battle_arena->pokemon_semaphore_array);
+    
+    for(size_t z = 0; z < TOTAL_POKEMON; z++){
+        free(battle_arena->players_array[TEAM_1]->pokemon_team[z]->charged_move_info);
+        free(battle_arena->players_array[TEAM_1]->pokemon_team[z]->fast_move_info);
+        free(battle_arena->players_array[TEAM_1]->pokemon_team[z]->type_info);
+        free(battle_arena->players_array[TEAM_1]->pokemon_team[z]->pokemon_info);
+
+        free(battle_arena->players_array[TEAM_2]->pokemon_team[z]->charged_move_info);
+        free(battle_arena->players_array[TEAM_2]->pokemon_team[z]->fast_move_info);
+        free(battle_arena->players_array[TEAM_2]->pokemon_team[z]->type_info);
+        free(battle_arena->players_array[TEAM_2]->pokemon_team[z]->pokemon_info);
+    }
+
+    free(battle_arena->players_array[TEAM_1]->pokemon_team);
+    free(battle_arena->players_array[TEAM_2]->pokemon_team);
+
     free(battle_arena);
+
+    battle_arena = NULL;
 
 }
 
