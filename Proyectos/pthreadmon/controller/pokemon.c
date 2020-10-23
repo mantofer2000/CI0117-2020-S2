@@ -59,7 +59,6 @@ void pokemon_destroy(pokemon_t * pokemon){
 }
 
 
-
 int pokemon_fast_attack(pokemon_t * pokemon){
     int damage = floor((pokemon->fast_move_info->power) * pokemon->efectivity * BONUS) + 1;
     pokemon->energy += pokemon->fast_move_info->energyGain;
