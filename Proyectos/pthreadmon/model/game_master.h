@@ -26,22 +26,10 @@ typedef struct{
     pthread_cond_t sleep_cond_var;
 
     player_t ** players_array;
-    //player_t * player_two;
-
-    // estos pokemon son los que estan
-    // peleando actualmente
-    // estan aca ya que se puedan quitar la vida
-    // entre si
-    
     int gotta_wait;
-
     player_t * winner;
     
     pokemon_t ** poke_p_array;
-
-    //pokemon_t * poke_p_one;
-    //pokemon_t * poke_p_two;
-
 }battle_arena_t;
 
 

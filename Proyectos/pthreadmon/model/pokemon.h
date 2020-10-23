@@ -16,7 +16,6 @@
 
 typedef struct
 {
-    //int id; // va aqui porque el usuario lo define
     int hp; // es 1500
     int efectivity; // por default es 1, pero depende del ambiente que puede cambiar
     int energy; // en la energia actual, cada vez que aterriza un ataque rapido la carga
