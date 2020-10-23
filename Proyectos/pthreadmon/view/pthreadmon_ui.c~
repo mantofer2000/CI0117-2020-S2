@@ -278,14 +278,14 @@ static void name_1(GtkWidget* widget, gpointer data)
 {
     player1_name = (char*) gtk_entry_get_text(GTK_ENTRY(data));
     printf("The name is %s\n", player1_name);
-    set_name(player1, player1_name);
+    player1 = player_create(player1_name);
 }
 
 static void name_2(GtkWidget* widget, gpointer data)
 {
     player2_name = (char*) gtk_entry_get_text(GTK_ENTRY(data));
     printf("The name is %s\n", player2_name);
-    set_name(player2, player2_name);
+    player2 = player_create(player2_name);
 }
 
 void player_get_name(GtkWindow* parent, int id)
@@ -345,6 +345,11 @@ static void start_async(GTask *task, gpointer source_object,
 
 static void create_players()
 {
+    // OJO
+    // Crear jugadores aqui
+    // Hacer la vara de los pokemon random
+    
+    // Pedir nombre y los pokemon que va a usar
     player_id = 1;
     player_get_name(GTK_WINDOW(window), player_id);
     
@@ -373,129 +378,18 @@ static gboolean draw_battle_arena(GtkWidget *widget, GdkEventExpose *event, gpoi
 
     if ( !(is_battle_over(player1, player2)) )
     {
-        
-        if ( battle_arena )
-        {
-            pokemon_t* poke_one = active_poke_one;
-
-            char hp_1[10];
-            sprintf(hp_1, "HP: %d", poke_one->hp);
-            gtk_label_set_text(GTK_LABEL(pokemon_labels1[0]), hp_1);
-            gtk_label_set_text(GTK_LABEL(pokemon_labels1[1]), poke_one->pokemon_info->speciesName);
-
-            char move_info_1[50];
-            sprintf(move_info_1, "Energy: %d\n", poke_one->energy);
-            gtk_label_set_text(GTK_LABEL(pokemon_labels1[2]), move_info_1);
-
-            if ( poke_one->is_attacking )
-            {
-                if ( poke_one->attacking_charged )
-                {
-                    char charged[50];
-                    sprintf(charged, "%s is using a CHARGED %s!!",
-                        poke_one->pokemon_info->speciesName, poke_one->charged_move_info->moveName);
-                    gtk_label_set_text(GTK_LABEL(attacks_info_label), charged);
-                }
-                else if ( poke_one->attacking_fast )
-                {
-                    char fast[50];
-                    sprintf(fast, "%s is using %s!",
-                        poke_one->pokemon_info->speciesName, poke_one->fast_move_info->moveName);
-                    gtk_label_set_text(GTK_LABEL(attacks_info_label), fast);
-                }
-            }
-
-            pokemon_t* poke_two = active_poke_two;
-
-            char hp_2[10];
-            sprintf(hp_2, "HP: %d", poke_two->hp);
-            gtk_label_set_text(GTK_LABEL(pokemon_labels2[0]), hp_2);
-            gtk_label_set_text(GTK_LABEL(pokemon_labels2[1]), poke_two->pokemon_info->speciesName);
-
-            char move_info_2[50];
-            sprintf(move_info_2, "Energy: %d\n", poke_two->energy);
-            gtk_label_set_text(GTK_LABEL(pokemon_labels2[2]), move_info_2);
-
-            if ( poke_two->is_attacking )
-            {
-                if ( poke_two->attacking_charged )
-                {
-                    char charged[50];
-                    sprintf(charged, "%s is using a CHARGED %s!!",
-                        poke_two->pokemon_info->speciesName, poke_two->charged_move_info->moveName);
-                    gtk_label_set_text(GTK_LABEL(attacks_info_label), charged);
-                }
-                else if ( poke_two->attacking_fast )
-                {
-                    char fast[50];
-                    sprintf(fast, "%s is using %s!",
-                        poke_two->pokemon_info->speciesName, poke_two->fast_move_info->moveName);
-                    gtk_label_set_text(GTK_LABEL(attacks_info_label), fast);
-                }
-            }
-
-            //char poke_two_image[50];
-            //sprintf(poke_two_image, "/sprites/%s.png", poke_two->pokemon_info->speciesName);
-        }
-        
-        
+        gtk_image_set_from_file(GTK_IMAGE(pokemon_labels1[1]), "sprites/mew.png");
+        gtk_image_set_from_pixbuf(GTK_IMAGE(pokemon_labels1[1]),
+            gdk_pixbuf_scale_simple(gtk_image_get_pixbuf(GTK_IMAGE(pokemon_labels1[1])),
+            75, 75, GDK_INTERP_NEAREST));
             
-        /*gtk_image_set_from_file(GTK_IMAGE(pokemon_labels2[1]), "sprites/magnezone.png");
+        gtk_image_set_from_file(GTK_IMAGE(pokemon_labels2[1]), "sprites/magnezone.png");
         gtk_image_set_from_pixbuf(GTK_IMAGE(pokemon_labels2[1]),
             gdk_pixbuf_scale_simple(gtk_image_get_pixbuf(GTK_IMAGE(pokemon_labels2[1])),
-            75, 75, GDK_INTERP_NEAREST));*/
-    }
-    else
-    {
-        // Podria mostrar en las mismas labels el HP con que quedaron los pokes
-        // O tambien mostrar un dialog con los resultados de todo
-        if ( battle_arena )
-        {
-            pokemon_t* poke_one = active_poke_one;
-
-            char hp_1[10];
-
-            if (poke_one->hp <= 0)
-            {
-                gtk_label_set_text(GTK_LABEL(pokemon_labels1[0]), "Lost");
-            }
-            else
-            {
-                sprintf(hp_1, "HP: %d", poke_one->hp);
-                gtk_label_set_text(GTK_LABEL(pokemon_labels1[0]), hp_1);
-            }
-            
-            gtk_label_set_text(GTK_LABEL(pokemon_labels1[1]), poke_one->pokemon_info->speciesName);
-
-            char move_info_1[50];
-            sprintf(move_info_1, "Energy: %d\n", poke_one->energy);
-            gtk_label_set_text(GTK_LABEL(pokemon_labels1[2]), move_info_1);
-
-            pokemon_t* poke_two = active_poke_two;
-
-            char hp_2[10];
-
-            if (poke_two->hp <= 0)
-            {
-                gtk_label_set_text(GTK_LABEL(pokemon_labels2[0]), "Lost");
-            }
-            else
-            {
-                sprintf(hp_2, "HP: %d", poke_two->hp);
-                gtk_label_set_text(GTK_LABEL(pokemon_labels2[0]), hp_2);
-            }
-
-            gtk_label_set_text(GTK_LABEL(pokemon_labels2[1]), poke_two->pokemon_info->speciesName);
-
-            char move_info_2[50];
-            sprintf(move_info_2, "Energy: %d\n", poke_two->energy);
-            gtk_label_set_text(GTK_LABEL(pokemon_labels2[2]), move_info_2);
-        }
+            75, 75, GDK_INTERP_NEAREST));
     }
 
     pthread_mutex_unlock(&battle_arena_mutex);
-
-    return TRUE;
 }
 
 static void activate(GtkApplication* app, gpointer user_data)
@@ -518,19 +412,19 @@ static void activate(GtkApplication* app, gpointer user_data)
 
     pokemon_labels1[0] = gtk_label_new("HP: ");
     gtk_widget_set_name(pokemon_labels1[0], "hp_label");
-    pokemon_labels1[1] = gtk_label_new("-");
+    pokemon_labels1[1] = gtk_image_new();
     
-    pokemon_labels1[2] = gtk_label_new("Info: ");
+    pokemon_labels1[2] = gtk_label_new("Energy: ");
     gtk_widget_set_name(pokemon_labels1[2], "energy_label");
 
     for ( int label = 0; label < 3; ++label )
-        gtk_grid_attach(GTK_GRID(grid), pokemon_labels1[label], 3, label + 1, 1, 1);
+        gtk_grid_attach(GTK_GRID(grid), pokemon_labels1[label], 2, label + 1, 1, 1);
 
     pokemon_labels2[0] = gtk_label_new("HP: ");
     gtk_widget_set_name(pokemon_labels2[0], "hp_label");
-    pokemon_labels2[1] = gtk_label_new("-");
+    pokemon_labels2[1] = gtk_image_new();
     
-    pokemon_labels2[2] = gtk_label_new("Info: ");
+    pokemon_labels2[2] = gtk_label_new("Energy: ");
     gtk_widget_set_name(pokemon_labels2[2], "energy_label");
 
     for ( int label = 0; label < 3; ++label )
@@ -538,7 +432,7 @@ static void activate(GtkApplication* app, gpointer user_data)
 
     attacks_info_label = gtk_label_new("-");
     gtk_widget_set_name(attacks_info_label, "attacks_info");
-    gtk_grid_attach(GTK_GRID(grid), attacks_info_label, 1, 2, 2, 4);
+    gtk_grid_attach(GTK_GRID(grid), attacks_info_label, 1, 2, 1, 4);
 
     button_start = gtk_button_new_with_label("Start");
     g_signal_connect(button_start, "clicked", G_CALLBACK(start_clicked), NULL);
@@ -558,13 +452,6 @@ int main(int argc, char* argv[])
 {
     srand( time(NULL) );
     initialize_data();
-
-    // Evitar seg fault
-    player1 = player_create("Trainer1");
-    player1->pokemon_team = choose_team(0, 0, 0);
-
-    player2 = player_create("Trainer2");
-    player2->pokemon_team = choose_team(0, 0, 0);
 
     pthread_mutex_init(&battle_arena_mutex, NULL);
 

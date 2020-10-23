@@ -32,14 +32,21 @@ void* fight_simulation(void * ptr){
                 pthread_cond_wait(&shared_data->cond_var, &shared_data->mutex);
             pthread_mutex_unlock(&shared_data->mutex);
         }
+            // GABRIEL
+            if ( private_data->team_number == TEAM_1 )
+                active_poke_one = private_data->pokemon;
+            else
+                active_poke_two = private_data->pokemon;
                 
             if(pokemon_charged_attack_availible(private_data->pokemon) == TRUE){
                 //private_data->pokemon->efectivity = get_efectivity(shared_data->poke_p_two->type_info->id, private_data->pokemon->charged_move_info->typeId);
+                private_data->pokemon->is_attacking = 1; // Gabo
+                private_data->pokemon->attacking_charged = 1;
                 private_data->pokemon->efectivity = get_efectivity(shared_data->poke_p_array[enemy_team_number]->type_info->id, private_data->pokemon->charged_move_info->typeId);
                 pthread_mutex_lock(&shared_data->mutex);
                     shared_data->gotta_wait = TRUE;
                 pthread_mutex_unlock(&shared_data->mutex);
-                
+
                 //shared_data->poke_p_two->hp -= pokemon_charged_attack(private_data->pokemon);
                 shared_data->poke_p_array[enemy_team_number]->hp -= pokemon_charged_attack(private_data->pokemon);
                 
@@ -48,11 +55,17 @@ void* fight_simulation(void * ptr){
                     shared_data->gotta_wait = FALSE;
                     pthread_cond_broadcast(&shared_data->sleep_cond_var);
                 pthread_mutex_unlock(&shared_data->mutex);
-                usleep(private_data->pokemon->charged_move_info->cooldown);    
+                usleep(private_data->pokemon->charged_move_info->cooldown);
+                private_data->pokemon->is_attacking = 0;
+                private_data->pokemon->attacking_charged = 0;    
             }else{
+                private_data->pokemon->is_attacking = 1; // Gabo
+                private_data->pokemon->attacking_fast = 1;
                 private_data->pokemon->efectivity = get_efectivity(shared_data->poke_p_array[enemy_team_number]->type_info->id, private_data->pokemon->fast_move_info->typeId);
                 shared_data->poke_p_array[enemy_team_number]->hp -= pokemon_fast_attack(private_data->pokemon);
                 usleep(private_data->pokemon->fast_move_info->cooldown);
+                private_data->pokemon->is_attacking = 0;
+                private_data->pokemon->attacking_fast = 0;
             }
             if(!shared_data->poke_p_array[enemy_team_number]->hp){
                 pthread_mutex_lock(&shared_data->mutex);
@@ -103,7 +116,7 @@ void initialize_fight(player_t * p_one, player_t * p_two){
     player_t ** players_array = malloc(PLAYER_AMOUNT * sizeof(player_t*));
     pokemon_t ** poke_p_array = malloc(PLAYER_AMOUNT * sizeof(pokemon_t*));
     
-    battle_arena_t * battle_arena = (battle_arena_t *) malloc(sizeof(battle_arena_t));
+    battle_arena = (battle_arena_t *) malloc(sizeof(battle_arena_t));
     battle_arena->gotta_wait = FALSE;
 
     pthread_mutex_init(&battle_arena->mutex, NULL);

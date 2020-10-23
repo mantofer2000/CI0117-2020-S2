@@ -15,11 +15,6 @@ void player_destroy(player_t* player)
     free(player);
 }
 
-void set_name(player_t* player, char* name)
-{
-   player->player_name = name;
-}
-
 pokemon_t** choose_team(int id1, int id2, int id3)
 {
     pokemon_t** pokemon_team = malloc( 3 * sizeof(pokemon_t*) );

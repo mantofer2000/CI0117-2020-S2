@@ -54,6 +54,11 @@ typedef struct{
     battle_arena_t * shared_data;
 }private_data_t;
 
+// GABRIEL
+battle_arena_t* battle_arena;
+
+pokemon_t* active_poke_one;
+pokemon_t* active_poke_two;
 
 void initialize_fight(player_t * p_one, player_t * p_two);
 
