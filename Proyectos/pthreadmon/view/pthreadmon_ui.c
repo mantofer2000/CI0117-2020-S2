@@ -409,7 +409,7 @@ static gboolean draw_battle_arena(GtkWidget *widget, GdkEventExpose *event, gpoi
             gtk_label_set_text(GTK_LABEL(pokemon_labels2[0]), hp_2);
             
             gchar image_2[50];
-            sprintf(image_1, "sprites/%s.png", poke_two->pokemon_info->speciesName);
+            sprintf(image_2, "sprites/%s.png", poke_two->pokemon_info->speciesName);
             gtk_image_set_from_file(GTK_IMAGE(pokemon_labels2[1]), image_2);
             gtk_image_set_from_pixbuf(GTK_IMAGE(pokemon_labels2[1]),
                 gdk_pixbuf_scale_simple(gtk_image_get_pixbuf(GTK_IMAGE(pokemon_labels2[1])),
@@ -474,15 +474,21 @@ static gboolean draw_battle_arena(GtkWidget *widget, GdkEventExpose *event, gpoi
 
             if (poke_two->hp <= 0)
             {
-                gtk_label_set_text(GTK_LABEL(pokemon_labels2[0]), "Lost");
+                sprintf(hp_2, "Name: %s\nLost", poke_two->pokemon_info->speciesName);
+                gtk_label_set_text(GTK_LABEL(pokemon_labels1[0]), hp_2);
             }
             else
             {
-                sprintf(hp_2, "HP: %d", poke_two->hp);
+                sprintf(hp_2, "Name: %s\nHP: %d", poke_two->pokemon_info->speciesName, poke_two->hp);
                 gtk_label_set_text(GTK_LABEL(pokemon_labels2[0]), hp_2);
             }
 
-            gtk_label_set_text(GTK_LABEL(pokemon_labels2[1]), poke_two->pokemon_info->speciesName);
+            gchar image_2[50];
+            sprintf(image_2, "sprites/%s.png", poke_two->pokemon_info->speciesName);
+            gtk_image_set_from_file(GTK_IMAGE(pokemon_labels2[1]), image_2);
+            gtk_image_set_from_pixbuf(GTK_IMAGE(pokemon_labels2[1]),
+                gdk_pixbuf_scale_simple(gtk_image_get_pixbuf(GTK_IMAGE(pokemon_labels2[1])),
+                75, 75, GDK_INTERP_NEAREST));
 
             char move_info_2[50];
             sprintf(move_info_2, "Energy: %d\n", poke_two->energy);
@@ -535,7 +541,7 @@ static void activate(GtkApplication* app, gpointer user_data)
 
     pokemon_labels2[0] = gtk_label_new("HP: ");
     gtk_widget_set_name(pokemon_labels2[0], "hp_label");
-    pokemon_labels2[1] = gtk_label_new("-");
+    pokemon_labels2[1] = gtk_image_new();
     
     pokemon_labels2[2] = gtk_label_new("Info: ");
     gtk_widget_set_name(pokemon_labels2[2], "energy_label");
