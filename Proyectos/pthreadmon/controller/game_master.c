@@ -55,7 +55,7 @@ void* fight_simulation(void * ptr){
                     shared_data->gotta_wait = FALSE;
                     pthread_cond_broadcast(&shared_data->sleep_cond_var);
                 pthread_mutex_unlock(&shared_data->mutex);
-                usleep(private_data->pokemon->charged_move_info->cooldown);
+                usleep(private_data->pokemon->charged_move_info->cooldown * 1000);
                 private_data->pokemon->is_attacking = 0;
                 private_data->pokemon->attacking_charged = 0;    
             }else{
@@ -63,7 +63,7 @@ void* fight_simulation(void * ptr){
                 private_data->pokemon->attacking_fast = 1;
                 private_data->pokemon->efectivity = get_efectivity(shared_data->poke_p_array[enemy_team_number]->type_info->id, private_data->pokemon->fast_move_info->typeId);
                 shared_data->poke_p_array[enemy_team_number]->hp -= pokemon_fast_attack(private_data->pokemon);
-                usleep(private_data->pokemon->fast_move_info->cooldown);
+                usleep(private_data->pokemon->fast_move_info->cooldown * 1000);
                 private_data->pokemon->is_attacking = 0;
                 private_data->pokemon->attacking_fast = 0;
             }
