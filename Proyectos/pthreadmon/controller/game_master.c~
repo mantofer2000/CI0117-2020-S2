@@ -50,12 +50,12 @@ void* fight_simulation(void * ptr){
                 //shared_data->poke_p_two->hp -= pokemon_charged_attack(private_data->pokemon);
                 shared_data->poke_p_array[enemy_team_number]->hp -= pokemon_charged_attack(private_data->pokemon);
                 
-                
+                usleep(private_data->pokemon->charged_move_info->cooldown * 1000);
                 pthread_mutex_lock(&shared_data->mutex);
                     shared_data->gotta_wait = FALSE;
                     pthread_cond_broadcast(&shared_data->sleep_cond_var);
                 pthread_mutex_unlock(&shared_data->mutex);
-                usleep(private_data->pokemon->charged_move_info->cooldown * 1000);
+                
                 private_data->pokemon->is_attacking = 0;
                 private_data->pokemon->attacking_charged = 0;    
             }else{
