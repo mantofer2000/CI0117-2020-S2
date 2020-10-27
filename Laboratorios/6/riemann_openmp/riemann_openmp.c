@@ -4,25 +4,6 @@
 #include <time.h>
 #include <omp.h>
 
-//#include <pthread.h>
-
-/*
-typedef struct{
-    pthread_mutex_t mutex;
-    double result;
-}shared_data_t;
-
-typedef struct{
-    size_t thread_id;
-    size_t num_threads;
-
-    double begin;
-    double end;
-    double delta_x;
-
-    shared_data_t* shared_data;
-}private_data_t;
-*/
 
 typedef struct timespec walltime_t;
 
@@ -32,29 +13,27 @@ size_t set_thread_amount(size_t max_num_threads, size_t number_of_rectangles);
 
 //private_data_t * set_private_data(size_t num_threads, double delta_x, double point_a, double point_b);
 
-void* calculate_area(void* args){
-    //private_data_t * private_data = (private_data_t*) args;
-    //shared_data_t * shared_data = (shared_data_t*)private_data->shared_data;
-
-    //double delta_x = private_data->delta_x;
+double calculate_area(int num_threads, double point_a, double point_b, double delta_x){
     double result = 0.0;
-    double jump = (double)private_data->num_threads;
-    double begin = private_data->begin;
-    double end = private_data->end;
+    double jump = num_threads;
 
-    //f(x) = x^2 + 1
+    #pragma omp parallel
+    {
+        double begin = point_a + (omp_get_thread_num() * delta_x);
+        double end = point_b;
 
-    for(double i = begin; i <= (end - delta_x); i += (delta_x * jump)){
-        result += delta_x * ((i * i) + 1);
+        for(double i = begin; i <= (end - delta_x); i += (delta_x * jump)){
+            #pragma omp critical
+            {
+                result += delta_x * ((i * i) + 1);
+            }
+        }
+
     }
-
-    //printf("The area THREAD: %ld\n", jump);
-
-    pthread_mutex_lock(&shared_data->mutex);
-        shared_data->result += result;
-    pthread_mutex_unlock(&shared_data->mutex);
-    return NULL;
+    
+    return result;
 }
+
 
 int main(int argc, char* argv[])
 {
@@ -86,39 +65,19 @@ int main(int argc, char* argv[])
 
 
     num_threads = set_thread_amount(max_num_threads, number_of_rectangles);
+    omp_set_num_threads(set_thread_amount(max_num_threads, number_of_rectangles));
     double delta_x = (b - a) / dou_number_of_rectangles;
     
-    
-    private_data_t * private_data = set_private_data(num_threads, delta_x, a, b);
-    shared_data_t * shared_data = (shared_data_t *)calloc(1, sizeof(shared_data_t));
-    pthread_t* threads = (pthread_t*)malloc((num_threads) * sizeof(pthread_t));
-    shared_data->result = 0;
-
-    pthread_mutex_init(&shared_data->mutex, NULL);
-    
-
     
     walltime_t start;
     walltime_start(&start);
 
-    for(size_t i = 0; i < num_threads; i++){
-        private_data[i].shared_data = shared_data;
-        pthread_create(&threads[i],  NULL, calculate_area, (void*)&private_data[i]);
-
-    }
-    // area = calculate_area(point_a, point_b, number_of_rectangles);
-    for(size_t it = 0; it < num_threads; it++){pthread_join(threads[it], NULL);}
-    area = shared_data->result;
-    
+    area = calculate_area(num_threads, point_a, point_b, delta_x);
     
     elapsed = walltime_elapsed(&start);
 
     printf("The area is: %lf\n", area);
     printf("Execution time: %lfs\n", elapsed);
-    pthread_mutex_destroy(&shared_data->mutex);
-    free(private_data);
-    free(shared_data);
-    free(threads);
     return 0;
 }
 
@@ -152,18 +111,3 @@ size_t set_thread_amount(size_t max_num_threads, size_t number_of_rectangles){
     return return_value;
 
 }
-
-
-/*
-private_data_t * set_private_data(size_t num_threads, double delta_x, double point_a, double point_b){
-    private_data_t * private_data = (private_data_t * )calloc(num_threads, sizeof(private_data_t));
-    for(int  i = 0; i < (int)num_threads; i++){
-        private_data[i].thread_id = i + 1;
-        private_data[i].begin = ( point_a) + (i * delta_x);
-        private_data[i].end = point_b;
-        private_data[i].delta_x = delta_x;
-        private_data[i].num_threads = num_threads;
-    }
-    return private_data;
-}
-*/
