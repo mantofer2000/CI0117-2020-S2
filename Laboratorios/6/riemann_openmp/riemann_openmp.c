@@ -57,7 +57,7 @@ int main(int argc, char* argv[])
             return (void) fprintf(stderr, "Error! Thread_num must not be 0\n"), 3;
     }
     else{
-        return (void) fprintf(stderr, "Usage: riemann_pthreads point_a point_b number_of_rectangles\n"), 1;
+        return (void) fprintf(stderr, "Usage: riemann_omp point_a point_b number_of_rectangles number_of_threads\n"), 1;
     }
     double a = (double) point_a;
     double b = (double) point_b;
