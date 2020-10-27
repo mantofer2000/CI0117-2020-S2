@@ -19,14 +19,16 @@ double calculate_area(int num_threads, double point_a, double point_b, double de
 
     #pragma omp parallel
     {
+        double result_local = 0.0;
         double begin = point_a + (omp_get_thread_num() * delta_x);
         double end = point_b;
 
         for(double i = begin; i <= (end - delta_x); i += (delta_x * jump)){
-            #pragma omp critical
-            {
-                result += delta_x * ((i * i) + 1);
-            }
+            result_local += delta_x * ((i * i) + 1);
+        }
+        #pragma omp critical
+        {
+            result += result_local;
         }
 
     }
