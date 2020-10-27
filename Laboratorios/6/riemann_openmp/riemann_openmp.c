@@ -13,11 +13,11 @@ size_t set_thread_amount(size_t max_num_threads, size_t number_of_rectangles);
 
 //private_data_t * set_private_data(size_t num_threads, double delta_x, double point_a, double point_b);
 
-double calculate_area(int num_threads, double point_a, double point_b, double delta_x){
+double calculate_area(int thread_count, double point_a, double point_b, double delta_x){
     double result = 0.0;
-    double jump = num_threads;
+    double jump = thread_count;
 
-    #pragma omp parallel
+    #pragma omp parallel num_threads(thread_count) default(none) shared(result)
     {
         double result_local = 0.0;
         double begin = point_a + (omp_get_thread_num() * delta_x);
@@ -67,7 +67,8 @@ int main(int argc, char* argv[])
 
 
     num_threads = set_thread_amount(max_num_threads, number_of_rectangles);
-    omp_set_num_threads(set_thread_amount(max_num_threads, number_of_rectangles));
+    //preguntar por esto y la clausula
+    //omp_set_num_threads(set_thread_amount(max_num_threads, number_of_rectangles));
     double delta_x = (b - a) / dou_number_of_rectangles;
     
     
