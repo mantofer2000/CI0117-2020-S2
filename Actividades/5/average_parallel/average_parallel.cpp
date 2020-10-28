@@ -13,6 +13,7 @@ int main(int argc, char *argv[])
 
     double sum = 0.0;
     omp_set_num_threads(5);
+    // 1 2 3 4 5 6
 
     #pragma omp parallel 
     {
