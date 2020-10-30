@@ -11,13 +11,11 @@ void walltime_start(walltime_t* start);
 double walltime_elapsed(const walltime_t* start);
 size_t set_thread_amount(size_t max_num_threads, size_t number_of_rectangles);
 
-//private_data_t * set_private_data(size_t num_threads, double delta_x, double point_a, double point_b);
-
 double calculate_area(int thread_count, double point_a, double point_b, double delta_x){
     double result = 0.0;
     double jump = thread_count;
 
-    #pragma omp parallel num_threads(thread_count) default(none) shared(result)
+    #pragma omp parallel num_threads(thread_count) default(none) shared(result, jump, point_a, point_b, delta_x)
     {
         double result_local = 0.0;
         double begin = point_a + (omp_get_thread_num() * delta_x);
