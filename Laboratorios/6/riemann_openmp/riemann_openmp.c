@@ -21,8 +21,9 @@ double calculate_area(int thread_count, double point_a, double point_b, double d
     //double end_rec = point_a + delta_x;
     
 
-    #pragma omp parallel for num_threads(thread_count) reduction(+: result)
-    for(int i = 0; i < number_of_rectangles; i++){
+    #pragma omp parallel for num_threads(thread_count) default(none) \
+    shared(number_of_rectangles, delta_x, point_a, begin_rec) reduction(+: result)
+    for(size_t i = 0; i < number_of_rectangles; i++){
         begin_rec = point_a + (delta_x * i);
         result += delta_x * ((begin_rec * begin_rec) + 1);
         
