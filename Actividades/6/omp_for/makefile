@@ -1,7 +1,7 @@
 APPNAME = omp_for
 
 $(APPNAME): $(APPNAME).cpp
-	g++ -g -Wall -Wextra $(APPNAME).cpp -o $(APPNAME) -fopenmp -lm -std=c99
+	g++ -g -Wall -Wextra $(APPNAME).cpp -o $(APPNAME) -fopenmp -lm 
 
 .PHONY: gitignore
 gitignore:
