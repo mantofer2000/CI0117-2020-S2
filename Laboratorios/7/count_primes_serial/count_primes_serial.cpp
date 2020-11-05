@@ -14,23 +14,36 @@ bool is_prime(size_t number){
 	return true;
 }
 
-int main(int argc, char* arg[]){
-    size_t number;
-    bool answer;
-    if(argc >= 2){
-        number = (size_t)strtoul(arg[1], NULL, 10);
+int count_primes(size_t max_number)
+{
+    int count = 0;
+    for ( size_t number = 0; number < max_number; ++number )
+        if ( is_prime(number) )
+            ++count;
+
+    return count;
+}
+
+int main(int argc, char* argv[])
+{
+    size_t max_number = 0;
+    int count = 0;
+
+    if( argc >= 2 ) {
+        max_number = (size_t) strtoul(argv[1], NULL, 10);
+
+        if ( max_number <= 2 ) {
+            std::cerr << "Error, max_number must be greater than 2.\n";
+            return 2;
+        }    
     } else {
-        fprintf(stderr, "Error, invalid number of parameters\n");
+        std::cerr << "Error, invalid number of parameters\n";
         return 1;
     }
-   
-    answer = is_prime(number);
-    if(answer){
-        std :: cout << number << " is prime." << std :: endl;
-    }else{
-        std :: cout << number << " is not prime." << std :: endl;
-    }
 
+    count = count_primes(max_number);
 
-   return 0; 
+    std::cout << "There are " << count << " prime numbers between 2 and " << max_number << '\n';
+
+    return 0; 
 }
