@@ -1,7 +1,7 @@
-APPNAME = omp_primes_serial
+APPNAME = count_primes_serial
 
 $(APPNAME): $(APPNAME).cpp
-	g++ -g -Wall -Wextra $(APPNAME).cpp -o $(APPNAME) -fopenmp -lm 
+	g++ -g -Wall -Wextra $(APPNAME).cpp -o $(APPNAME) 
 
 .PHONY: gitignore
 gitignore:

@@ -1,4 +1,4 @@
-APPNAME = omp_primes_parallel
+APPNAME = count_primes_parallel
 
 $(APPNAME): $(APPNAME).cpp
 	g++ -g -Wall -Wextra $(APPNAME).cpp -o $(APPNAME) -fopenmp -lm 

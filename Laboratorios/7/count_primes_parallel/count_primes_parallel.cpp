@@ -7,11 +7,19 @@ bool is_prime(size_t number){
 	if ( number == 2 ) return true;
 	if ( number % 2 == 0 ) return false;
 
-	for ( size_t i = 3, last = (size_t)(double)sqrt(number); i <= last; i += 2 )
-		if ( number % i == 0 )
-			return false;
+    int value = 0;
 
-	return true;
+    
+
+    size_t last = (size_t)(double)sqrt(number);
+    #pragma omp parallel for default(none) shared(number, last) reduction(+: value) 
+        for (size_t i = 3; i <= last; i += 2 ){
+            if ( number % i == 0 )
+                value++;
+        }
+
+    
+	return !((bool)value);
 }
 
 int main(int argc, char* arg[]){
