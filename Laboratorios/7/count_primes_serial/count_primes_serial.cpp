@@ -17,7 +17,7 @@ bool is_prime(size_t number){
 int count_primes(size_t max_number)
 {
     int count = 0;
-    for ( size_t number = 0; number < max_number; ++number )
+    for ( size_t number = 3; number < max_number; ++number )
         if ( is_prime(number) )
             ++count;
 
