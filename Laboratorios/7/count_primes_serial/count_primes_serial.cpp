@@ -26,6 +26,8 @@ int count_primes(size_t max_number)
 
 int main(int argc, char* argv[])
 {
+    //auto start = std::chrono::system_clock::now();
+
     size_t max_number = 0;
     int count = 0;
 
@@ -44,6 +46,11 @@ int main(int argc, char* argv[])
     count = count_primes(max_number);
 
     std::cout << "There are " << count << " prime numbers between 2 and " << max_number << '\n';
+
+
+    //auto end = std::chrono::system_clock::now();
+    //double elapsed_time_ns = double(std::chrono::duration_cast <std::chrono::nanoseconds>(end-start).count());
+    //std::cout << "Execution Time (s): " << elapsed_time_ns/ 1e9 << '\n';
 
     return 0; 
 }

@@ -3,15 +3,24 @@
 
 
 bool is_prime(size_t number){
+    bool value = true;
+    
     if ( number < 2 ) return false;
 	if ( number == 2 ) return true;
 	if ( number % 2 == 0 ) return false;
 
-	for ( size_t i = 3, last = (size_t)(double)sqrt(number); i <= last; i += 2 )
-		if ( number % i == 0 )
-			return false;
+    size_t last = (size_t)(double)sqrt(number);
 
-	return true;
+    // ver si esto esta bien
+    #pragma omp parallel for
+	for ( size_t i = 3; i <= last; i += 2 ){
+		if ( number % i == 0 ){
+            value = false;
+            i = last + 1;
+        }
+    }
+
+	return value;
 }
 
 int count_primes(size_t max_number)
