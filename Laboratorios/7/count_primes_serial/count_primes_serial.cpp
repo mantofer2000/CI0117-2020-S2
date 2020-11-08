@@ -45,7 +45,7 @@ int main(int argc, char* argv[])
 
     count = count_primes(max_number);
 
-    std::cout << "There are " << count << " prime numbers between 2 and " << max_number << '\n';
+    //std::cout << "There are " << count << " prime numbers between 2 and " << max_number << '\n';
 
 
     //auto end = std::chrono::system_clock::now();
