@@ -12,7 +12,7 @@ bool is_prime(size_t number){
     size_t last = (size_t)(double)sqrt(number);
 
     // ver si esto esta bien
-    #pragma omp parallel for
+    //#pragma omp parallel for
 	for ( size_t i = 3; i <= last; i += 2 ){
 		if ( number % i == 0 ){
             value = false;
