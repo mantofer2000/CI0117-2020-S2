@@ -26,7 +26,7 @@ bool is_prime(size_t number){
 int count_primes(size_t max_number)
 {
     int count = 0;
-    #pragma omp parallel for default(none) shared(max_number) reduction(+: count) schedule(runtime)
+    #pragma omp parallel for default(none) shared(max_number) num_threads(4) reduction(+: count) schedule(runtime)
     for ( size_t number = 3; number < max_number; ++number ){
         if ( is_prime(number) ){
             ++count;

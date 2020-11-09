@@ -1,4 +1,4 @@
-APPNAME = count_primes_parallel_cyclic
+APPNAME = count_primes_cyclic
 
 $(APPNAME): $(APPNAME).cpp
 	g++ -g -Wall -Wextra $(APPNAME).cpp -o $(APPNAME) -fopenmp -lm 
