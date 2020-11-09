@@ -2,9 +2,9 @@
 
 ### n = 10000000
 
-Las pruebas del tiempo de ejecucion fueron calculadas
+Las pruebas del tiempo de ejecución fueron calculadas
 con la herramienta de profiling *perf* de linux.
-Estas pruebas fueron realizadas en una maquina
+Estas pruebas fueron realizadas en una máquina
 virtual de Ubuntu 14.04 con una maquina host de
 2 cores. Por esta razon, las pruebas con *scheduling*
 siguen este orden:
