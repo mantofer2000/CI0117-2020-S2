@@ -10,6 +10,7 @@
 // preguntar por el static
 #include <omp.h>
 #include <stdio.h>
+
 int main(void) {
   omp_sched_t kind;
   int chunk;
