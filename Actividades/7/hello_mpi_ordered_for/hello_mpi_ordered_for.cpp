@@ -15,6 +15,7 @@ int main(int argc, char *argv[]) {
     MPI_Comm_rank(MPI_COMM_WORLD, &my_id);
 
 
+
     int message_received = 0;
     if(my_id != 0){
         MPI_Recv(&message_received, 1 /* count*/, MPI_INT, 0 /*source*/, 123 /*message id*/, MPI_COMM_WORLD, &status);
@@ -25,11 +26,9 @@ int main(int argc, char *argv[]) {
     if(my_id == 0){
         int message_sent = 0;
         for(int i = 1; i < num_processes; i++){
-            MPI_Send(&message_sent, 1 /*count*/, MPI_INT, i /*dest*/, 123 /*message id*/, MPI_COMM_WORLD);
+            MPI_Ssend(&message_sent, 1 /*count*/, MPI_INT, i /*dest*/, 123 /*message id*/, MPI_COMM_WORLD);
         }
     }
-
-
 
 
     MPI_Finalize();
