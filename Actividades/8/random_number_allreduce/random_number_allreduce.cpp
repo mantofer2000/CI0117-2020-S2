@@ -39,11 +39,11 @@ int main(int argc, char *argv[]){
 
     random_num = array[rand() % array_size];
 
-    MPI_Reduce(&random_num, &min_num, 1, MPI_INT, MPI_MIN, 0, MPI_COMM_WORLD);
-    MPI_Reduce(&random_num, &max_num, 1, MPI_INT, MPI_MAX, 0, MPI_COMM_WORLD);
-    MPI_Reduce(&random_num, &average_num, 1, MPI_INT, MPI_SUM, 0, MPI_COMM_WORLD);
+    MPI_Allreduce(&random_num, &min_num, 1, MPI_INT, MPI_MIN, MPI_COMM_WORLD);
+    MPI_Allreduce(&random_num, &max_num, 1, MPI_INT, MPI_MAX, MPI_COMM_WORLD);
+    MPI_Allreduce(&random_num, &average_num, 1, MPI_INT, MPI_SUM, MPI_COMM_WORLD);
 
-    if(!my_id){average_num /= num_processes;}
+    average_num /= num_processes;
     
 
 
@@ -56,13 +56,16 @@ int main(int argc, char *argv[]){
         MPI_Recv(&receive, 1 /* count*/, MPI_INT, my_id - 1 /*source*/, 123 /*message id*/, MPI_COMM_WORLD, &status);
     }
 
-    std :: cout << "process: " << my_id << " I chose number " << random_num << std :: endl;
+    std :: cout << "process: " << my_id << " I chose number " << random_num;
     
-    if(!my_id){
-        std :: cout << "process: " << my_id << " Minimun is " << min_num << std :: endl;
-        std :: cout << "process: " << my_id << " Maximun is " << max_num << std :: endl;
-        std :: cout << "process: " << my_id << " Average is " << average_num << std :: endl;
-    }
+    if(random_num == min_num){std :: cout << ". It's the minimun." << std :: endl;}
+    if(random_num == max_num){std :: cout << ". It's the maximun." << std :: endl;}
+
+    std :: cout << "process: " << my_id << " I chose number " << random_num << ". It's ";
+
+    if(random_num < average_num){std :: cout << "less ";}else{std :: cout << "more ";}
+    
+    std :: cout << "than the average. (" << average_num << ")" << std :: endl;
 
 
 	if ( my_id < num_processes - 1 ) {
