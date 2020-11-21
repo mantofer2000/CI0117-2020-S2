@@ -14,10 +14,9 @@ bool is_prime(size_t number){
 	return true;
 }
 
-int count_primes(size_t max_number)
-{
+int count_primes(size_t max_number, int my_id, int num_processes){
     int count = 0;
-    for ( size_t number = 3; number < max_number; ++number )
+    for ( size_t number = 3 + my_id; number < max_number; number += num_processes)
         if ( is_prime(number) )
             ++count;
 
@@ -44,7 +43,7 @@ int main(int argc, char* argv[])
     }
 
 
-    int my_id, num_processes;
+    int my_id, num_processes, final_result;
     
     MPI_Init(&argc, &argv);
     MPI_Status status;
@@ -53,12 +52,16 @@ int main(int argc, char* argv[])
     MPI_Comm_rank(MPI_COMM_WORLD, &my_id);
 
 
-    count = count_primes(max_number);
+    count = count_primes(max_number, my_id, num_processes);
+
+
+    MPI_Reduce(&count, &final_result, 1, MPI_INT, MPI_SUM,0, MPI_COMM_WORLD);
+
 
     if(!my_id){
-        std::cout << "There are " << count << " prime numbers between 2 and " << max_number << '\n';
+        std::cout << "There are " << final_result << " prime numbers between 2 and " << max_number << '\n';
     }
-
+    
     //auto end = std::chrono::system_clock::now();
     //double elapsed_time_ns = double(std::chrono::duration_cast <std::chrono::nanoseconds>(end-start).count());
     //std::cout << "Execution Time (s): " << elapsed_time_ns/ 1e9 << '\n';
