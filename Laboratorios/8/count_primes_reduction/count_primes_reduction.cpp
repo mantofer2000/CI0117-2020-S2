@@ -1,7 +1,6 @@
 #include <mpi.h>
 #include <bits/stdc++.h>
 
-#define ID 82957
 
 bool is_prime(size_t number){
     if ( number < 2 ) return false;
@@ -44,7 +43,7 @@ int main(int argc, char* argv[])
     }
 
 
-    int my_id, num_processes, send, receive, it;
+    int my_id, num_processes, final_result;
     
     MPI_Init(&argc, &argv);
     MPI_Status status;
@@ -56,27 +55,11 @@ int main(int argc, char* argv[])
     count = count_primes(max_number, my_id, num_processes);
 
 
+    MPI_Reduce(&count, &final_result, 1, MPI_INT, MPI_SUM,0, MPI_COMM_WORLD);
 
-
-    //MPI_Reduce(&count, &final_result, 1, MPI_INT, MPI_SUM,0, MPI_COMM_WORLD);
-
-    it = my_id + 1;
 
     if(!my_id){
-        while(it < num_processes){
-            MPI_Recv(&receive, 1, MPI_INT, MPI_ANY_SOURCE, ID, MPI_COMM_WORLD, &status);
-            count += receive;
-            it++;
-        }
-    }
-
-    if(my_id){
-        send = count;
-        MPI_Send(&send, 1, MPI_INT, 0, ID, MPI_COMM_WORLD);
-    }
-
-    if(!my_id){
-        std::cout << "There are " << count << " prime numbers between 2 and " << max_number << "with "<< num_processes << " processes. "<< '\n';
+        std::cout << "There are " << final_result << " prime numbers between 2 and " << max_number << '\n';
     }
     
     //auto end = std::chrono::system_clock::now();
