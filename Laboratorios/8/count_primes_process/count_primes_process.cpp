@@ -15,9 +15,9 @@ bool is_prime(size_t number){
 	return true;
 }
 
-int count_primes(size_t max_number, int my_id, int num_processes){
+int count_primes(size_t max_number, int begin, int end, int num_processes){
     int count = 0;
-    for ( size_t number = 2 + my_id; number <= max_number; number += num_processes)
+    for ( size_t number = begin; number < end; ++number )
         if ( is_prime(number) )
             ++count;
 
@@ -60,7 +60,7 @@ int main(int argc, char* argv[])
     else
         end = max_number;
 
-    count = count_primes(max_number, my_id, num_processes);
+    count = count_primes(max_number, begin, end, num_processes);
 
     //MPI_Reduce(&count, &final_result, 1, MPI_INT, MPI_SUM,0, MPI_COMM_WORLD);
 
