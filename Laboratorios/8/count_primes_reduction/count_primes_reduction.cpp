@@ -14,9 +14,10 @@ bool is_prime(size_t number){
 	return true;
 }
 
-int count_primes(size_t max_number, int my_id, int num_processes){
+int count_primes(size_t max_number, int begin, int end, int num_processes)
+{
     int count = 0;
-    for ( size_t number = 3 + my_id; number < max_number; number += num_processes)
+    for ( size_t number = begin; number < end; ++number )
         if ( is_prime(number) )
             ++count;
 
@@ -25,25 +26,12 @@ int count_primes(size_t max_number, int my_id, int num_processes){
 
 int main(int argc, char* argv[])
 {
-    //auto start = std::chrono::system_clock::now();
 
     size_t max_number = 0;
     int count = 0;
 
-    if( argc >= 2 ) {
-        max_number = (size_t) strtoul(argv[1], NULL, 10);
-
-        if ( max_number <= 2 ) {
-            std::cerr << "Error, max_number must be greater than 2.\n";
-            return 2;
-        }    
-    } else {
-        std::cerr << "Error, invalid number of parameters\n";
-        return 1;
-    }
-
-
-    int my_id, num_processes, final_result;
+    int my_id, num_processes, final_result, distribution, begin, end;
+    double t1, t2, elapsed, total_elapsed;
     
     MPI_Init(&argc, &argv);
     MPI_Status status;
@@ -51,20 +39,41 @@ int main(int argc, char* argv[])
     MPI_Comm_size(MPI_COMM_WORLD, &num_processes);
     MPI_Comm_rank(MPI_COMM_WORLD, &my_id);
 
+    if ( my_id == 0 )
+    {
+        while ( max_number <= 2 )
+        {
+            std::cout << "Enter max_number: ";
+            std::cin >> max_number;
 
-    count = count_primes(max_number, my_id, num_processes);
+            if ( max_number <= 2 ) std::cerr << "max_number must be greater than 2.\n";
+        }
+    }
 
+    MPI_Bcast(&max_number, 1, MPI_INT, 0, MPI_COMM_WORLD);
+
+    t1 = MPI_Wtime();
+    distribution = ( max_number / num_processes );
+    begin = ( distribution * my_id );
+    if ( my_id < num_processes - 1 )
+        end = begin + distribution;
+    else
+        end = max_number;
+
+    count = count_primes(max_number, begin, end, num_processes);
+    t2 = MPI_Wtime();
+
+    elapsed = ( t2 - t1 );
+
+    MPI_Reduce(&elapsed, &total_elapsed, 1, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
 
     MPI_Reduce(&count, &final_result, 1, MPI_INT, MPI_SUM,0, MPI_COMM_WORLD);
 
-
-    if(!my_id){
-        std::cout << "There are " << final_result << " prime numbers between 2 and " << max_number << '\n';
+    if( !(my_id) )
+    {
+        std::cout   << final_result << " prime numbers found in range [2, " << max_number << "] in "
+                    << total_elapsed << " with " << num_processes << " processes. "<< '\n';
     }
-    
-    //auto end = std::chrono::system_clock::now();
-    //double elapsed_time_ns = double(std::chrono::duration_cast <std::chrono::nanoseconds>(end-start).count());
-    //std::cout << "Execution Time (s): " << elapsed_time_ns/ 1e9 << '\n';
 
     MPI_Finalize();
 
