@@ -17,7 +17,7 @@ bool is_prime(size_t number){
 
 int count_primes(size_t max_number, int my_id, int num_processes){
     int count = 0;
-    for ( size_t number = 3 + my_id; number < max_number; number += num_processes)
+    for ( size_t number = 2 + my_id; number <= max_number; number += num_processes)
         if ( is_prime(number) )
             ++count;
 
@@ -44,7 +44,8 @@ int main(int argc, char* argv[])
     }
 
 
-    int my_id, num_processes, send, receive, it;
+    int my_id, num_processes, send, receive, it, distribution, begin, end;
+    double t1, t2;
     
     MPI_Init(&argc, &argv);
     MPI_Status status;
@@ -52,22 +53,27 @@ int main(int argc, char* argv[])
     MPI_Comm_size(MPI_COMM_WORLD, &num_processes);
     MPI_Comm_rank(MPI_COMM_WORLD, &my_id);
 
+    distribution = ( max_number / num_processes );
+    begin = ( distribution * my_id );
+    if ( my_id < num_processes - 1 )
+        end = begin + distribution;
+    else
+        end = max_number;
 
     count = count_primes(max_number, my_id, num_processes);
-
-
-
 
     //MPI_Reduce(&count, &final_result, 1, MPI_INT, MPI_SUM,0, MPI_COMM_WORLD);
 
     it = my_id + 1;
 
     if(!my_id){
+        t1 = MPI_Wtime();
         while(it < num_processes){
             MPI_Recv(&receive, 1, MPI_INT, MPI_ANY_SOURCE, ID, MPI_COMM_WORLD, &status);
             count += receive;
             it++;
         }
+        t2 = MPI_Wtime();
     }
 
     if(my_id){
@@ -75,8 +81,10 @@ int main(int argc, char* argv[])
         MPI_Send(&send, 1, MPI_INT, 0, ID, MPI_COMM_WORLD);
     }
 
-    if(!my_id){
-        std::cout << "There are " << count << " prime numbers between 2 and " << max_number << "with "<< num_processes << " processes. "<< '\n';
+
+    if( !(my_id) ) {
+        std::cout   << count << " prime numbers found in range [2, " << max_number << "] in "
+                    << ( t2 - t1 ) << " with " << num_processes << " processes. "<< '\n';
     }
     
     //auto end = std::chrono::system_clock::now();
