@@ -14,9 +14,10 @@ bool is_prime(size_t number){
 	return true;
 }
 
-int count_primes(size_t max_number, int my_id, int num_processes){
+int count_primes(size_t max_number, int begin, int end, int num_processes)
+{
     int count = 0;
-    for ( size_t number = 3 + my_id; number < max_number; number += num_processes)
+    for ( size_t number = begin; number < end; ++number )
         if ( is_prime(number) )
             ++count;
 
@@ -25,8 +26,6 @@ int count_primes(size_t max_number, int my_id, int num_processes){
 
 int main(int argc, char* argv[])
 {
-    //auto start = std::chrono::system_clock::now();
-
     size_t max_number = 0;
     int count = 0;
 
@@ -42,7 +41,8 @@ int main(int argc, char* argv[])
         return 1;
     }
 
-    int my_id, num_processes, final_result;
+    int my_id, num_processes, final_result, distribution, begin, end;
+    double t1, t2;
     
     MPI_Init(&argc, &argv);
     MPI_Status status;
@@ -50,20 +50,23 @@ int main(int argc, char* argv[])
     MPI_Comm_size(MPI_COMM_WORLD, &num_processes);
     MPI_Comm_rank(MPI_COMM_WORLD, &my_id);
 
+    distribution = ( max_number / num_processes );
+    begin = ( distribution * my_id );
+    if ( my_id < num_processes - 1 )
+        end = begin + distribution;
+    else
+        end = max_number;
 
-    count = count_primes(max_number, my_id, num_processes);
-
+    t1 = MPI_Wtime();
+    count = count_primes(max_number, begin, end, num_processes);
+    t2 = MPI_Wtime();
 
     MPI_Allreduce(&count, &final_result, 1, MPI_INT, MPI_SUM , MPI_COMM_WORLD);
 
 
-    //if(!my_id){
-    std::cout << "There are " << final_result << " prime numbers between 2 and " << max_number << '\n';
-    //}
-    
-    //auto end = std::chrono::system_clock::now();
-    //double elapsed_time_ns = double(std::chrono::duration_cast <std::chrono::nanoseconds>(end-start).count());
-    //std::cout << "Execution Time (s): " << elapsed_time_ns/ 1e9 << '\n';
+    std::cout   << "process " << my_id << ": " << count << " out of " << final_result
+                << " primes found in range [2, " << max_number << "] in "
+                << ( t2 - t1 ) << " with " << num_processes << " processes. "<< '\n';
 
     MPI_Finalize();
 

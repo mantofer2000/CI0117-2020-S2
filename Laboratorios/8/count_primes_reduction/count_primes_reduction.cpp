@@ -26,7 +26,6 @@ int count_primes(size_t max_number, int begin, int end, int num_processes)
 
 int main(int argc, char* argv[])
 {
-
     size_t max_number = 0;
     int count = 0;
 
@@ -52,7 +51,6 @@ int main(int argc, char* argv[])
 
     MPI_Bcast(&max_number, 1, MPI_INT, 0, MPI_COMM_WORLD);
 
-    t1 = MPI_Wtime();
     distribution = ( max_number / num_processes );
     begin = ( distribution * my_id );
     if ( my_id < num_processes - 1 )
@@ -60,6 +58,7 @@ int main(int argc, char* argv[])
     else
         end = max_number;
 
+    t1 = MPI_Wtime();
     count = count_primes(max_number, begin, end, num_processes);
     t2 = MPI_Wtime();
 
