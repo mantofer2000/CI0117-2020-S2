@@ -60,13 +60,20 @@ int main(int argc, char* argv[])
     else
         end = max_number;
 
-    count = count_primes(max_number, begin, end, num_processes);
+    if ( num_processes == 1 )
+    {
+        t1 = MPI_Wtime();
+        count = count_primes(max_number, begin, end, num_processes);
+        t2 = MPI_Wtime();
+    }
+    else
+        count = count_primes(max_number, begin, end, num_processes);
 
     //MPI_Reduce(&count, &final_result, 1, MPI_INT, MPI_SUM,0, MPI_COMM_WORLD);
 
     it = my_id + 1;
 
-    if(!my_id){
+    if( my_id == 0 && num_processes > 1 ){
         t1 = MPI_Wtime();
         while(it < num_processes){
             MPI_Recv(&receive, 1, MPI_INT, MPI_ANY_SOURCE, ID, MPI_COMM_WORLD, &status);

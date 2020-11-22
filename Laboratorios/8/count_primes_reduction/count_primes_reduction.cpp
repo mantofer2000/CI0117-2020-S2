@@ -60,18 +60,15 @@ int main(int argc, char* argv[])
 
     t1 = MPI_Wtime();
     count = count_primes(max_number, begin, end, num_processes);
-    t2 = MPI_Wtime();
-
-    elapsed = ( t2 - t1 );
-
-    MPI_Reduce(&elapsed, &total_elapsed, 1, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
+    
 
     MPI_Reduce(&count, &final_result, 1, MPI_INT, MPI_SUM,0, MPI_COMM_WORLD);
+    t2 = MPI_Wtime();
 
     if( !(my_id) )
     {
         std::cout   << final_result << " prime numbers found in range [2, " << max_number << "] in "
-                    << total_elapsed << " with " << num_processes << " processes. "<< '\n';
+                    << ( t2 - t1 ) << " with " << num_processes << " processes. "<< '\n';
     }
 
     MPI_Finalize();
