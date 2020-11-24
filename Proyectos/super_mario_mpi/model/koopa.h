@@ -3,7 +3,7 @@
 #include <element.h>
 
 
-class Koopa_Troopa : public Element {
+class KoopaTroopa : public Element {
     public:
         void action(Mario &) override {};
 };
