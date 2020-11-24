@@ -5,7 +5,8 @@
 #include <mario.h>
 
 class Element {
-
+    public:
+        virtual void action(Mario &) = 0;    
 };
 
 
