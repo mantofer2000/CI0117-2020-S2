@@ -5,6 +5,7 @@
 
 class Hole : public Element {
     public:
+        Hole();
         void action(Mario &) override;
 };
 

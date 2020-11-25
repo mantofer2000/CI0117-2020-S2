@@ -1,5 +1,5 @@
-#ifndef GOOMBA_H
-#define GOOMBA_H
+#ifndef KOOPA_H
+#define KOOPA_H
 #include "element.h"
 
 
