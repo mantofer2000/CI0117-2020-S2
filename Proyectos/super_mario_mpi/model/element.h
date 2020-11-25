@@ -3,10 +3,10 @@
 
 #include <mario.h>
 
-#define LITTLE_GOOMBA = "Little_Goomba"
-#define COIN = "Coin"
-#define KOOPA_TROOPA = "Koopa_Troopa"
-#define HOLE = "Hole"
+#define LITTLE_GOOMBA "Little_Goomba"
+#define COIN "Coin"
+#define KOOPA_TROOPA "Koopa_Troopa"
+#define HOLE "Hole"
 
 
 class Element {

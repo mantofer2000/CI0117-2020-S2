@@ -1,5 +1,10 @@
 #include "../model/coin.h"
 
+
+Coin::Coin() {
+    this->element_type = COIN;
+}
+
 void Coin::action(Mario &mario) {
     srand (time(NULL));
 

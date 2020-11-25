@@ -1,5 +1,10 @@
 #include "../model/koopa.h"
 
+
+Koopa_Troopa::Koopa_Troopa() {
+    this->element_type = KOOPA_TROOPA;
+}
+
 void Koopa_Troopa::action(Mario &mario) {
     srand (time(NULL));
 

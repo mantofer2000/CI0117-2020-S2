@@ -1,5 +1,11 @@
 #include "../model/goomba.h"
 
+Little_Goomba::Little_Goomba() {
+    this->element_type = LITTLE_GOOMBA;
+}
+
+
+
 void Little_Goomba::action(Mario &mario) {
     srand (time(NULL));
 

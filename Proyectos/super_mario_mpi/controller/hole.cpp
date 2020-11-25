@@ -1,5 +1,10 @@
 #include "../model/hole.h"
 
+
+Hole::Hole() {
+    this->element_type = HOLE;
+}
+
 void Hole::action(Mario &mario) {
     srand (time(NULL));
 
