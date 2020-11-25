@@ -12,6 +12,7 @@
 class Element {
     public:
         virtual void action(Mario &) = 0;
+    
     protected:
         std::string element_type;
 };

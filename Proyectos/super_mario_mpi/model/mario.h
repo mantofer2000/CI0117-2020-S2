@@ -3,14 +3,17 @@
 
 #include <bits/stdc++.h>
 
+
 class Mario {
-    friend class Element;
     public:
-        Mario() {};
+        Mario();
+        bool is_active();
+        void add_coin(int);
+        void set_inactive();
     
     private:
         // amount of coins
-        int coin;
+        int coins;
         // bool to know if mario is active or not
         bool active;
         // mpi rank, needs to be implemented
