@@ -1,10 +1,11 @@
 #ifndef GOOMBA_H
 #define GOOMBA_H
-#include <element.h>
+#include "element.h"
 
 
-class LittleGoomba : public Element {
+class Little_Goomba : public Element {
     public:
+        Little_Goomba();
         void action(Mario &) override {};
 };
 

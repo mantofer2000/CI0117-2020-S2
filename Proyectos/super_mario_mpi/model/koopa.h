@@ -1,10 +1,11 @@
 #ifndef GOOMBA_H
 #define GOOMBA_H
-#include <element.h>
+#include "element.h"
 
 
-class KoopaTroopa : public Element {
+class Koopa_Troopa : public Element {
     public:
+        Koopa_Troopa();
         void action(Mario &) override {};
 };
 

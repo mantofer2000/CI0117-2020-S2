@@ -1,6 +1,8 @@
 #ifndef MARIO_H
 #define MARIO_H
 
+#include <bits/stdc++.h>
+
 class Mario {
     friend class Element;
     public:
