@@ -5,6 +5,7 @@
 
 class Coin : public Element {
     public:
+        Coin();
         void action(Mario &) override;
 };
 
