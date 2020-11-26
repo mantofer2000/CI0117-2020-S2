@@ -14,8 +14,10 @@ void World::initialize_world() {
     // 
     this->world_array.resize(100);
 
-    this->world_array[8].push_back(coin);
-
+    Coin * myCoin = new Coin();
+    *myCoin = coin;
+    this->world_array[8].push_back(myCoin);
+    /*
     this->world_array[11].push_back(coin);
     this->world_array[11].push_back(coin);
     this->world_array[11].push_back(goomba);
@@ -60,5 +62,5 @@ void World::initialize_world() {
 
     this->world_array[87].push_back(goomba);
     this->world_array[88].push_back(goomba);
-
+    */
 }
