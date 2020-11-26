@@ -74,6 +74,21 @@ void World::initialize_world() {
     this->world_array[88].push_back(goomba_pointer);
 }
 
+void World::add_goomba(Little_Goomba* new_goomba, int world_position) {
+    // Si hay que actualizar la posicion en este metodo hacer:
+    // int index = (world_position + 10) % 100;
+    this->world_array[world_position].push_back(new_goomba);
+}
+
+void World::add_koopa(Koopa_Troopa* new_koopa, int world_position) {
+    // Aqui tambien considerar lo de la posicion.
+    this->world_array[world_position].push_back(new_koopa);
+}
+
+std::vector<Element*> World::get_next_position_elements(int world_position) {
+    return this->world_array[world_position];
+}
+
 void World::print_world_array() {
     for (int index = 0; index < 100; ++index) {
         int position_size = this->world_array[index].size();
