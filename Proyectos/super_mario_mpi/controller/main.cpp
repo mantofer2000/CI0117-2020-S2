@@ -13,6 +13,7 @@ int main() {
         std::cout << "Diferrent Elements" << std::endl;
     }
 
+    // w.print_world_array();
 
     return 0;
 

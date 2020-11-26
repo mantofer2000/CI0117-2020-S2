@@ -7,6 +7,7 @@
 #include "hole.h"
 #include "koopa.h"
 
+#include <iostream>
 #include <vector>
 #include <list>
 
@@ -18,6 +19,7 @@ class World {
         void initialize_world();
         std::vector<Element> get_next_position_elements();
         void add_goomba(Little_Goomba new_goomba);
+        void print_world_array();
 
     private:
         std::vector< std::vector<Element *> > world_array;
