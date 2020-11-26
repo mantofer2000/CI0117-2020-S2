@@ -3,15 +3,20 @@
 
 #include "mario.h"
 
+
 #define LITTLE_GOOMBA "Little_Goomba"
 #define COIN "Coin"
 #define KOOPA_TROOPA "Koopa_Troopa"
 #define HOLE "Hole"
 
+#define ELEMENT_KILLED_MARIO 1
+#define ELEMENT_KILLED_BY_MARIO 2
+#define ELEMENT_IGNORED_BY_MARIO 3
+
 
 class Element {
     public:
-        virtual void action(Mario &) = 0;
+        virtual int action(Mario &) = 0;
 
         // Operators
         bool operator==(const Element &other) {

@@ -6,7 +6,7 @@
 class Koopa_Troopa : public Element {
     public:
         Koopa_Troopa();
-        void action(Mario &) override;
+        int action(Mario &) override;
 };
 
 #endif

@@ -6,7 +6,7 @@
 class Little_Goomba : public Element {
     public:
         Little_Goomba();
-        void action(Mario &) override;
+        int action(Mario &) override;
 };
 
 #endif

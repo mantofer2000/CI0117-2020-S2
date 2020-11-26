@@ -5,7 +5,9 @@ Hole::Hole() {
     this->element_type = HOLE;
 }
 
-void Hole::action(Mario &mario) {
+int Hole::action(Mario &mario) {
+    int status = ELEMENT_IGNORED_BY_MARIO;
+    
     srand (time(NULL));
 
     int probability =  (rand() % 100) + 1;
@@ -13,5 +15,7 @@ void Hole::action(Mario &mario) {
     if (probability > 95) { 
         // falta el print
         mario.set_inactive();
+        status = ELEMENT_KILLED_MARIO;
     }
+    return status;
 }
