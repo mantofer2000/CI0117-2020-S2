@@ -16,8 +16,10 @@ int Hole::action(Mario &mario) {
         // falta el print
         mario.set_inactive();
         status = ELEMENT_KILLED_MARIO;
+        // remember rank_id if
         std::cout << "Mario didn't jump the hole and had a brutal death! ";
     }
+    // remember rank_id if
     std::cout << "Mario jumped and passed the hole! ";
     return status;
 }
