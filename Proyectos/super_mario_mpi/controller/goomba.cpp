@@ -16,14 +16,17 @@ int Little_Goomba::action(Mario &mario) {
         // falta el print
         mario.set_inactive();
         status = ELEMENT_KILLED_MARIO;
+        std::cout << "Mario didn't jump and was killed by a little goomba! ";
     } else {
         if (probability > 5 && probability <= 60) {
             // mario salta y pasa
             // no tiene efecto
+            std::cout << "Mario jumped and passed a little goomba! ";
         } else {
             if (probability > 60 && probability <= 100) {
                 // mario salta y mata al enemigo
                 status = ELEMENT_KILLED_BY_MARIO;
+                std::cout << "Mario jumped and killed a little goomba! ";
             }
         }
     }

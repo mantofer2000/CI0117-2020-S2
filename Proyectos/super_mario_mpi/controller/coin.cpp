@@ -16,7 +16,9 @@ int Coin::action(Mario &mario) {
         // falta el print
         mario.add_coin(1);
         status = ELEMENT_KILLED_BY_MARIO;
+        std::cout << "Mario jumped and grabbed a coin! ";
     }
+    std::cout << "Mario didn't jump and ingored the coin! ";
     
     return status;
 }
