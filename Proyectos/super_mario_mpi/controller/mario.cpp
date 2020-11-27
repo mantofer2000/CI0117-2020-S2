@@ -18,23 +18,23 @@ Mario::Mario() {
 
     switch (probability) {
         case 1:
-            this->attack_strategy = R;
+            this->attack_strategy = RANDOM_STRG;
             break;
         
         case 2:
-            this->attack_strategy = L_COIN;
+            this->attack_strategy = L_COIN_STRG;
             break;
         
         case 3:
-            this->attack_strategy = M_COIN;
+            this->attack_strategy = M_COIN_STRG;
             break;
         
         case 4:
-            this->attack_strategy = A;
+            this->attack_strategy = ATTACKER_STRG;
             break;
 
         default:
-            this->attack_strategy = R;
+            this->attack_strategy = RANDOM_STRG;
     }
 }
 

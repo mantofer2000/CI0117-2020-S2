@@ -3,10 +3,10 @@
 
 #include <bits/stdc++.h>
 
-#define R "random"
-#define L_COIN "less_coins"
-#define M_COIN "most_coins"
-#define A "attacker"
+#define RANDOM_STRG "random"
+#define L_COIN_STRG "less_coins"
+#define M_COIN_STRG "most_coins"
+#define ATTACKER_STRG "attacker"
 
 class Mario {
     public:
