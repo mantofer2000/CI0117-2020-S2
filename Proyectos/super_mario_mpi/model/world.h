@@ -23,7 +23,6 @@ class World {
         void remove_coin(int world_position);
         void remove_goomba(int world_position);
         void remove_koopa(int world_position);
-        void remove_element(int world_position, std::vector<Element*>::iterator element_position);
         void print_world_array();
 
     private:

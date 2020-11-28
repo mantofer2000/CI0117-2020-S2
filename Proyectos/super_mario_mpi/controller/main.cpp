@@ -52,7 +52,6 @@ int main() {
                         } else {
                             my_world.remove_koopa((position + 1) % 100);
                         }
-                        // my_world.remove_element(position, iteration);
                     } else {
                         if (action == ELEMENT_KILLED_MARIO) {
                             my_mario.set_inactive();

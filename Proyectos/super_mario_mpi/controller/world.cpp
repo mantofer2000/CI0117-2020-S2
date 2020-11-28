@@ -134,10 +134,6 @@ void World::remove_koopa(int world_position) {
     }
 }
 
-void World::remove_element(int world_position, std::vector<Element*>::iterator element_position) {
-    this->world_array[world_position].erase(element_position);
-}
-
 void World::print_world_array() {
     for (int index = 0; index < 100; ++index) {
         int position_size = this->world_array[index].size();
