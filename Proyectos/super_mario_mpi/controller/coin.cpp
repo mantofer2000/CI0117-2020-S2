@@ -18,9 +18,10 @@ int Coin::action(Mario &mario) {
         status = ELEMENT_KILLED_BY_MARIO;
         // remember rank_id if
         std::cout << "Mario jumped and grabbed a coin! ";
+    } else {
+        // remember rank_id if
+        std::cout << "Mario didn't jump and ingored the coin! ";
     }
-    // remember rank_id if
-    std::cout << "Mario didn't jump and ingored the coin! ";
     
     return status;
 }
