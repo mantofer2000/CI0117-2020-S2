@@ -20,6 +20,7 @@ int main() {
     int position = 0;
     while (my_mario.is_active()) {
         std::vector<Element*> position_elements = my_world.get_next_position_elements(position);
+        // No esta reevaluando la cantidad de elementos.
         for (auto iteration = position_elements.begin(); iteration != position_elements.end();
             ++iteration) {
                 int status = 0;
