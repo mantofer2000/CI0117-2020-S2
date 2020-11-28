@@ -8,7 +8,7 @@ Little_Goomba::Little_Goomba() {
 
 int Little_Goomba::action(Mario &mario) {
     int status = ELEMENT_IGNORED_BY_MARIO;
-    srand (time(NULL));
+    // srand (time(NULL));
 
     int probability =  (rand() % 100) + 1;
 

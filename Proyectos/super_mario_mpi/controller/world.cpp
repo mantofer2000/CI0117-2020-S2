@@ -86,8 +86,10 @@ void World::add_koopa(Koopa_Troopa* new_koopa, int world_position) {
 }
 
 std::vector<Element*> World::get_next_position_elements(int world_position) {
-    return this->world_array[world_position];
+    return this->world_array[(world_position + 1) % 100];
 }
+
+// remove_goomba, for iterator hasta que lo encuentre
 
 void World::remove_element(int world_position, std::vector<Element*>::iterator element_position) {
     this->world_array[world_position].erase(element_position);

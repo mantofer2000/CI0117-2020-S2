@@ -8,7 +8,7 @@ Koopa_Troopa::Koopa_Troopa() {
 int Koopa_Troopa::action(Mario &mario) {
     int status = ELEMENT_IGNORED_BY_MARIO;
     
-    srand (time(NULL));
+    // srand (time(NULL));
 
     int probability =  (rand() % 100) + 1;
 
