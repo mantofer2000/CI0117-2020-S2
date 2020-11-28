@@ -42,6 +42,10 @@ void Mario::add_coin(int amount) {
     this->coins += amount; 
 }
 
+int Mario::get_coins_amount() {
+    return this->coins;
+}
+
 bool Mario::is_active() {
     return this->active;
 }

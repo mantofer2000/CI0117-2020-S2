@@ -12,8 +12,9 @@ class Mario {
     public:
         Mario();
         Mario(std::string);
-        bool is_active();
         void add_coin(int);
+        int get_coins_amount();
+        bool is_active();
         void set_inactive();
     
     private:

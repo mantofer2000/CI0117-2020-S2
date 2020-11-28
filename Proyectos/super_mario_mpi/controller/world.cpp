@@ -89,7 +89,6 @@ std::vector<Element*> World::get_next_position_elements(int world_position) {
     return this->world_array[(world_position + 1) % 100];
 }
 
-// remove_goomba, for iterator hasta que lo encuentre
 void World::remove_coin(int world_position) {
     Coin a_coin; // Mejor tener un private de estos elementos en la clase.
     bool removed = false;
@@ -98,6 +97,36 @@ void World::remove_coin(int world_position) {
         iteration != this->world_array[world_position].end() && !(removed); ++iteration) {
 
         if (*(*iteration) == a_coin) {
+            this->world_array[world_position].erase(iteration);
+            removed = true;
+        }
+
+    }
+}
+
+void World::remove_goomba(int world_position) {
+    Little_Goomba a_goomba;
+    bool removed = false;
+
+    for (auto iteration = this->world_array[world_position].begin();
+        iteration != this->world_array[world_position].end() && !(removed); ++iteration) {
+
+        if (*(*iteration) == a_goomba) {
+            this->world_array[world_position].erase(iteration);
+            removed = true;
+        }
+
+    }
+}
+
+void World::remove_koopa(int world_position) {
+    Koopa_Troopa a_koopa;
+    bool removed = false;
+
+    for (auto iteration = this->world_array[world_position].begin();
+        iteration != this->world_array[world_position].end() && !(removed); ++iteration) {
+
+        if (*(*iteration) == a_koopa) {
             this->world_array[world_position].erase(iteration);
             removed = true;
         }
