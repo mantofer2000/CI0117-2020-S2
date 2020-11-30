@@ -1,5 +1,6 @@
 #include "../model/world.h"
 #include "../model/element.h"
+#include <mpi.h>
 
 int main() {
 
