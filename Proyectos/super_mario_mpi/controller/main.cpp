@@ -1,24 +1,52 @@
-#include "../model/coin.h"
-#include "../model/goomba.h"
-#include "../model/hole.h"
-#include "../model/koopa.h"
 #include "../model/world.h"
 #include "../model/element.h"
 
 int main() {
 
+    // seed for the entire program
     srand (time(NULL));
+    // ignorar el proceso 0
+    // mpi rank 
 
+    // vectores de info
+    // el de monedas -> marios activos
+    // vector de marios activos
+    // vector de marios attacker
+    // vector de enemigos por recibir
+
+
+
+    // if mario parametrado
+    // 
+
+    // local variables
     Little_Goomba my_goomba;
     Coin my_coin;
-    Hole hole; // 
+    Hole hole;  
     Koopa_Troopa my_koopa;
 
     World my_world;
     Mario my_mario;
 
     int position = 0;
+    
+    // 0 3 3 
+    //   
+    //
+    //
+    //
+
+
+    //
+    //
+    //
+    //
+    //
+
+
     while (my_mario.is_active()) {
+        // all gather vector monedas
+
 
         std::cout << "Position: " << position << '\n';
         std::cout << "Coins: " << my_mario.get_coins_amount() << '\n';
@@ -49,6 +77,7 @@ int main() {
 
                         if (*world_position_elements[element_position] == my_goomba) {
                             my_world.remove_goomba((position + 1) % 100);
+                            // metodo de enviar
                         } else {
                             my_world.remove_koopa((position + 1) % 100);
                         }
@@ -68,7 +97,6 @@ int main() {
                             my_mario.set_inactive();
 
                         }
-
                     }
 
                 }
@@ -77,15 +105,9 @@ int main() {
         }
         position++;
         position = position % 100;
-        // sleep(2);
     }
 
-    /* if (myCoin != myGoomba) {
-        std::cout << "Diferrent Elements" << std::endl;
-    } */
-
-    // w.print_world_array();
-
+ 
     return 0;
 
 }
