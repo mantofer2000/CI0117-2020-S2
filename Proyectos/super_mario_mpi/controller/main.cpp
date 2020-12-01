@@ -22,12 +22,21 @@ int main(int argc, char* argv[]) {
     MPI_Comm_size(MPI_COMM_WORLD, &num_processes);
     MPI_Comm_rank(MPI_COMM_WORLD, &my_id);
 
-    if(my_id){
-        int player_to_view = 0;
-        char attack_strategy = '?';
+    int player_to_view = 0;
+    char attack_strategy = '?';
 
-        // Hacer comprobacion de argumentos.
-        // Verificar que player_to_view no sea 0 ni mayor a la cantidad de procesos.
+    // Hacer comprobacion de argumentos.
+    /*if (argc >= 3) {
+        player_to_view = std::stoi(argv[1]);
+        attack_strategy = (char)argv[2];
+    } else {
+        std::cerr << "Usage: super_mario_mpi player_to_view attack_strategy";
+        return 1;
+    }*/
+    // Verificar que player_to_view no sea 0 ni mayor a la cantidad de procesos.
+
+    if (my_id != 0) {
+        
 
         // ignorar el proceso 0
         // mpi rank 
