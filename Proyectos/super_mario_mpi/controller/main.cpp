@@ -20,10 +20,6 @@ int main(int argc, char* argv[]) {
     
     num_processes = 2;
 
-    // seed for the entire program
-    srand (time(NULL));
-
-
     MPI_Init(&argc, &argv);
     MPI_Status status;
 
@@ -57,6 +53,9 @@ int main(int argc, char* argv[]) {
         std::cerr << "Usage: super_mario_mpi player_to_view attack_strategy";
         return 1;
     }*/
+
+    // seed for the entire program
+    srand (time(NULL) + my_id * num_processes);
 
     // Son de tamano num_processes porque el allgather no puede ignorar al 0.
     coin_array = new int[num_processes];
@@ -133,7 +132,7 @@ int main(int argc, char* argv[]) {
             
             // OJO: Como el metodo action es el que imprime lo que esta haciendo Mario,
             // hay que mandarle el my_id para que imprima cual Mario es
-            if (my_id == player_to_view && elements_count == 0) {
+            if (/*my_id == player_to_view &&*/ elements_count == 0) {
 
                 std::cout << "World pos. " << position << ": ";
                 std::cout << "Mario #" << my_id << " is walking. ";
@@ -152,9 +151,9 @@ int main(int argc, char* argv[]) {
                     (element_position < elements_count) && (my_mario.is_active()); ++element_position) {
                     int status = 0;
 
-                    if (my_id == player_to_view) {
+                    //if (my_id == player_to_view) {
                         std::cout << "World pos. " << position << ": ";
-                    }
+                    //}
 
                     if (*world_position_elements[element_position] == my_coin) {
 
@@ -162,14 +161,14 @@ int main(int argc, char* argv[]) {
                             == ELEMENT_KILLED_BY_MARIO) {
 
                             my_world.remove_coin((position + 1) % 100);
-                            if (my_id == player_to_view) {
+                            //if (my_id == player_to_view) {
                                 std::cout << "Mario #" << my_id << " jumped and grabbed a coin! ";
-                            }
+                            //}
 
                         } else {
-                            if (my_id == player_to_view) {
+                            //if (my_id == player_to_view) {
                                 std::cout << "Mario #" << my_id << " didn't jump and ingored the coin! ";
-                            }
+                            //}
                         }
 
                     } else {
@@ -183,26 +182,26 @@ int main(int argc, char* argv[]) {
                                 if (*world_position_elements[element_position] == my_goomba) {
 
                                     my_world.remove_goomba((position + 1) % 100);
-                                    if (my_id == player_to_view) {
+                                    //if (my_id == player_to_view) {
                                         std::cout   << "Mario #" << my_id
                                                     << " jumped and killed a little goomba! ";
-                                    }
+                                    //}
                                     // metodo de enviar
 
                                 } else {
 
                                     my_world.remove_koopa((position + 1) % 100);
-                                    if (my_id == player_to_view) {
+                                    //if (my_id == player_to_view) {
                                         std::cout   << "Mario #" << my_id
                                                     << " jumped and killed a koopa troopa! ";
-                                    }
+                                    //}
                                     // Enviar koopa
 
                                 }
 
                             } else {
                                 if (action == ELEMENT_KILLED_MARIO) {
-                                    if (my_id == player_to_view) {
+                                    //if (my_id == player_to_view) {
 
                                         if (*world_position_elements[element_position] == my_goomba) {
                                             std::cout   << "Mario #" << my_id
@@ -212,11 +211,11 @@ int main(int argc, char* argv[]) {
                                                         << " didn't jump and was killed by a koopa troopa! ";
                                         }
 
-                                    }
+                                    //}
 
                                     my_mario.set_inactive();
                                 } else {
-                                    if (my_id == player_to_view) {
+                                    //if (my_id == player_to_view) {
 
                                         if (*world_position_elements[element_position] == my_goomba) {
                                             std::cout   << "Mario #" << my_id
@@ -226,7 +225,7 @@ int main(int argc, char* argv[]) {
                                                         << " jumped and passed a koopa troopa! ";
                                         }
 
-                                    }
+                                    //}
                                 }
                             }
 
@@ -237,30 +236,30 @@ int main(int argc, char* argv[]) {
                                 if (world_position_elements[element_position]->action(my_mario)
                                     == ELEMENT_KILLED_MARIO) {
 
-                                    if (my_id == player_to_view) {
+                                    //if (my_id == player_to_view) {
                                         std::cout   << "Mario #" << my_id
                                                     << " didn't jump the hole and had a brutal death! ";
-                                    }
+                                    //}
 
                                     my_mario.set_inactive();
 
                                 } else {
-                                    if (my_id == player_to_view) {
+                                    //if (my_id == player_to_view) {
                                         std::cout << "Mario jumped and passed the hole! ";
-                                    }
+                                    //}
                                 }
 
                             }
 
                         }
                     }
-                    if (my_id == player_to_view) {
+                    //if (my_id == player_to_view) {
                         std::cout << "Coins: " << my_mario.get_coins_amount() << ' ';
 
                         // Imprimir info de MPI: Attacking, Being attacked by, Attack Strategy, Total Playing.
 
                         std::cout << '\n';
-                    }
+                    //}
                 }
             }
 
