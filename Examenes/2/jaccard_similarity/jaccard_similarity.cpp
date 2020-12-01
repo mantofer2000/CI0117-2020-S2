@@ -64,7 +64,7 @@ int main(int argc, char *argv[])
         }
         
         jaccard_similarity = words_intersection / words_union; // Calculate Jaccard similarity score
-        
+                
         array_results[j] = jaccard_similarity;
        
         j++;
@@ -95,6 +95,7 @@ int main(int argc, char *argv[])
     text_file.close();
 
     delete[] array_results; 
+
 
     return 0;
 }

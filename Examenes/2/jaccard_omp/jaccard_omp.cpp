@@ -7,7 +7,9 @@ using namespace std;
 
 int main(int argc, char *argv[])
 {
-    string test_vector, test_text, matrix_row, text_row, most_similar_text;
+    string test_vector, test_text, matrix_row, text_row, most_similar_text, useless;
+      int array_size;
+
 
     if (argc < 3)
     {
@@ -24,6 +26,16 @@ int main(int argc, char *argv[])
         return 1;
     }
 
+
+    array_size = 0;
+    while(getline(text_file, useless)){
+        array_size++;
+    }
+    text_file.clear();
+    text_file.seekg(0, ios::beg);
+    
+    double * array_results = new double [array_size];
+
     ifstream matrix_file(argv[2]);
     if (!matrix_file.is_open())
     {
@@ -39,6 +51,7 @@ int main(int argc, char *argv[])
     double words_union, words_intersection, jaccard_similarity, max_jaccard_similarity;;
     max_jaccard_similarity = -1.0;
     int i;
+    int j = 0;
     
     while (getline(matrix_file, matrix_row) && getline(text_file, text_row)) {
         words_union = words_intersection = 0.0;
@@ -56,17 +69,39 @@ int main(int argc, char *argv[])
 
 
         jaccard_similarity = words_intersection / words_union; // Calculate Jaccard similarity score
+                
+        array_results[j] = jaccard_similarity;
+       
+        j++;
+
 
         if (jaccard_similarity > max_jaccard_similarity) { // Update highest Jaccard score if it is greater than the previous one
             max_jaccard_similarity = jaccard_similarity;
             most_similar_text = text_row;
         }
     }
-    matrix_file.close();
-    text_file.close();
+
+     matrix_file.close();
     cout << "\nEvaluated text: \n\"" << test_text << "\"" << endl;
-    cout << "\nMost similar text: \n\"" << most_similar_text << "\"" << endl;
+    
+    text_file.clear();
+    text_file.seekg(0, ios::beg);
+    getline(text_file, text_row);
+
+    for (int i = 0; i < array_size; i++) {
+        getline(text_file, text_row);
+        if (array_results[i] == max_jaccard_similarity) {
+            cout << "\nMost similar text: \n\"" << text_row << "\"" << endl;
+        }
+        
+    }
+
     printf("\nJaccard similarity score: %.6f\n", max_jaccard_similarity);
+
+    text_file.close();
+
+    delete[] array_results; 
+    
 
     return 0;
 }
