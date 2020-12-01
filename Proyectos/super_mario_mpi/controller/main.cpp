@@ -70,11 +70,10 @@ int main(int argc, char* argv[]) {
             
             // OJO: Como el metodo action es el que imprime lo que esta haciendo Mario,
             // hay que mandarle el my_id para que imprima cual Mario es
-            if (elements_count == 0) {
-                std::cout <<"Mario #" << my_id << " | ";
+            if (my_id == player_to_view && elements_count == 0) {
+
                 std::cout << "World pos. " << position << ": ";
-                // "Mario " << my_id << " is walking. "
-                std::cout << "Mario is walking. ";
+                std::cout << "Mario #" << my_id << " is walking. ";
                 std::cout << "Coins: " << my_mario.get_coins_amount() << ' ';
 
                 // Imprimir info de MPI: Attacking, Being attacked by, Attack Strategy, Total Playing.
@@ -86,7 +85,9 @@ int main(int argc, char* argv[]) {
                     (element_position < elements_count) && (my_mario.is_active()); ++element_position) {
                     int status = 0;
 
-                    std::cout << "World pos. " << position << ": ";
+                    if (my_id == player_to_view) {
+                        std::cout << "World pos. " << position << ": ";
+                    }
 
                     if (*world_position_elements[element_position] == my_coin) {
 
@@ -94,7 +95,14 @@ int main(int argc, char* argv[]) {
                             == ELEMENT_KILLED_BY_MARIO) {
 
                             my_world.remove_coin((position + 1) % 100);
+                            if (my_id == player_to_view) {
+                                std::cout << "Mario #" << my_id << " jumped and grabbed a coin! ";
+                            }
 
+                        } else {
+                            if (my_id == player_to_view) {
+                                std::cout << "Mario #" << my_id << " didn't jump and ingored the coin! ";
+                            }
                         }
 
                     } else {
@@ -106,14 +114,52 @@ int main(int argc, char* argv[]) {
                             if (action == ELEMENT_KILLED_BY_MARIO) {
 
                                 if (*world_position_elements[element_position] == my_goomba) {
+
                                     my_world.remove_goomba((position + 1) % 100);
+                                    if (my_id == player_to_view) {
+                                        std::cout   << "Mario #" << my_id
+                                                    << " jumped and killed a little goomba! ";
+                                    }
                                     // metodo de enviar
+
                                 } else {
+
                                     my_world.remove_koopa((position + 1) % 100);
+                                    if (my_id == player_to_view) {
+                                        std::cout   << "Mario #" << my_id
+                                                    << " jumped and killed a koopa troopa! ";
+                                    }
+                                    // Enviar koopa
+
                                 }
+
                             } else {
                                 if (action == ELEMENT_KILLED_MARIO) {
+                                    if (my_id == player_to_view) {
+
+                                        if (*world_position_elements[element_position] == my_goomba) {
+                                            std::cout   << "Mario #" << my_id
+                                                        << " didn't jump and was killed by a little goomba! ";
+                                        } else {
+                                            std::cout   << "Mario #" << my_id
+                                                        << " didn't jump and was killed by a koopa troopa! ";
+                                        }
+
+                                    }
+
                                     my_mario.set_inactive();
+                                } else {
+                                    if (my_id == player_to_view) {
+
+                                        if (*world_position_elements[element_position] == my_goomba) {
+                                            std::cout   << "Mario #" << my_id
+                                                        << " jumped and passed a little goomba! ";
+                                        } else {
+                                            std::cout   << "Mario #" << my_id
+                                                        << " jumped and passed a koopa troopa! ";
+                                        }
+
+                                    }
                                 }
                             }
 
@@ -124,8 +170,17 @@ int main(int argc, char* argv[]) {
                                 if (world_position_elements[element_position]->action(my_mario)
                                     == ELEMENT_KILLED_MARIO) {
 
+                                    if (my_id == player_to_view) {
+                                        std::cout   << "Mario #" << my_id
+                                                    << " didn't jump the hole and had a brutal death! ";
+                                    }
+
                                     my_mario.set_inactive();
 
+                                } else {
+                                    if (my_id == player_to_view) {
+                                        std::cout << "Mario jumped and passed the hole! ";
+                                    }
                                 }
 
                             }
@@ -144,12 +199,17 @@ int main(int argc, char* argv[]) {
                 position++;
                 position = position % 100;
             } else {
-                std::cout << "World pos. " << position << ": Mario Game Over.\n";
+                if (my_id == player_to_view) {
+                    std::cout << "World pos. " << position << ": Mario #" << my_id << " Game Over.\n";
+                }
             }
             
         }
         
     }
+
+
+
     MPI_Finalize();
 
 

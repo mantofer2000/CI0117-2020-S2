@@ -12,23 +12,16 @@ int Koopa_Troopa::action(Mario &mario) {
 
     int probability =  (rand() % 100) + 1;
 
-    if (probability > 0 && probability <= 10) { 
-        // falta el print
+    if (probability > 0 && probability <= 10) {
         mario.set_inactive();
         status = ELEMENT_KILLED_MARIO;
-        // remember rank_id if
-        std::cout << "Mario didn't jump and was killed by a koopa troopa! ";
     } else {
         if (probability > 10 && probability <= 63) {
             // mario salta y pasa
-            // remember rank_id if
-            std::cout << "Mario jumped and passed a koopa troopa! ";
         } else {
             if (probability > 63 && probability <= 100) {
                 // mario salta y mata al enemigo
                 status = ELEMENT_KILLED_BY_MARIO;
-                // remember rank_id if
-                std::cout << "Mario jumped and killed a koopa troopa! ";
             }
         }
     }
