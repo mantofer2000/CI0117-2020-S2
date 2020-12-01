@@ -22,7 +22,7 @@ int main(int argc, char* argv[]) {
     MPI_Comm_size(MPI_COMM_WORLD, &num_processes);
     MPI_Comm_rank(MPI_COMM_WORLD, &my_id);
 
-    int player_to_view = 0;
+    int player_to_view = 3;
     char attack_strategy = '?';
 
     // Hacer comprobacion de argumentos.
@@ -187,11 +187,13 @@ int main(int argc, char* argv[]) {
 
                         }
                     }
-                    std::cout << "Coins: " << my_mario.get_coins_amount() << ' ';
+                    if (my_id == player_to_view) {
+                        std::cout << "Coins: " << my_mario.get_coins_amount() << ' ';
 
-                    // Imprimir info de MPI: Attacking, Being attacked by, Attack Strategy, Total Playing.
+                        // Imprimir info de MPI: Attacking, Being attacked by, Attack Strategy, Total Playing.
 
-                    std::cout << '\n';
+                        std::cout << '\n';
+                    }
                 }
             }
 
