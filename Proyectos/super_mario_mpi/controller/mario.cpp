@@ -1,13 +1,5 @@
 #include "../model/mario.h"
 
-Mario::Mario(std::string attack_strategy) {
-    this->coins = 0;
-    this->active = true;
-    this->attack_strategy = attack_strategy;
-}
-
-
-
 Mario::Mario() {
     this->coins = 0;
     this->active = true;
@@ -52,4 +44,28 @@ bool Mario::is_active() {
 
 void Mario::set_inactive() {
     this->active = false;
+}
+
+std::string Mario::get_attack_strategy() {
+    return this->attack_strategy;
+}
+
+void Mario::set_attack_strategy(char attack_strategy) {
+    switch (attack_strategy) {
+        case 'R':
+            this->attack_strategy = RANDOM_STRG;
+            break;
+
+        case 'L':
+            this->attack_strategy = L_COIN_STRG;
+            break;
+
+        case 'M':
+            this->attack_strategy = M_COIN_STRG;
+            break;
+
+        case 'A':
+            this->attack_strategy = ATTACKER_STRG;
+            break;
+    }
 }
