@@ -115,7 +115,6 @@ int main(int argc, char *argv[])
     }
 
     text_file.close();
-
     delete[] array_results; 
 
     
