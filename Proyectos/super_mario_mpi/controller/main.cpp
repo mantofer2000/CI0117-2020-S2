@@ -54,8 +54,10 @@ int main(int argc, char* argv[]) {
         return 1;
     }*/
 
-    // seed for the entire program
-    srand (time(NULL) + my_id * num_processes);
+    // seed for the entire program. Funciona?
+    double seed = time(NULL) * my_id;
+    std::cout << seed << '\n';
+    srand (seed);
 
     // Son de tamano num_processes porque el allgather no puede ignorar al 0.
     coin_array = new int[num_processes];
@@ -130,8 +132,6 @@ int main(int argc, char* argv[]) {
             std::vector<Element*> world_position_elements = my_world.get_next_position_elements(position);
             int elements_count = world_position_elements.size();
             
-            // OJO: Como el metodo action es el que imprime lo que esta haciendo Mario,
-            // hay que mandarle el my_id para que imprima cual Mario es
             if (/*my_id == player_to_view &&*/ elements_count == 0) {
 
                 std::cout << "World pos. " << position << ": ";
