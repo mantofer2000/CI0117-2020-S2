@@ -1,7 +1,7 @@
 APPNAME = jaccard_omp
 
 $(APPNAME): $(APPNAME).cpp
-	g++ -Wall -Wextra $(APPNAME).cpp -o $(APPNAME) -fopenmp 
+	g++ $(APPNAME).cpp -o $(APPNAME) -fopenmp 
 
 .PHONY: gitignore
 gitignore:

@@ -56,8 +56,7 @@ int main(int argc, char *argv[])
     while (getline(matrix_file, matrix_row) && getline(text_file, text_row)) {
         words_union = words_intersection = 0.0;
 
-        #pragma omp parallel for default(none)  shared(matrix_row, test_vector) \ 
-       reduction(+: words_union) reduction(+: words_intersection)
+        #pragma omp parallel for default(none)  shared(matrix_row, test_vector) reduction(+: words_union) reduction(+: words_intersection)
         for (i = 0; i < matrix_row.length(); ++i) {
             if (matrix_row[i] == '1' || test_vector[i] == '1') { // If the word is present in any of the texts being compared, sum up to Union
                 ++words_union;
