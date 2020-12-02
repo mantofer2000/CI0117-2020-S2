@@ -17,6 +17,7 @@ int main(int argc, char* argv[]) {
     int my_id, num_processes, mario_status, players_alive;
     int *coin_array;
     int *active_marios;
+    int *attackers;
     
     num_processes = 2;
 
@@ -71,6 +72,7 @@ int main(int argc, char* argv[]) {
     if (my_id == 0) {
         mario_status = 0;
         int coins = 0;
+        int attacking = 0;
         while (remaining_still_alive(active_marios, num_processes)) {
 
             MPI_Bcast(&player_to_view, 1, MPI_INT, 0, MPI_COMM_WORLD);
