@@ -18,6 +18,7 @@ int main(int argc, char* argv[]) {
     int *coin_array;
     int *active_marios;
     int *attackers;
+    int *being_attacked;
     
     num_processes = 2;
 
@@ -64,7 +65,11 @@ int main(int argc, char* argv[]) {
     coin_array = new int[num_processes];
 
     active_marios = new int[num_processes];
+    attackers = new int[num_processes];
+    being_attacked = new int[num_processes];
+
     players_alive = 0;
+
     for (int index = 1; index < num_processes; ++index) {
         active_marios[index] = 1;
     }
@@ -117,12 +122,27 @@ int main(int argc, char* argv[]) {
             my_mario.set_attack_strategy(attack_strategy);
         }
 
+        int new_goombas = 0;
+        int send_goombas = 0;
+        int new_koopas = 0;
+        int send_koopas = 0;
+
+        Little_Goomba* goomba_pointer = new Little_Goomba();
+        *goomba_pointer = my_goomba;
+
+
+        int my_attacker = 0;
+        int id_to_attack = 0;
+        int message = 0;
+
         int position = 0;
         
         while (my_mario.is_active()) {
 
             mario_status = 1;
             int coins = my_mario.get_coins_amount();
+            std::string my_attack_strategy = my_mario.get_attack_strategy();
+
             // all gather vector monedas
 
             MPI_Bcast(&player_to_view, 1, MPI_INT, 0, MPI_COMM_WORLD);
@@ -131,6 +151,18 @@ int main(int argc, char* argv[]) {
             MPI_Allgather(&coins, 1, MPI_INT, coin_array, 1, MPI_INT, MPI_COMM_WORLD);
             MPI_Allgather(&mario_status, 1, MPI_INT, active_marios, 1, MPI_INT, MPI_COMM_WORLD);
 
+            /*if (being_attacked[my_id] == 1) {
+                // Reciba el id de quien lo esta atacando.
+                MPI_Recv(&my_attacker, 1, MPI_INT, MPI_ANY_SOURCE, 120, MPI_COMM_WORLD, &status);
+                // Reciba la cantidad de goombas que tiene que meter en su mundo.
+                MPI_Recv(&new_goombas, 1, MPI_INT, my_attacker, 130, MPI_COMM_WORLD, &status);
+
+                while (new_goombas > 0) {
+                    my_world.add_goomba(goomba_pointer, (position + 10) % 100);
+                    --new_goombas;
+                }
+            }*/
+
             std::vector<Element*> world_position_elements = my_world.get_next_position_elements(position);
             int elements_count = world_position_elements.size();
             
@@ -138,12 +170,12 @@ int main(int argc, char* argv[]) {
 
                 std::cout << "World pos. " << position << ": ";
                 std::cout << "Mario #" << my_id << " is walking. ";
-                std::cout << "Coins: " << my_mario.get_coins_amount() << " | ";
+                std::cout << "Coins: " << coins << " | ";
 
                 // Imprimir info de MPI: Attacking, Being attacked by, Attack Strategy, Total Playing.
                 std::cout << "attacking #- | ";
                 std::cout << "being attacked by #- | ";
-                std::cout << "attack strategy: " << my_mario.get_attack_strategy() << " | ";
+                std::cout << "attack strategy: " << my_attack_strategy << " | ";
                 std::cout << "Total playing: " << players_alive;
 
                 std::cout << '\n';
@@ -189,6 +221,51 @@ int main(int argc, char* argv[]) {
                                                     << " jumped and killed a little goomba! ";
                                     //}
                                     // metodo de enviar
+                                    if (my_attack_strategy == RANDOM_STRG) {
+                                        // Escoger un jugador vivo aleatoriamente y enviar mensaje.
+                                    } else {
+                                        if (my_attack_strategy == L_COIN_STRG) {
+                                            int minimum = 1;
+                                            for (int index = 2; index < num_processes; ++index) {
+                                                if (coin_array[index] < coin_array[minimum]) {
+                                                    if (active_marios[index] == 1) {
+                                                        minimum = index;
+                                                    }
+                                                }
+                                            }
+                                            id_to_attack = minimum;
+                                        } else {
+                                            if (my_attack_strategy == M_COIN_STRG) {
+                                                int maximum = 1;
+                                                for (int index = 2; index < num_processes; ++index) {
+                                                    if (coin_array[index] > coin_array[maximum]) {
+                                                        if (active_marios[index] == 1) {
+                                                            maximum = index;
+                                                        }
+                                                    }
+                                                }
+                                                id_to_attack = maximum;
+                                            } else {
+                                                if (my_attack_strategy == ATTACKER_STRG) {
+                                                    
+                                                    /*for (int index = 1; index < num_processes; ++index) {
+                                                        if (attackers[index] == 1) {
+
+                                                        }
+                                                    }*/
+
+                                                }
+                                            }
+                                        }
+                                    }
+                                    // Que cada proceso tenga una variable 
+                                    // que se reciba siempre el numero de goombas
+                                    // que va a recibir, o algo asi
+                                    // Tipo si no va a recibir nada, que ahi reciba un 0.
+                                    /*message = my_id;
+                                    MPI_Send(&message, 1, MPI_INT, id_to_attack, 120, MPI_COMM_WORLD);
+                                    new_goombas = 1;
+                                    MPI_Send(&new_goombas, 1, MPI_INT, id_to_attack, 130, MPI_COMM_WORLD);*/
 
                                 } else {
 
