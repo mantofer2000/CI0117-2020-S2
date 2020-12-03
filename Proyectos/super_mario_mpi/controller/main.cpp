@@ -14,32 +14,40 @@ void attacking_array(int * array, int array_len) {
         array[i] = -1;
 }
 
-int find_less_coin(int* coin_array, int num_processes) {
+int find_less_coin(int* active_marios, int* coin_array, int num_processes, int my_id) {
     int process = -1;
-    for (int i = 0; i < num_processes; i++){
-        if (process < 0) {
-            if (coin_array[i] >= 0) {
-                process = i;
-            }
-        } else {
-            if (coin_array[i] < coin_array[process]) {
-                process = i;
+    for (int i = 1; i < num_processes; i++) {
+        if (i != my_id) {
+            if (process < 0) {
+                if (coin_array[i] >= 0) {
+                    process = i;
+                }
+            } else {
+                if (active_marios[i] == 1) {
+                    if (coin_array[i] < coin_array[process]) {
+                        process = i;
+                    }
+                }
             }
         }
     }
     return process;
 }
 
-int find_more_coin(int* coin_array, int num_processes) {
+int find_more_coin(int* active_marios, int* coin_array, int num_processes, int my_id) {
     int process = -1;
-    for (int i = 0; i < num_processes; i++){
-        if (process < 0) {
-            if (coin_array[i] >= 0) {
-                process = i;
-            }
-        } else {
-            if (coin_array[i] > coin_array[process]) {
-                process = i;
+    for (int i = 1; i < num_processes; i++) {
+        if (i != my_id) {
+            if (process < 0) {
+                if (coin_array[i] >= 0) {
+                    process = i;
+                }
+            } else {
+                if (active_marios[i] == 1) {
+                    if (coin_array[i] > coin_array[process]) {
+                        process = i;
+                    }
+                }
             }
         }
     }
@@ -48,7 +56,7 @@ int find_more_coin(int* coin_array, int num_processes) {
 
 
 bool remaining_still_alive(int* active_marios, int num_processes) {
-    for (int index = 0; index < num_processes - 1; ++index) {
+    for (int index = 1; index < num_processes; ++index) {
         if (active_marios[index] == 1) {
             return true;
         }
@@ -58,7 +66,7 @@ bool remaining_still_alive(int* active_marios, int num_processes) {
 
 int main(int argc, char* argv[]) {
 
-    int my_id, num_processes, mario_status, players_alive;
+    int my_id, num_processes, mario_status, players_alive, num_attackers_strat;
     int *coin_array;
     int *active_marios;
     int *attackers;
@@ -104,12 +112,6 @@ int main(int argc, char* argv[]) {
         return 1;
     }*/
 
-    // seed for the entire program. Funciona?
-    
-    //double seed = time(NULL) * (my_id * 10000);
-    //std::cout << seed << '\n';
-    //srand (seed);
-
     // Son de tamano num_processes porque el allgather no puede ignorar al 0.
     coin_array = new int[num_processes];
     active_marios = new int[num_processes];
@@ -119,6 +121,7 @@ int main(int argc, char* argv[]) {
     koopas = new int[num_processes];
 
     players_alive = 0;
+    num_attackers_strat = 0;
 
     for (int index = 1; index < num_processes; ++index) {
         active_marios[index] = 1;
@@ -127,14 +130,23 @@ int main(int argc, char* argv[]) {
     if (my_id == 0) {
         mario_status = 0;
         int coins = 0;
-        int attacking = 0;
+        int attacker_strat = 0;
+        int id_to_attack = 0;
+        int goombas_to_send = 0;
+        int koopas_to_send = 0;
+
         while (remaining_still_alive(active_marios, num_processes)) {
 
             MPI_Bcast(&player_to_view, 1, MPI_INT, 0, MPI_COMM_WORLD);
             MPI_Allreduce(&mario_status, &players_alive, 1, MPI_INT, MPI_SUM, MPI_COMM_WORLD);
+            MPI_Allreduce(&attacker_strat, &num_attackers_strat, 1, MPI_INT, MPI_SUM, MPI_COMM_WORLD);
 
             MPI_Allgather(&coins, 1, MPI_INT, coin_array, 1, MPI_INT, MPI_COMM_WORLD);
             MPI_Allgather(&mario_status, 1, MPI_INT, active_marios, 1, MPI_INT, MPI_COMM_WORLD);
+            MPI_Allgather(&id_to_attack, 1, MPI_INT, attacking_array, 1, MPI_INT, MPI_COMM_WORLD);
+            MPI_Allgather(&attacker_strat, 1, MPI_INT, attackers, 1, MPI_INT, MPI_COMM_WORLD);
+            MPI_Allgather(&goombas_to_send, 1, MPI_INT, goombas, 1, MPI_INT, MPI_COMM_WORLD);
+            MPI_Allgather(&koopas_to_send, 1, MPI_INT, koopas, 1, MPI_INT, MPI_COMM_WORLD);
 
             if (remaining_still_alive(active_marios, num_processes)) {
                 while (active_marios[player_to_view] == 0) {
@@ -175,15 +187,13 @@ int main(int argc, char* argv[]) {
         }
 
         int new_goombas = 0;
-        int send_goombas = 0;
+        int goombas_to_send = 0;
         int new_koopas = 0;
-        int send_koopas = 0;
+        int koopas_to_send = 0;
 
-        Little_Goomba* goomba_pointer = new Little_Goomba();
-        *goomba_pointer = my_goomba;
-
-
+        int coins = 0;
         int my_attacker = 0;
+        int attacker_strat = 0;
         int id_to_attack = 0;
         int message = 0;
 
@@ -192,28 +202,52 @@ int main(int argc, char* argv[]) {
         while (my_mario.is_active()) {
 
             mario_status = 1;
-            int coins = my_mario.get_coins_amount();
+            coins = my_mario.get_coins_amount();
             std::string my_attack_strategy = my_mario.get_attack_strategy();
+
+            if (my_attack_strategy == ATTACKER_STRG) {
+                attacker_strat = 1;
+            }
 
             // all gather vector monedas
 
             MPI_Bcast(&player_to_view, 1, MPI_INT, 0, MPI_COMM_WORLD);
             MPI_Allreduce(&mario_status, &players_alive, 1, MPI_INT, MPI_SUM, MPI_COMM_WORLD);
+            MPI_Allreduce(&attacker_strat, &num_attackers_strat, 1, MPI_INT, MPI_SUM, MPI_COMM_WORLD);
 
             MPI_Allgather(&coins, 1, MPI_INT, coin_array, 1, MPI_INT, MPI_COMM_WORLD);
             MPI_Allgather(&mario_status, 1, MPI_INT, active_marios, 1, MPI_INT, MPI_COMM_WORLD);
+            MPI_Allgather(&id_to_attack, 1, MPI_INT, attacking_array, 1, MPI_INT, MPI_COMM_WORLD);
+            MPI_Allgather(&attacker_strat, 1, MPI_INT, attackers, 1, MPI_INT, MPI_COMM_WORLD);
+            MPI_Allgather(&goombas_to_send, 1, MPI_INT, goombas, 1, MPI_INT, MPI_COMM_WORLD);
+            MPI_Allgather(&koopas_to_send, 1, MPI_INT, koopas, 1, MPI_INT, MPI_COMM_WORLD);
 
-            /*if (being_attacked[my_id] == 1) {
-                // Reciba el id de quien lo esta atacando.
-                MPI_Recv(&my_attacker, 1, MPI_INT, MPI_ANY_SOURCE, 120, MPI_COMM_WORLD, &status);
-                // Reciba la cantidad de goombas que tiene que meter en su mundo.
-                MPI_Recv(&new_goombas, 1, MPI_INT, my_attacker, 130, MPI_COMM_WORLD, &status);
-
-                while (new_goombas > 0) {
-                    my_world.add_goomba(goomba_pointer, (position + 10) % 100);
-                    --new_goombas;
+            for (int index = 1; index < num_processes; ++index) {
+                if (attacking_array[index] == my_id) {
+                    my_attacker = index; // Ese proceso me esta atacando.
+                    // Ver cuantos goombas y koopas me esta mandando.
+                    int count_goombas = 0, count_koopas = 0;
+                    while (count_goombas < goombas[index]) {
+                        my_world.add_goomba(position);
+                        ++count_goombas;
+                    }
+                    while (count_koopas < koopas[index]) {
+                        my_world.add_koopa(position);
+                        ++count_koopas;
+                    }
                 }
-            }*/
+            }
+
+            if (active_marios[id_to_attack] == 0) {
+                id_to_attack = 0;
+            }
+
+            if (active_marios[my_attacker] == 0) {
+                my_attacker = 0;
+            }
+
+            goombas_to_send = 0;
+            koopas_to_send = 0;
 
             std::vector<Element*> world_position_elements = my_world.get_next_position_elements(position);
             int elements_count = world_position_elements.size();
@@ -225,8 +259,8 @@ int main(int argc, char* argv[]) {
                 std::cout << "Coins: " << coins << " | ";
 
                 // Imprimir info de MPI: Attacking, Being attacked by, Attack Strategy, Total Playing.
-                std::cout << "attacking #- | ";
-                std::cout << "being attacked by #- | ";
+                std::cout << "attacking #" << id_to_attack << " | ";
+                std::cout << "being attacked by #" << my_attacker << " | ";
                 std::cout << "attack strategy: " << my_attack_strategy << " | ";
                 std::cout << "Total playing: " << players_alive;
 
@@ -240,7 +274,6 @@ int main(int argc, char* argv[]) {
                     double seed = time(NULL) * (my_id * 10000);
                     srand(seed);
                     int probability = (rand() % 100) + 1;
-                    std::cout << "Seed " << seed << " Id: " << my_id << " Rand: " << probability << '\n';
 
                     //if (my_id == player_to_view) {
                         std::cout << "World pos. " << position << ": ";
@@ -278,51 +311,36 @@ int main(int argc, char* argv[]) {
                                                     << " jumped and killed a little goomba! ";
                                     //}
                                     // metodo de enviar
-                                    if (my_attack_strategy == RANDOM_STRG) {
-                                        // Escoger un jugador vivo aleatoriamente y enviar mensaje.
-                                    } else {
-                                        if (my_attack_strategy == L_COIN_STRG) {
-                                            int minimum = 1;
-                                            for (int index = 2; index < num_processes; ++index) {
-                                                if (coin_array[index] < coin_array[minimum]) {
-                                                    if (active_marios[index] == 1) {
-                                                        minimum = index;
-                                                    }
-                                                }
-                                            }
-                                            id_to_attack = minimum;
+                                    if (players_alive > 1)
+                                    {
+                                        if (my_attack_strategy == RANDOM_STRG) {
+                                            // Escoger un jugador vivo aleatoriamente y enviar mensaje.
+                                            do {
+                                                id_to_attack = (rand() % (num_processes - 1)) + 1;
+                                            } while (active_marios[id_to_attack] == 0 || id_to_attack == my_id);
+
                                         } else {
-                                            if (my_attack_strategy == M_COIN_STRG) {
-                                                int maximum = 1;
-                                                for (int index = 2; index < num_processes; ++index) {
-                                                    if (coin_array[index] > coin_array[maximum]) {
-                                                        if (active_marios[index] == 1) {
-                                                            maximum = index;
+
+                                            if (my_attack_strategy == L_COIN_STRG) {
+                                                id_to_attack = find_less_coin(active_marios, coin_array, num_processes, my_id);
+                                            } else {
+                                                if (my_attack_strategy == M_COIN_STRG) {
+                                                    id_to_attack = find_more_coin(active_marios, coin_array, num_processes, my_id);
+                                                } else {
+                                                    if (my_attack_strategy == ATTACKER_STRG) {
+                                                        if (num_attackers_strat > 1) {
+                                                            do {
+                                                                id_to_attack = (rand() % (num_processes - 1)) + 1;
+                                                            } while (active_marios[id_to_attack] == 0 || attackers[id_to_attack] == 0
+                                                                || id_to_attack == my_id);
                                                         }
                                                     }
                                                 }
-                                                id_to_attack = maximum;
-                                            } else {
-                                                if (my_attack_strategy == ATTACKER_STRG) {
-                                                    
-                                                    /*for (int index = 1; index < num_processes; ++index) {
-                                                        if (attackers[index] == 1) {
-
-                                                        }
-                                                    }*/
-
-                                                }
                                             }
+
                                         }
+                                        ++goombas_to_send;
                                     }
-                                    // Que cada proceso tenga una variable 
-                                    // que se reciba siempre el numero de goombas
-                                    // que va a recibir, o algo asi
-                                    // Tipo si no va a recibir nada, que ahi reciba un 0.
-                                    /*message = my_id;
-                                    MPI_Send(&message, 1, MPI_INT, id_to_attack, 120, MPI_COMM_WORLD);
-                                    new_goombas = 1;
-                                    MPI_Send(&new_goombas, 1, MPI_INT, id_to_attack, 130, MPI_COMM_WORLD);*/
 
                                 } else {
 
@@ -332,7 +350,36 @@ int main(int argc, char* argv[]) {
                                                     << " jumped and killed a koopa troopa! ";
                                     //}
                                     // Enviar koopa
+                                    if (players_alive > 1)
+                                    {
+                                        if (my_attack_strategy == RANDOM_STRG) {
+                                            // Escoger un jugador vivo aleatoriamente y enviar mensaje.
+                                            do {
+                                                id_to_attack = (rand() % (num_processes - 1)) + 1;
+                                            } while (active_marios[id_to_attack] == 0 || id_to_attack == my_id);
 
+                                        } else {
+
+                                            if (my_attack_strategy == L_COIN_STRG) {
+                                                id_to_attack = find_less_coin(active_marios, coin_array, num_processes, my_id);
+                                            } else {
+                                                if (my_attack_strategy == M_COIN_STRG) {
+                                                    id_to_attack = find_more_coin(active_marios, coin_array, num_processes, my_id);
+                                                } else {
+                                                    if (my_attack_strategy == ATTACKER_STRG) {
+                                                        if (num_attackers_strat > 1) {
+                                                            do {
+                                                                id_to_attack = (rand() % (num_processes - 1)) + 1;
+                                                            } while (active_marios[id_to_attack] == 0 || attackers[id_to_attack] == 0
+                                                                || id_to_attack == my_id);
+                                                        }
+                                                    }
+                                                }
+                                            }
+
+                                        }
+                                        ++koopas_to_send;
+                                    }
                                 }
 
                             } else {
@@ -381,7 +428,8 @@ int main(int argc, char* argv[]) {
 
                                 } else {
                                     //if (my_id == player_to_view) {
-                                        std::cout << "Mario jumped and passed the hole! ";
+                                        std::cout   << "Mario #" << my_id
+                                                    << " jumped and passed the hole! ";
                                     //}
                                 }
 
@@ -390,9 +438,13 @@ int main(int argc, char* argv[]) {
                         }
                     }
                     //if (my_id == player_to_view) {
-                        std::cout << "Coins: " << my_mario.get_coins_amount() << ' ';
+                        std::cout << "Coins: " << my_mario.get_coins_amount() << " | ";
 
                         // Imprimir info de MPI: Attacking, Being attacked by, Attack Strategy, Total Playing.
+                        std::cout << "attacking #" << id_to_attack << " | ";
+                        std::cout << "being attacked by #" << my_attacker << " | ";
+                        std::cout << "attack strategy: " << my_attack_strategy << " | ";
+                        std::cout << "Total playing: " << players_alive;
 
                         std::cout << '\n';
                     //}
@@ -407,20 +459,30 @@ int main(int argc, char* argv[]) {
                 if (my_id == player_to_view) {
                     std::cout << "World pos. " << position << ": Mario #" << my_id << " Game Over.\n";
                 }
+                if (my_attack_strategy == ATTACKER_STRG) {
+                    attacker_strat = 0;
+                }
             }
             sleep(2);
             
         }
         
         while (remaining_still_alive(active_marios, num_processes)) {
-            int coins = my_mario.get_coins_amount();
+            coins = my_mario.get_coins_amount();
+            id_to_attack = 0;
+            goombas_to_send = 0;
+            koopas_to_send = 0;
 
             MPI_Bcast(&player_to_view, 1, MPI_INT, 0, MPI_COMM_WORLD);
             MPI_Allreduce(&mario_status, &players_alive, 1, MPI_INT, MPI_SUM, MPI_COMM_WORLD);
+            MPI_Allreduce(&attacker_strat, &num_attackers_strat, 1, MPI_INT, MPI_SUM, MPI_COMM_WORLD);
 
             MPI_Allgather(&coins, 1, MPI_INT, coin_array, 1, MPI_INT, MPI_COMM_WORLD);
             MPI_Allgather(&mario_status, 1, MPI_INT, active_marios, 1, MPI_INT, MPI_COMM_WORLD);
-
+            MPI_Allgather(&id_to_attack, 1, MPI_INT, attacking_array, 1, MPI_INT, MPI_COMM_WORLD);
+            MPI_Allgather(&attacker_strat, 1, MPI_INT, attackers, 1, MPI_INT, MPI_COMM_WORLD);
+            MPI_Allgather(&goombas_to_send, 1, MPI_INT, goombas, 1, MPI_INT, MPI_COMM_WORLD);
+            MPI_Allgather(&koopas_to_send, 1, MPI_INT, koopas, 1, MPI_INT, MPI_COMM_WORLD);
         }
 
     }
