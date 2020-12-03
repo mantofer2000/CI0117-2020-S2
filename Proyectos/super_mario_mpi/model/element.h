@@ -2,7 +2,7 @@
 #define ELEMENT_H
 
 #include "mario.h"
-#include "random.h"
+#include "rand_gen.h"
 
 #define LITTLE_GOOMBA "Little_Goomba"
 #define COIN "Coin"

@@ -58,10 +58,16 @@ int main(int argc, char* argv[]) {
     }*/
 
     // seed for the entire program. Funciona?
+<<<<<<< HEAD
     
     //double seed = time(NULL) * (my_id * 10000);
     //std::cout << seed << '\n';
     //srand (seed);
+=======
+    double seed = time(NULL) * my_id;
+    std::cout << seed << '\n';
+    srand (seed);
+>>>>>>> parent of 3491f33... Try seed
 
     // Son de tamano num_processes porque el allgather no puede ignorar al 0.
     coin_array = new int[num_processes];
@@ -370,7 +376,10 @@ int main(int argc, char* argv[]) {
 
     }
 
+    
+
     MPI_Finalize();
+
 
     delete active_marios;
 

@@ -10,8 +10,8 @@ int Koopa_Troopa::action(Mario &mario) {
     
     // srand (time(NULL));
 
-    Rand_Gen random;
-    int probability =  random.get_rand_double();
+    Rand_Gen object;
+    int probability =  object.get_rand_double();
 
 
     if (probability > 0 && probability <= 10) {
