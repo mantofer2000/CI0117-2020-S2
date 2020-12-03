@@ -10,7 +10,9 @@ int Koopa_Troopa::action(Mario &mario) {
     
     // srand (time(NULL));
 
-    int probability =  (rand() % 100) + 1;
+    Rand_Gen random;
+    int probability =  random.get_rand_double();
+
 
     if (probability > 0 && probability <= 10) {
         mario.set_inactive();

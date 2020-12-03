@@ -18,6 +18,7 @@ int main(int argc, char* argv[]) {
     int *coin_array;
     int *active_marios;
     int *attackers;
+
     int *being_attacked;
     
     num_processes = 2;
@@ -58,9 +59,9 @@ int main(int argc, char* argv[]) {
 
     // seed for the entire program. Funciona?
     
-    double seed = time(NULL) * (my_id * 10000);
+    //double seed = time(NULL) * (my_id * 10000);
     //std::cout << seed << '\n';
-    srand (seed);
+    //srand (seed);
 
     // Son de tamano num_processes porque el allgather no puede ignorar al 0.
     coin_array = new int[num_processes];
