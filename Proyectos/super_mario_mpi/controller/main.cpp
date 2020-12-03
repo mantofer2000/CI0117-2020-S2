@@ -62,7 +62,10 @@ int main(int argc, char* argv[]) {
     int *coin_array;
     int *active_marios;
     int *attackers;
-
+    // goombas every process has to receive
+    int *goombas;
+    // koopas every process has to receive
+    int *koopas;
     int *attacking_array;
     
     num_processes = 2;
@@ -109,11 +112,11 @@ int main(int argc, char* argv[]) {
 
     // Son de tamano num_processes porque el allgather no puede ignorar al 0.
     coin_array = new int[num_processes];
-
     active_marios = new int[num_processes];
     attackers = new int[num_processes];
-    
     attacking_array = new int[num_processes];
+    goombas = new int[num_processes];
+    koopas = new int[num_processes];
 
     players_alive = 0;
 
@@ -428,6 +431,7 @@ int main(int argc, char* argv[]) {
 
 
     delete active_marios;
+    
 
     return 0;
 
