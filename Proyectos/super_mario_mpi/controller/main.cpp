@@ -3,6 +3,50 @@
 #include <unistd.h>
 #include <mpi.h>
 
+
+void init_array(int * array, int array_len) {
+    for (int i = 0; i < array_len; i++)
+        array[i] = 0;
+}
+
+void attacking_array(int * array, int array_len) {
+    for (int i = 0; i < array_len; i++)
+        array[i] = -1;
+}
+
+int find_less_coin(int* coin_array, int num_processes) {
+    int process = -1;
+    for (int i = 0; i < num_processes; i++){
+        if (process < 0) {
+            if (coin_array[i] >= 0) {
+                process = i;
+            }
+        } else {
+            if (coin_array[i] < coin_array[process]) {
+                process = i;
+            }
+        }
+    }
+    return process;
+}
+
+int find_more_coin(int* coin_array, int num_processes) {
+    int process = -1;
+    for (int i = 0; i < num_processes; i++){
+        if (process < 0) {
+            if (coin_array[i] >= 0) {
+                process = i;
+            }
+        } else {
+            if (coin_array[i] > coin_array[process]) {
+                process = i;
+            }
+        }
+    }
+    return process;
+}
+
+
 bool remaining_still_alive(int* active_marios, int num_processes) {
     for (int index = 0; index < num_processes - 1; ++index) {
         if (active_marios[index] == 1) {
@@ -19,7 +63,7 @@ int main(int argc, char* argv[]) {
     int *active_marios;
     int *attackers;
 
-    int *being_attacked;
+    int *attacking_array;
     
     num_processes = 2;
 
@@ -58,23 +102,18 @@ int main(int argc, char* argv[]) {
     }*/
 
     // seed for the entire program. Funciona?
-<<<<<<< HEAD
     
     //double seed = time(NULL) * (my_id * 10000);
     //std::cout << seed << '\n';
     //srand (seed);
-=======
-    double seed = time(NULL) * my_id;
-    std::cout << seed << '\n';
-    srand (seed);
->>>>>>> parent of 3491f33... Try seed
 
     // Son de tamano num_processes porque el allgather no puede ignorar al 0.
     coin_array = new int[num_processes];
 
     active_marios = new int[num_processes];
     attackers = new int[num_processes];
-    being_attacked = new int[num_processes];
+    
+    attacking_array = new int[num_processes];
 
     players_alive = 0;
 
