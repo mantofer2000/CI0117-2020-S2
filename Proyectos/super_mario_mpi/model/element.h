@@ -2,10 +2,6 @@
 #define ELEMENT_H
 
 #include "mario.h"
-<<<<<<< HEAD
-
-=======
->>>>>>> a12aa01cde9b7ecff9744cc872601490adf06364
 
 #define LITTLE_GOOMBA "Little_Goomba"
 #define COIN "Coin"
