@@ -2,7 +2,7 @@
 #define MARIO_H
 
 #include <bits/stdc++.h>
-
+// comment
 #define RANDOM_STRG "random"
 #define L_COIN_STRG "less_coins"
 #define M_COIN_STRG "most_coins"
