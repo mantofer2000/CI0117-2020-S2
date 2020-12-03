@@ -5,11 +5,11 @@ Coin::Coin() {
     this->element_type = COIN;
 }
 
-int Coin::action(Mario &mario) {
+int Coin::action(Mario &mario, int probability) {
     int status = ELEMENT_IGNORED_BY_MARIO;
     
     // srand (time(NULL));
-    int probability = rand() % 100 + 1;
+    // int probability =  random.get_rand_double();
 
     if (probability > 50) { 
         // falta el print

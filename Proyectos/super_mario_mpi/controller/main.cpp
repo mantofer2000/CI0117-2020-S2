@@ -133,9 +133,11 @@ int main(int argc, char* argv[]) {
             MPI_Allgather(&coins, 1, MPI_INT, coin_array, 1, MPI_INT, MPI_COMM_WORLD);
             MPI_Allgather(&mario_status, 1, MPI_INT, active_marios, 1, MPI_INT, MPI_COMM_WORLD);
 
-            if (active_marios[player_to_view] == 0) {
-                std::cout << "Enter the number of another player: ";
-                std::cin >> player_to_view;
+            if (remaining_still_alive(active_marios, num_processes)) {
+                while (active_marios[player_to_view] == 0) {
+                    std::cout << "He dead. Enter the number of another player: ";
+                    std::cin >> player_to_view;
+                }
             }
         }
     }
@@ -163,7 +165,7 @@ int main(int argc, char* argv[]) {
 
         World my_world;
 
-        Mario my_mario;
+        Mario my_mario(my_id);
 
         if (my_id == player_to_view) {
             my_mario.set_attack_strategy(attack_strategy);
@@ -232,13 +234,18 @@ int main(int argc, char* argv[]) {
                     (element_position < elements_count) && (my_mario.is_active()); ++element_position) {
                     int status = 0;
 
+                    double seed = time(NULL) * (my_id * 10000);
+                    srand(seed);
+                    int probability = (rand() % 100) + 1;
+                    std::cout << "Seed " << seed << " Id: " << my_id << " Rand: " << probability << '\n';
+
                     //if (my_id == player_to_view) {
                         std::cout << "World pos. " << position << ": ";
                     //}
 
                     if (*world_position_elements[element_position] == my_coin) {
 
-                        if (world_position_elements[element_position]->action(my_mario)
+                        if (world_position_elements[element_position]->action(my_mario, probability)
                             == ELEMENT_KILLED_BY_MARIO) {
 
                             my_world.remove_coin((position + 1) % 100);
@@ -257,7 +264,7 @@ int main(int argc, char* argv[]) {
                         if ((*world_position_elements[element_position] == my_goomba)
                             || (*world_position_elements[element_position] == my_koopa)) {
 
-                            int action = world_position_elements[element_position]->action(my_mario);
+                            int action = world_position_elements[element_position]->action(my_mario, probability);
                             if (action == ELEMENT_KILLED_BY_MARIO) {
 
                                 if (*world_position_elements[element_position] == my_goomba) {
@@ -359,7 +366,7 @@ int main(int argc, char* argv[]) {
 
                             if (*world_position_elements[element_position] == hole) {
 
-                                if (world_position_elements[element_position]->action(my_mario)
+                                if (world_position_elements[element_position]->action(my_mario, probability)
                                     == ELEMENT_KILLED_MARIO) {
 
                                     //if (my_id == player_to_view) {
@@ -398,7 +405,7 @@ int main(int argc, char* argv[]) {
                     std::cout << "World pos. " << position << ": Mario #" << my_id << " Game Over.\n";
                 }
             }
-            // sleep(2);
+            sleep(2);
             
         }
         

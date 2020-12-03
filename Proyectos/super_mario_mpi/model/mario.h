@@ -10,7 +10,7 @@
 
 class Mario {
     public:
-        Mario();
+        Mario(int);
         Mario(char);
         void add_coin(int);
         int get_coins_amount();

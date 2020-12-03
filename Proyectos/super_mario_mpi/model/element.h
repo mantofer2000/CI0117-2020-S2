@@ -2,7 +2,10 @@
 #define ELEMENT_H
 
 #include "mario.h"
+<<<<<<< HEAD
 
+=======
+>>>>>>> a12aa01cde9b7ecff9744cc872601490adf06364
 
 #define LITTLE_GOOMBA "Little_Goomba"
 #define COIN "Coin"
@@ -16,7 +19,7 @@
 
 class Element {
     public:
-        virtual int action(Mario &) = 0;
+        virtual int action(Mario &, int probability) = 0;
 
         // Operators
         bool operator==(const Element &other) {

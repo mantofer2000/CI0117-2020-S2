@@ -6,7 +6,7 @@
 class Coin : public Element {
     public:
         Coin();
-        int action(Mario &) override;
+        int action(Mario &, int probability) override;
 };
 
 #endif

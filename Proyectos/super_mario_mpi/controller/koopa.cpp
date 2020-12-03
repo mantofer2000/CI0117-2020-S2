@@ -5,13 +5,12 @@ Koopa_Troopa::Koopa_Troopa() {
     this->element_type = KOOPA_TROOPA;
 }
 
-int Koopa_Troopa::action(Mario &mario) {
+int Koopa_Troopa::action(Mario &mario, int probability) {
     int status = ELEMENT_IGNORED_BY_MARIO;
     
     // srand (time(NULL));
 
-    
-    int probability = rand() % 100 + 1;
+    // int probability =  object.get_rand_double();
 
 
     if (probability > 0 && probability <= 10) {

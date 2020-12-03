@@ -6,7 +6,7 @@
 class Hole : public Element {
     public:
         Hole();
-        int action(Mario &) override;
+        int action(Mario &, int probability) override;
 };
 
 #endif

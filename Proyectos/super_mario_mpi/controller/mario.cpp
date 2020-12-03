@@ -1,10 +1,10 @@
 #include "../model/mario.h"
 
-Mario::Mario() {
+Mario::Mario(int my_id) {
     this->coins = 0;
     this->active = true;
 
-    srand (time(NULL));
+    srand (time(NULL) * (my_id * 10000));
 
     int probability =  (rand() % 4) + 1;
 
