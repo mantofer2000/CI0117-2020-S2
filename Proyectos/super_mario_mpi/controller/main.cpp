@@ -164,21 +164,6 @@ int main(int argc, char* argv[]) {
     }
 
     if (my_id != 0) {
-        
-
-        // ignorar el proceso 0
-        // mpi rank 
-
-        // vectores de info
-        // el de monedas -> marios activos
-        // vector de marios activos
-        // vector de marios attacker
-        // vector de enemigos por recibir
-
-        // if mario parametrado
-        // 
-
-        // local variables
         Little_Goomba my_goomba;
         Coin my_coin;
         Hole hole;  
@@ -214,8 +199,6 @@ int main(int argc, char* argv[]) {
             if (my_attack_strategy == ATTACKER_STRG) {
                 attacker_strat = 1;
             }
-
-            // all gather vector monedas
 
             MPI_Bcast(&player_to_view, 1, MPI_INT, 0, MPI_COMM_WORLD);
             MPI_Allreduce(&mario_status, &players_alive, 1, MPI_INT, MPI_SUM, MPI_COMM_WORLD);
@@ -492,14 +475,17 @@ int main(int argc, char* argv[]) {
         }
 
     }
-
-    
-
     MPI_Finalize();
 
 
-    delete active_marios;
-    
+    delete[] active_marios;
+    delete[] coin_array;
+    delete[] active_marios;
+    delete[] attackers;
+    delete[] attacking_array;
+    delete[] goombas;
+    delete[] koopas;
+   
 
     return 0;
 
