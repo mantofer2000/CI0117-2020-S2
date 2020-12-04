@@ -11,7 +11,7 @@
 class Mario {
     public:
         Mario(int);
-        Mario(char);
+        //Mario(char);
         void add_coin(int);
         int get_coins_amount();
         bool is_active();

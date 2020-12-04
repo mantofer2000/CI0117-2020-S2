@@ -8,9 +8,6 @@ Little_Goomba::Little_Goomba() {
 
 int Little_Goomba::action(Mario &mario, int probability) {
     int status = ELEMENT_IGNORED_BY_MARIO;
-    // srand (time(NULL));
-
-    // int probability =  random.get_rand_double();
 
     if (probability > 0 && probability <= 5) { 
         mario.set_inactive();

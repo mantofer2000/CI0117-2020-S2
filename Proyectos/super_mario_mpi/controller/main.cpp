@@ -140,9 +140,7 @@ int main(int argc, char* argv[]) {
         int id_to_attack = 0;
         int goombas_to_send = 0;
         int koopas_to_send = 0;
-
         while (remaining_still_alive(active_marios, num_processes)) {
-
             MPI_Bcast(&player_to_view, 1, MPI_INT, 0, MPI_COMM_WORLD);
             MPI_Allreduce(&mario_status, &players_alive, 1, MPI_INT, MPI_SUM, MPI_COMM_WORLD);
             MPI_Allreduce(&attacker_strat, &num_attackers_strat, 1, MPI_INT, MPI_SUM, MPI_COMM_WORLD);
@@ -153,7 +151,7 @@ int main(int argc, char* argv[]) {
             MPI_Allgather(&attacker_strat, 1, MPI_INT, attackers, 1, MPI_INT, MPI_COMM_WORLD);
             MPI_Allgather(&goombas_to_send, 1, MPI_INT, goombas, 1, MPI_INT, MPI_COMM_WORLD);
             MPI_Allgather(&koopas_to_send, 1, MPI_INT, koopas, 1, MPI_INT, MPI_COMM_WORLD);
-
+            
             if (remaining_still_alive(active_marios, num_processes)) {
                 while (active_marios[player_to_view] == 0) {
                     std::cout << "He dead. Enter the number of another player: ";

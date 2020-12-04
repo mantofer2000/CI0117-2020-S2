@@ -8,9 +8,6 @@ Coin::Coin() {
 int Coin::action(Mario &mario, int probability) {
     int status = ELEMENT_IGNORED_BY_MARIO;
     
-    // srand (time(NULL));
-    // int probability =  random.get_rand_double();
-
     if (probability > 50) { 
         // falta el print
         mario.add_coin(1);
