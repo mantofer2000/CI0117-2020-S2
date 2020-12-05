@@ -4,8 +4,10 @@ World::World() {
     this->initialize_world();
 }
 
+/**
+ * Inicializa el arreglo que representa al mundo y sus elementos.
+ */
 void World::initialize_world() {
-    // int index = 0;
     Coin coin;
     Little_Goomba goomba;
     Hole hole;
@@ -23,7 +25,7 @@ void World::initialize_world() {
     Koopa_Troopa* koopa_pointer = new Koopa_Troopa();
     *koopa_pointer = koopa;
 
-    // 
+    // El mundo tiene 100 posiciones.
     this->world_array.resize(100);
 
     this->world_array[8].push_back(coin_pointer);
@@ -74,6 +76,10 @@ void World::initialize_world() {
     this->world_array[88].push_back(goomba_pointer);
 }
 
+/**
+ * Agrega un goomba nuevo al mundo, 10 posiciones adelante de la posicion recibida.
+ * @param world_position : La posicion recibida.
+ */
 void World::add_goomba(int world_position) {
     Little_Goomba goomba;
     Little_Goomba* new_goomba_pointer = new Little_Goomba();
@@ -83,6 +89,10 @@ void World::add_goomba(int world_position) {
     this->world_array[index].push_back(new_goomba_pointer);
 }
 
+/**
+ * Agrega un koopa nuevo al mundo, 10 posiciones adelante de la posicion recibida.
+ * @param world_position : La posicion recibida.
+ */
 void World::add_koopa(int world_position) {
     Koopa_Troopa koopa;
     Koopa_Troopa* new_koopa_pointer = new Koopa_Troopa();
@@ -92,12 +102,21 @@ void World::add_koopa(int world_position) {
     this->world_array[index].push_back(new_koopa_pointer);
 }
 
+/**
+ * Obtiene los elementos de la siguiente posicion del mundo.
+ * @param world_position : La posicion recibida.
+ * @return un vector con cada elemento de la posicion.
+ */
 std::vector<Element*> World::get_next_position_elements(int world_position) {
     return this->world_array[(world_position + 1) % 100];
 }
 
+/**
+ * Elimina una moneda del mundo segun la posicion recibida.
+ * @param world_position : La posicion recibida.
+ */
 void World::remove_coin(int world_position) {
-    Coin a_coin; // Mejor tener un private de estos elementos en la clase.
+    Coin a_coin;
     bool removed = false;
 
     for (auto iteration = this->world_array[world_position].begin();
@@ -111,6 +130,10 @@ void World::remove_coin(int world_position) {
     }
 }
 
+/**
+ * Elimina un goomba del mundo segun la posicion recibida.
+ * @param world_position : La posicion recibida.
+ */
 void World::remove_goomba(int world_position) {
     Little_Goomba a_goomba;
     bool removed = false;
@@ -126,6 +149,10 @@ void World::remove_goomba(int world_position) {
     }
 }
 
+/**
+ * Elimina un koopa del mundo segun la posicion recibida.
+ * @param world_position : La posicion recibida.
+ */
 void World::remove_koopa(int world_position) {
     Koopa_Troopa a_koopa;
     bool removed = false;
@@ -138,21 +165,5 @@ void World::remove_koopa(int world_position) {
             removed = true;
         }
 
-    }
-}
-
-void World::print_world_array() {
-    for (int index = 0; index < 100; ++index) {
-        int position_size = this->world_array[index].size();
-
-        std::cout << index << ": ";
-        if (position_size != 0) {
-            for (int element_position = 0; element_position < position_size; ++element_position) {
-                // std::cout << this->world_array[index][element_position]->get_element_type() << ' ';
-            }
-        } else {
-            std::cout << "empty";
-        }
-        std::cout << '\n';
     }
 }
