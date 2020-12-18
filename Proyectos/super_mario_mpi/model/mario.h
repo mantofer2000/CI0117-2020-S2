@@ -11,11 +11,13 @@
 class Mario {
     public:
         Mario(int);
-        //Mario(char);
+
         void add_coin(int);
         int get_coins_amount();
+
         bool is_active();
         void set_inactive();
+        
         std::string get_attack_strategy();
         void set_attack_strategy(char);
     

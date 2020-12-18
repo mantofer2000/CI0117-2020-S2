@@ -3,17 +3,19 @@
 #include <unistd.h>
 #include <mpi.h>
 
-
+// Inicializa un arreglo.
 void init_array(int * array, int array_len) {
     for (int i = 0; i < array_len; i++)
         array[i] = 0;
 }
 
+// Inicializa el arreglo "atacking_array".
 void attacking_array(int * array, int array_len) {
     for (int i = 0; i < array_len; i++)
         array[i] = -1;
 }
 
+// Encuentra al jugador con menos monedas entre los Marios vivos.
 int find_less_coin(int* active_marios, int* coin_array, int num_processes, int my_id) {
     int process = -1;
     for (int i = 1; i < num_processes; i++) {
@@ -34,6 +36,7 @@ int find_less_coin(int* active_marios, int* coin_array, int num_processes, int m
     return process;
 }
 
+// Encuentra al jugador con mas monedas entre los Marios vivos.
 int find_more_coin(int* active_marios, int* coin_array, int num_processes, int my_id) {
     int process = -1;
     for (int i = 1; i < num_processes; i++) {
@@ -54,7 +57,7 @@ int find_more_coin(int* active_marios, int* coin_array, int num_processes, int m
     return process;
 }
 
-
+// Verifica que hay al menos un Mario vivo.
 bool remaining_still_alive(int* active_marios, int num_processes) {
     for (int index = 1; index < num_processes; ++index) {
         if (active_marios[index] == 1) {
@@ -67,13 +70,17 @@ bool remaining_still_alive(int* active_marios, int num_processes) {
 int main(int argc, char* argv[]) {
 
     int my_id, num_processes, mario_status, players_alive, num_attackers_strat;
+
+    // Para la cantidad de monedas de cada jugador.
     int *coin_array;
+    // Para identificar a los Marios que aun estan vivos.
     int *active_marios;
     int *attackers;
-    // goombas every process has to receive
+    // Para la cantidad de goombas que envia cada proceso.
     int *goombas;
-    // koopas every process has to receive
+    // Para la cantidad de koopas que envia cada proceso.
     int *koopas;
+    // Para ver cual proceso esta atacando a cual otro.
     int *attacking_array;
     
     num_processes = 2;
@@ -101,6 +108,7 @@ int main(int argc, char* argv[]) {
 
         attack_strategy = (argv[2])[0];
 
+        // Verificar que la estrategia sea valida.
         if (attack_strategy != 'R' && attack_strategy != 'L'
             && attack_strategy != 'M' && attack_strategy != 'A') {
 
@@ -129,18 +137,23 @@ int main(int argc, char* argv[]) {
     players_alive = 0;
     num_attackers_strat = 0;
 
+    // Todos los Marios empiezan vivos.
     for (int index = 1; index < num_processes; ++index) {
         active_marios[index] = 1;
     }
 
     if (my_id == 0) {
+
+        // Proceso 0 no es jugador, todo es 0.
         mario_status = 0;
         int coins = 0;
         int attacker_strat = 0;
         int id_to_attack = 0;
         int goombas_to_send = 0;
         int koopas_to_send = 0;
+
         while (remaining_still_alive(active_marios, num_processes)) {
+            // Comunicar con los demas procesos.
             MPI_Bcast(&player_to_view, 1, MPI_INT, 0, MPI_COMM_WORLD);
             MPI_Allreduce(&mario_status, &players_alive, 1, MPI_INT, MPI_SUM, MPI_COMM_WORLD);
             MPI_Allreduce(&attacker_strat, &num_attackers_strat, 1, MPI_INT, MPI_SUM, MPI_COMM_WORLD);
@@ -152,6 +165,7 @@ int main(int argc, char* argv[]) {
             MPI_Allgather(&goombas_to_send, 1, MPI_INT, goombas, 1, MPI_INT, MPI_COMM_WORLD);
             MPI_Allgather(&koopas_to_send, 1, MPI_INT, koopas, 1, MPI_INT, MPI_COMM_WORLD);
             
+            // Pedir al usuario que escoja otro jugador que esta vivo.
             if (remaining_still_alive(active_marios, num_processes)) {
                 while (active_marios[player_to_view] == 0) {
                     std::cout << "He dead. Enter the number of another player: ";
@@ -159,6 +173,7 @@ int main(int argc, char* argv[]) {
                 }
             }
         }
+
     }
 
     if (my_id != 0) {
@@ -198,6 +213,7 @@ int main(int argc, char* argv[]) {
                 attacker_strat = 1;
             }
 
+            // Comunicacion con los demas procesos.
             MPI_Bcast(&player_to_view, 1, MPI_INT, 0, MPI_COMM_WORLD);
             MPI_Allreduce(&mario_status, &players_alive, 1, MPI_INT, MPI_SUM, MPI_COMM_WORLD);
             MPI_Allreduce(&attacker_strat, &num_attackers_strat, 1, MPI_INT, MPI_SUM, MPI_COMM_WORLD);
@@ -209,11 +225,15 @@ int main(int argc, char* argv[]) {
             MPI_Allgather(&goombas_to_send, 1, MPI_INT, goombas, 1, MPI_INT, MPI_COMM_WORLD);
             MPI_Allgather(&koopas_to_send, 1, MPI_INT, koopas, 1, MPI_INT, MPI_COMM_WORLD);
 
+            // Buscar a mi atacante.
             for (int index = 1; index < num_processes; ++index) {
+
                 if (attacking_array[index] == my_id) {
                     my_attacker = index; // Ese proceso me esta atacando.
+
                     // Ver cuantos goombas y koopas me esta mandando.
                     int count_goombas = 0, count_koopas = 0;
+
                     while (count_goombas < goombas[index]) {
                         my_world.add_goomba(position);
                         ++count_goombas;
@@ -223,7 +243,10 @@ int main(int argc, char* argv[]) {
                         ++count_koopas;
                     }
                 }
+
             }
+
+            // Verificacion de que el atacante y el atacado siguen vivos.
 
             if (active_marios[id_to_attack] == 0) {
                 id_to_attack = 0;
@@ -239,13 +262,15 @@ int main(int argc, char* argv[]) {
             std::vector<Element*> world_position_elements = my_world.get_next_position_elements(position);
             int elements_count = world_position_elements.size();
             
+            // Realizar las acciones de Mario. Imprimir estado del proceso.
+
             if (my_id == player_to_view && elements_count == 0) {
 
                 std::cout << "World pos. " << position << ": ";
                 std::cout << "Mario #" << my_id << " is walking. ";
                 std::cout << "Coins: " << coins << " | ";
 
-                // Imprimir info de MPI: Attacking, Being attacked by, Attack Strategy, Total Playing.
+                // Imprimir info de MPI.
                 std::cout << "attacking #" << id_to_attack << " | ";
                 std::cout << "being attacked by #" << my_attacker << " | ";
                 std::cout << "attack strategy: " << my_attack_strategy << " | ";
@@ -297,7 +322,8 @@ int main(int argc, char* argv[]) {
                                         std::cout   << "Mario #" << my_id
                                                     << " jumped and killed a little goomba! ";
                                     }
-                                    // metodo de enviar
+
+                                    // Enviar goomba.
                                     if (players_alive > 1)
                                     {
                                         if (my_attack_strategy == RANDOM_STRG) {
@@ -336,7 +362,7 @@ int main(int argc, char* argv[]) {
                                         std::cout   << "Mario #" << my_id
                                                     << " jumped and killed a koopa troopa! ";
                                     }
-                                    // Enviar koopa
+                                    // Enviar koopa.
                                     if (players_alive > 1)
                                     {
                                         if (my_attack_strategy == RANDOM_STRG) {
@@ -427,7 +453,7 @@ int main(int argc, char* argv[]) {
                     if (my_id == player_to_view) {
                         std::cout << "Coins: " << my_mario.get_coins_amount() << " | ";
 
-                        // Imprimir info de MPI: Attacking, Being attacked by, Attack Strategy, Total Playing.
+                        // Imprimir info de MPI.
                         std::cout << "attacking #" << id_to_attack << " | ";
                         std::cout << "being attacked by #" << my_attacker << " | ";
                         std::cout << "attack strategy: " << my_attack_strategy << " | ";
@@ -438,6 +464,7 @@ int main(int argc, char* argv[]) {
                 }
             }
 
+            // Verificar si Mario sigue vivo.
             if (my_mario.is_active()) {
                 position++;
                 position = position % 100;
@@ -454,6 +481,7 @@ int main(int argc, char* argv[]) {
             
         }
         
+        // Si el proceso esta muerto, sigue comunicando con los demas.
         while (remaining_still_alive(active_marios, num_processes)) {
             coins = my_mario.get_coins_amount();
             id_to_attack = 0;
@@ -475,7 +503,7 @@ int main(int argc, char* argv[]) {
     }
     MPI_Finalize();
 
-
+    // Liberar memoria.
     delete[] active_marios;
     delete[] coin_array;
     delete[] active_marios;
